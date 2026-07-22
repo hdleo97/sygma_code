@@ -51,10 +51,10 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold">
-            G
+            S
           </div>
           <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold">GMAO</span>
+            <span className="text-sm font-semibold">SYGMA</span>
             <span className="text-xs text-sidebar-foreground/60">
               Maintenance
             </span>

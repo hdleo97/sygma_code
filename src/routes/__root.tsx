@@ -78,16 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "GMAO — Gestion de Maintenance Assistée par Ordinateur" },
+      { title: "SYGMA — Système de Gestion de Maintenance Assistée" },
       {
         name: "description",
         content:
-          "Application GMAO pour la gestion de la maintenance industrielle : interventions, équipements, stocks et préventif.",
+          "Application SYGMA pour la gestion de la maintenance industrielle : interventions, équipements, stocks et préventif.",
       },
-      { property: "og:title", content: "GMAO" },
+      { property: "og:title", content: "SYGMA" },
       {
         property: "og:description",
-        content: "Application GMAO pour la maintenance industrielle.",
+        content: "Application SYGMA pour la maintenance industrielle.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -129,9 +129,9 @@ function RootComponent() {
             <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
               <SidebarTrigger />
               <div className="flex flex-col leading-tight">
-                <span className="text-sm font-semibold text-foreground">GMAO</span>
+                <span className="text-sm font-semibold text-foreground">SYGMA</span>
                 <span className="text-xs text-muted-foreground">
-                  Gestion de Maintenance Assistée par Ordinateur
+                  Système de Gestion de Maintenance Assistée
                 </span>
               </div>
             </header>
