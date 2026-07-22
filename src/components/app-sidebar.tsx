@@ -23,16 +23,22 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const modules = [
+type ModuleItem = {
+  title: string;
+  icon: typeof LayoutDashboard;
+  url?: "/";
+};
+
+const modules: ModuleItem[] = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard },
-  { title: "Demandes d'intervention", url: "/demandes", icon: ClipboardList },
-  { title: "Interventions", url: "/interventions", icon: Wrench },
-  { title: "Équipements", url: "/equipements", icon: Cog },
-  { title: "Stocks", url: "/stocks", icon: Boxes },
-  { title: "Préventif", url: "/preventif", icon: CalendarClock },
-  { title: "Techniciens", url: "/techniciens", icon: Users },
-  { title: "Rapports", url: "/rapports", icon: FileBarChart },
-  { title: "Paramétrage", url: "/parametrage", icon: Settings },
+  { title: "Demandes d'intervention", icon: ClipboardList },
+  { title: "Interventions", icon: Wrench },
+  { title: "Équipements", icon: Cog },
+  { title: "Stocks", icon: Boxes },
+  { title: "Préventif", icon: CalendarClock },
+  { title: "Techniciens", icon: Users },
+  { title: "Rapports", icon: FileBarChart },
+  { title: "Paramétrage", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -61,21 +67,37 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {modules.map((item) => {
-                const isActive =
-                  item.url === "/"
-                    ? currentPath === "/"
-                    : currentPath.startsWith(item.url);
+                const isActive = item.url ? currentPath === item.url : false;
+                const Icon = item.icon;
+
+                if (item.url) {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.url}>
+                          <Icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      tooltip={item.title}
+                      tooltip={`${item.title} (bientôt)`}
+                      className="cursor-not-allowed opacity-60"
                     >
-                      <Link to={item.url as never} disabled>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
+                      <Icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                      <span className="ml-auto text-[10px] uppercase tracking-wide text-sidebar-foreground/50 group-data-[collapsible=icon]:hidden">
+                        Bientôt
+                      </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
