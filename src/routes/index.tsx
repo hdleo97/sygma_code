@@ -1,24 +1,65 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { supabase } from "@/integrations/supabase/client";
+
 export const Route = createFileRoute("/")({
   component: Index,
+  head: () => ({
+    meta: [
+      { title: "GMAO — Accueil" },
+      {
+        name: "description",
+        content: "Application GMAO en cours de construction.",
+      },
+    ],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["health_check"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("health_check")
+        .select("id, status")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const ok = !!data && !isError;
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-12">
+      <div className="w-full max-w-xl rounded-xl border border-border bg-card p-8 shadow-sm">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">GMAO</h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          Application en cours de construction
+        </p>
+
+        <div className="mt-8 rounded-lg border border-border bg-muted/40 p-4">
+          {isLoading ? (
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Vérification de la connexion à la base de données…</span>
+            </div>
+          ) : ok ? (
+            <div className="flex items-center gap-3 text-sm font-medium text-foreground">
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+              <span>Connexion base de données : OK</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 text-sm font-medium text-destructive">
+              <XCircle className="h-5 w-5" />
+              <span>Connexion base de données : échec</span>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
