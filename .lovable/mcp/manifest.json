@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://igosfgoiuyqxfgejajoc.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "sygma-mcp",
+      "version": "0.1.0",
+      "title": "SYGMA MCP"
+    },
+    "tools": [
+      {
+        "name": "ping",
+        "title": "Ping SYGMA",
+        "description": "Vérifie la connexion au serveur MCP SYGMA et renvoie l'identité de l'utilisateur authentifié.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "message": {
+              "description": "Message facultatif à renvoyer tel quel pour tester l'aller-retour.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
