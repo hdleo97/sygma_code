@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      etablissements: {
+        Row: {
+          adresse: string | null
+          contact: string | null
+          created_at: string
+          id: string
+          nom: string
+          responsable: string | null
+          updated_at: string
+        }
+        Insert: {
+          adresse?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          nom: string
+          responsable?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adresse?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          nom?: string
+          responsable?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       health_check: {
         Row: {
           created_at: string
@@ -32,15 +62,107 @@ export type Database = {
         }
         Relationships: []
       }
+      profils_utilisateurs: {
+        Row: {
+          created_at: string
+          id: string
+          nom: string | null
+          prenom: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nom?: string | null
+          prenom?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nom?: string | null
+          prenom?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      utilisateur_etablissements: {
+        Row: {
+          created_at: string
+          etablissement_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          etablissement_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          etablissement_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utilisateur_etablissements_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_global_access: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      user_in_etablissement: {
+        Args: { _etab: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "super_admin"
+        | "responsable_maintenance"
+        | "technicien"
+        | "demandeur"
+        | "gestionnaire_stock"
+        | "prestataire"
+        | "responsable_etablissement"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -167,6 +289,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "super_admin",
+        "responsable_maintenance",
+        "technicien",
+        "demandeur",
+        "gestionnaire_stock",
+        "prestataire",
+        "responsable_etablissement",
+      ],
+    },
   },
 } as const
