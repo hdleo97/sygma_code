@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -27,7 +27,7 @@ function AuthPage() {
   const { next } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const target = safeNext(next);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -36,44 +36,43 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) window.location.replace(target);
+      if (data.session) navigate({ to: target });
     });
-  }, [target]);
+  }, [target, navigate]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
     setInfo(null);
+
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
       if (error) return setError(error.message);
-      window.location.replace(target);
-    } else {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}${target}`,
-        },
-      });
-      setBusy(false);
-      if (error) return setError(error.message);
-      if (data.session) {
-        window.location.replace(target);
-      } else {
-        setInfo("Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse.");
-      }
+      navigate({ to: target });
+      return;
     }
+
+    // forgot password
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) return setError(error.message);
+    setInfo(
+      "Si un compte est associé à cet e-mail, un lien de réinitialisation vient d'être envoyé.",
+    );
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-2xl font-bold tracking-tight">SYGMA</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "signin" ? "Connectez-vous à votre compte." : "Créez votre compte."}
+          {mode === "signin"
+            ? "Connectez-vous à votre compte."
+            : "Réinitialiser votre mot de passe."}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
@@ -91,21 +90,26 @@ function AuthPage() {
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          <div>
-            <label className="text-xs font-medium text-foreground" htmlFor="password">
-              Mot de passe
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
+
+          {mode === "signin" && (
+            <div>
+              <label
+                className="text-xs font-medium text-foreground"
+                htmlFor="password"
+              >
+                Mot de passe
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          )}
 
           {error && (
             <p role="alert" className="text-sm text-destructive">
@@ -120,23 +124,40 @@ function AuthPage() {
             className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
             {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === "signin" ? "Se connecter" : "Créer un compte"}
+            {mode === "signin" ? "Se connecter" : "Envoyer le lien"}
           </button>
         </form>
 
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
-            setError(null);
-            setInfo(null);
-          }}
-          className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground"
-        >
-          {mode === "signin"
-            ? "Pas encore de compte ? Créer un compte"
-            : "Déjà un compte ? Se connecter"}
-        </button>
+        <div className="mt-4 flex flex-col gap-2 text-center text-xs">
+          {mode === "signin" ? (
+            <button
+              type="button"
+              onClick={() => {
+                setMode("forgot");
+                setError(null);
+                setInfo(null);
+              }}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Mot de passe oublié ?
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setMode("signin");
+                setError(null);
+                setInfo(null);
+              }}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Retour à la connexion
+            </button>
+          )}
+          <p className="text-muted-foreground/80">
+            Les comptes SYGMA sont créés par un administrateur.
+          </p>
+        </div>
       </div>
     </div>
   );
