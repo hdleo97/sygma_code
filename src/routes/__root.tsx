@@ -3,15 +3,20 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
+  useNavigate,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Loader2 } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { EtablissementSelector } from "@/components/etablissement-selector";
 
 function NotFoundComponent() {
   return (
@@ -117,30 +122,75 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+// Routes that render outside the authenticated shell.
+const PUBLIC_UI_PREFIXES = ["/auth", "/reset-password", "/.lovable.oauth", "/.lovable/oauth"];
+
+function isPublicUiRoute(pathname: string): boolean {
+  return PUBLIC_UI_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-background">
-          <AppSidebar />
-          <div className="flex flex-1 flex-col">
-            <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
-              <SidebarTrigger />
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-semibold text-foreground">SYGMA</span>
-                <span className="text-xs text-muted-foreground">
-                  Système de Gestion de Maintenance Assistée
-                </span>
-              </div>
-            </header>
-            <main className="flex-1">
-              <Outlet />
-            </main>
-          </div>
-        </div>
-      </SidebarProvider>
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
     </QueryClientProvider>
+  );
+}
+
+function AppShell() {
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const { loading, session } = useAuth();
+  const navigate = useNavigate();
+  const isPublic = isPublicUiRoute(pathname);
+
+  useEffect(() => {
+    if (!loading && !session && !isPublic) {
+      navigate({ to: "/auth", search: { next: pathname } });
+    }
+  }, [loading, session, isPublic, pathname, navigate]);
+
+  if (isPublic) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Outlet />
+      </div>
+    );
+  }
+
+  if (loading || !session) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
+            <SidebarTrigger />
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold text-foreground">SYGMA</span>
+              <span className="text-xs text-muted-foreground">
+                Système de Gestion de Maintenance Assistée
+              </span>
+            </div>
+            <div className="ml-auto">
+              <EtablissementSelector />
+            </div>
+          </header>
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
