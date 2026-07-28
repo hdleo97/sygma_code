@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      equipements: {
+        Row: {
+          categorie: string | null
+          created_at: string
+          date_mise_en_service: string | null
+          designation: string
+          etablissement_id: string
+          fournisseur: string | null
+          id: string
+          marque: string | null
+          modele: string | null
+          numero_serie: string | null
+          photo_path: string | null
+          reference: string
+          statut: Database["public"]["Enums"]["equipement_statut"]
+          updated_at: string
+          zone: string | null
+        }
+        Insert: {
+          categorie?: string | null
+          created_at?: string
+          date_mise_en_service?: string | null
+          designation: string
+          etablissement_id: string
+          fournisseur?: string | null
+          id?: string
+          marque?: string | null
+          modele?: string | null
+          numero_serie?: string | null
+          photo_path?: string | null
+          reference: string
+          statut?: Database["public"]["Enums"]["equipement_statut"]
+          updated_at?: string
+          zone?: string | null
+        }
+        Update: {
+          categorie?: string | null
+          created_at?: string
+          date_mise_en_service?: string | null
+          designation?: string
+          etablissement_id?: string
+          fournisseur?: string | null
+          id?: string
+          marque?: string | null
+          modele?: string | null
+          numero_serie?: string | null
+          photo_path?: string | null
+          reference?: string
+          statut?: Database["public"]["Enums"]["equipement_statut"]
+          updated_at?: string
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipements_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       etablissements: {
         Row: {
           adresse: string | null
@@ -163,6 +225,12 @@ export type Database = {
         | "gestionnaire_stock"
         | "prestataire"
         | "responsable_etablissement"
+      equipement_statut:
+        | "en_service"
+        | "en_panne"
+        | "en_maintenance"
+        | "hors_service"
+        | "reforme"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -298,6 +366,13 @@ export const Constants = {
         "gestionnaire_stock",
         "prestataire",
         "responsable_etablissement",
+      ],
+      equipement_statut: [
+        "en_service",
+        "en_panne",
+        "en_maintenance",
+        "hors_service",
+        "reforme",
       ],
     },
   },
