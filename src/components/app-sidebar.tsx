@@ -146,7 +146,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {visible.map((item) => {
-                const isActive = item.url ? currentPath === item.url : false;
+                const isActive = item.url
+                  ? item.url === "/"
+                    ? currentPath === "/"
+                    : currentPath.startsWith(item.url)
+                  : false;
                 const Icon = item.icon;
 
                 if (item.url) {
