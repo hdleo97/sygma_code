@@ -29,7 +29,7 @@ import { useAuth, type AppRole } from "@/lib/auth-context";
 type ModuleItem = {
   title: string;
   icon: typeof LayoutDashboard;
-  url?: "/";
+  url?: "/" | "/equipements";
   roles: AppRole[] | "all";
 };
 
@@ -63,6 +63,7 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Équipements",
+    url: "/equipements",
     icon: Cog,
     roles: [
       "super_admin",
@@ -145,7 +146,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {visible.map((item) => {
-                const isActive = item.url ? currentPath === item.url : false;
+                const isActive = item.url
+                  ? item.url === "/"
+                    ? currentPath === "/"
+                    : currentPath.startsWith(item.url)
+                  : false;
                 const Icon = item.icon;
 
                 if (item.url) {
