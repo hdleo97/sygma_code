@@ -18,6 +18,7 @@ import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nou
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as EquipementsIdIndexRouteImport } from './routes/equipements/$id/index'
+import { Route as EquipementsIdModifierRouteImport } from './routes/equipements/$id/modifier'
 import { Route as ApiPublicSeedDemoRouteImport } from './routes/api/public/seed-demo'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -69,6 +70,11 @@ const EquipementsIdIndexRoute = EquipementsIdIndexRouteImport.update({
   path: '/equipements/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EquipementsIdModifierRoute = EquipementsIdModifierRouteImport.update({
+  id: '/equipements/$id/modifier',
+  path: '/equipements/$id/modifier',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSeedDemoRoute = ApiPublicSeedDemoRouteImport.update({
   id: '/api/public/seed-demo',
   path: '/api/public/seed-demo',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
+  '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
+  '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id': typeof EquipementsIdIndexRoute
 }
 export interface FileRoutesById {
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
+  '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/seed-demo'
+    | '/equipements/$id/modifier'
     | '/equipements/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/seed-demo'
+    | '/equipements/$id/modifier'
     | '/equipements/$id'
   id:
     | '__root__'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/seed-demo'
+    | '/equipements/$id/modifier'
     | '/equipements/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicSeedDemoRoute: typeof ApiPublicSeedDemoRoute
+  EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
   EquipementsIdIndexRoute: typeof EquipementsIdIndexRoute
 }
 
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipementsIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/equipements/$id/modifier': {
+      id: '/equipements/$id/modifier'
+      path: '/equipements/$id/modifier'
+      fullPath: '/equipements/$id/modifier'
+      preLoaderRoute: typeof EquipementsIdModifierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/seed-demo': {
       id: '/api/public/seed-demo'
       path: '/api/public/seed-demo'
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicSeedDemoRoute: ApiPublicSeedDemoRoute,
+  EquipementsIdModifierRoute: EquipementsIdModifierRoute,
   EquipementsIdIndexRoute: EquipementsIdIndexRoute,
 }
 export const routeTree = rootRouteImport
