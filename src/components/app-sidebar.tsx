@@ -63,6 +63,7 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Équipements",
+    url: "/equipements",
     icon: Cog,
     roles: [
       "super_admin",
