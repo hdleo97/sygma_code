@@ -47,6 +47,7 @@ const modules: ModuleItem[] = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard, roles: "all" },
   {
     title: "Demandes d'intervention",
+    url: "/demandes",
     icon: ClipboardList,
     roles: ALL_ROLES,
   },
