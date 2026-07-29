@@ -14,6 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
+      demandes_intervention: {
+        Row: {
+          created_at: string
+          demandeur_id: string
+          description: string
+          equipement_id: string | null
+          etablissement_id: string
+          id: string
+          localisation: string | null
+          pieces_jointes: string[]
+          priorite: Database["public"]["Enums"]["di_priorite"]
+          statut: Database["public"]["Enums"]["di_statut"]
+          technicien_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          demandeur_id: string
+          description: string
+          equipement_id?: string | null
+          etablissement_id: string
+          id?: string
+          localisation?: string | null
+          pieces_jointes?: string[]
+          priorite?: Database["public"]["Enums"]["di_priorite"]
+          statut?: Database["public"]["Enums"]["di_statut"]
+          technicien_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          demandeur_id?: string
+          description?: string
+          equipement_id?: string | null
+          etablissement_id?: string
+          id?: string
+          localisation?: string | null
+          pieces_jointes?: string[]
+          priorite?: Database["public"]["Enums"]["di_priorite"]
+          statut?: Database["public"]["Enums"]["di_statut"]
+          technicien_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demandes_intervention_demandeur_id_fkey"
+            columns: ["demandeur_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_intervention_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_intervention_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_intervention_technicien_id_fkey"
+            columns: ["technicien_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demandes_intervention_historique: {
+        Row: {
+          ancien_statut: Database["public"]["Enums"]["di_statut"] | null
+          created_at: string
+          demande_id: string
+          id: string
+          nouveau_statut: Database["public"]["Enums"]["di_statut"]
+          user_id: string | null
+        }
+        Insert: {
+          ancien_statut?: Database["public"]["Enums"]["di_statut"] | null
+          created_at?: string
+          demande_id: string
+          id?: string
+          nouveau_statut: Database["public"]["Enums"]["di_statut"]
+          user_id?: string | null
+        }
+        Update: {
+          ancien_statut?: Database["public"]["Enums"]["di_statut"] | null
+          created_at?: string
+          demande_id?: string
+          id?: string
+          nouveau_statut?: Database["public"]["Enums"]["di_statut"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demandes_intervention_historique_demande_id_fkey"
+            columns: ["demande_id"]
+            isOneToOne: false
+            referencedRelation: "demandes_intervention"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipements: {
         Row: {
           categorie: string | null
@@ -203,6 +312,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_view_demande: {
+        Args: { _demande_id: string; _user_id: string }
+        Returns: boolean
+      }
+      di_transition_autorisee: {
+        Args: {
+          _ancien: Database["public"]["Enums"]["di_statut"]
+          _nouveau: Database["public"]["Enums"]["di_statut"]
+        }
+        Returns: boolean
+      }
       has_global_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -225,6 +345,15 @@ export type Database = {
         | "gestionnaire_stock"
         | "prestataire"
         | "responsable_etablissement"
+      di_priorite: "faible" | "moyenne" | "haute" | "critique"
+      di_statut:
+        | "nouvelle"
+        | "validee"
+        | "affectee"
+        | "en_cours"
+        | "terminee"
+        | "cloturee"
+        | "refusee"
       equipement_statut:
         | "en_service"
         | "en_panne"
@@ -366,6 +495,16 @@ export const Constants = {
         "gestionnaire_stock",
         "prestataire",
         "responsable_etablissement",
+      ],
+      di_priorite: ["faible", "moyenne", "haute", "critique"],
+      di_statut: [
+        "nouvelle",
+        "validee",
+        "affectee",
+        "en_cours",
+        "terminee",
+        "cloturee",
+        "refusee",
       ],
       equipement_statut: [
         "en_service",
