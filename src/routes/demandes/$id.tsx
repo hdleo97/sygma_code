@@ -158,7 +158,8 @@ function FicheDemande() {
       statut: DemandeStatut;
       technicien?: string | null;
     }) => {
-      const payload: Record<string, unknown> = { statut };
+      const payload: { statut: DemandeStatut; technicien_id?: string | null } =
+        { statut };
       if (technicien !== undefined) payload.technicien_id = technicien;
       const { error } = await supabase
         .from("demandes_intervention")
