@@ -19,7 +19,6 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as EquipementsIdIndexRouteImport } from './routes/equipements/$id/index'
 import { Route as EquipementsIdModifierRouteImport } from './routes/equipements/$id/modifier'
-import { Route as ApiPublicSeedDemoRouteImport } from './routes/api/public/seed-demo'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -75,11 +74,6 @@ const EquipementsIdModifierRoute = EquipementsIdModifierRouteImport.update({
   path: '/equipements/$id/modifier',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicSeedDemoRoute = ApiPublicSeedDemoRouteImport.update({
-  id: '/api/public/seed-demo',
-  path: '/api/public/seed-demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -103,7 +97,6 @@ export interface FileRoutesByFullPath {
   '/equipements/': typeof EquipementsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
 }
@@ -118,7 +111,6 @@ export interface FileRoutesByTo {
   '/equipements': typeof EquipementsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id': typeof EquipementsIdIndexRoute
 }
@@ -134,7 +126,6 @@ export interface FileRoutesById {
   '/equipements/': typeof EquipementsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/seed-demo': typeof ApiPublicSeedDemoRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
 }
@@ -151,7 +142,6 @@ export interface FileRouteTypes {
     | '/equipements/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/api/public/seed-demo'
     | '/equipements/$id/modifier'
     | '/equipements/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -166,7 +156,6 @@ export interface FileRouteTypes {
     | '/equipements'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/api/public/seed-demo'
     | '/equipements/$id/modifier'
     | '/equipements/$id'
   id:
@@ -181,7 +170,6 @@ export interface FileRouteTypes {
     | '/equipements/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/api/public/seed-demo'
     | '/equipements/$id/modifier'
     | '/equipements/$id/'
   fileRoutesById: FileRoutesById
@@ -197,7 +185,6 @@ export interface RootRouteChildren {
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
-  ApiPublicSeedDemoRoute: typeof ApiPublicSeedDemoRoute
   EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
   EquipementsIdIndexRoute: typeof EquipementsIdIndexRoute
 }
@@ -274,13 +261,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipementsIdModifierRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/seed-demo': {
-      id: '/api/public/seed-demo'
-      path: '/api/public/seed-demo'
-      fullPath: '/api/public/seed-demo'
-      preLoaderRoute: typeof ApiPublicSeedDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -310,7 +290,6 @@ const rootRouteChildren: RootRouteChildren = {
   EquipementsIndexRoute: EquipementsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
-  ApiPublicSeedDemoRoute: ApiPublicSeedDemoRoute,
   EquipementsIdModifierRoute: EquipementsIdModifierRoute,
   EquipementsIdIndexRoute: EquipementsIdIndexRoute,
 }
