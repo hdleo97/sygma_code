@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
+import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
 import { Route as DemandesNouvelleRouteImport } from './routes/demandes/nouvelle'
 import { Route as DemandesIdRouteImport } from './routes/demandes/$id'
@@ -59,6 +60,11 @@ const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
 const DemandesIndexRoute = DemandesIndexRouteImport.update({
   id: '/demandes/',
   path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
+  id: '/interventions/nouvelle',
+  path: '/interventions/nouvelle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquipementsNouveauRoute = EquipementsNouveauRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/nouvelle'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/nouvelle'
     | '/demandes'
     | '/equipements'
     | '/interventions'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/nouvelle'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesNouvelleRoute: typeof DemandesNouvelleRoute
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
+  InterventionsNouvelleRoute: typeof InterventionsNouvelleRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/demandes'
       fullPath: '/demandes/'
       preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/nouvelle': {
+      id: '/interventions/nouvelle'
+      path: '/interventions/nouvelle'
+      fullPath: '/interventions/nouvelle'
+      preLoaderRoute: typeof InterventionsNouvelleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipements/nouveau': {
@@ -369,6 +389,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemandesIdRoute: DemandesIdRoute,
   DemandesNouvelleRoute: DemandesNouvelleRoute,
   EquipementsNouveauRoute: EquipementsNouveauRoute,
+  InterventionsNouvelleRoute: InterventionsNouvelleRoute,
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
