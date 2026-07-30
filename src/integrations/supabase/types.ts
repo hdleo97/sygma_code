@@ -260,6 +260,13 @@ export type Database = {
             referencedRelation: "interventions"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "intervention_techniciens_technicien_id_fkey"
+            columns: ["technicien_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
         ]
       }
       interventions: {
