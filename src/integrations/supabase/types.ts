@@ -233,6 +233,117 @@ export type Database = {
         }
         Relationships: []
       }
+      intervention_techniciens: {
+        Row: {
+          created_at: string
+          id: string
+          intervention_id: string
+          technicien_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intervention_id: string
+          technicien_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intervention_id?: string
+          technicien_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intervention_techniciens_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interventions: {
+        Row: {
+          created_at: string
+          cree_par: string
+          date_appel: string | null
+          date_debut: string | null
+          date_fin: string | null
+          date_planifiee: string | null
+          demande_id: string | null
+          description: string
+          duree_estimee_minutes: number | null
+          duree_minutes: number | null
+          equipement_id: string | null
+          etablissement_id: string
+          id: string
+          localisation: string | null
+          nature: Database["public"]["Enums"]["intervention_nature"]
+          statut: Database["public"]["Enums"]["intervention_statut"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cree_par?: string
+          date_appel?: string | null
+          date_debut?: string | null
+          date_fin?: string | null
+          date_planifiee?: string | null
+          demande_id?: string | null
+          description: string
+          duree_estimee_minutes?: number | null
+          duree_minutes?: number | null
+          equipement_id?: string | null
+          etablissement_id: string
+          id?: string
+          localisation?: string | null
+          nature?: Database["public"]["Enums"]["intervention_nature"]
+          statut?: Database["public"]["Enums"]["intervention_statut"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cree_par?: string
+          date_appel?: string | null
+          date_debut?: string | null
+          date_fin?: string | null
+          date_planifiee?: string | null
+          demande_id?: string | null
+          description?: string
+          duree_estimee_minutes?: number | null
+          duree_minutes?: number | null
+          equipement_id?: string | null
+          etablissement_id?: string
+          id?: string
+          localisation?: string | null
+          nature?: Database["public"]["Enums"]["intervention_nature"]
+          statut?: Database["public"]["Enums"]["intervention_statut"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_demande_id_fkey"
+            columns: ["demande_id"]
+            isOneToOne: false
+            referencedRelation: "demandes_intervention"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profils_utilisateurs: {
         Row: {
           created_at: string
@@ -312,6 +423,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_intervention: {
+        Args: { _etab: string; _user_id: string }
+        Returns: boolean
+      }
       can_view_demande: {
         Args: { _demande_id: string; _user_id: string }
         Returns: boolean
@@ -329,6 +444,11 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      intervention_etab: { Args: { _intervention_id: string }; Returns: string }
+      is_intervention_technicien: {
+        Args: { _intervention_id: string; _user_id: string }
         Returns: boolean
       }
       user_in_etablissement: {
@@ -360,6 +480,8 @@ export type Database = {
         | "en_maintenance"
         | "hors_service"
         | "reforme"
+      intervention_nature: "curative" | "preventive"
+      intervention_statut: "planifiee" | "en_cours" | "terminee" | "signee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -513,6 +635,8 @@ export const Constants = {
         "hors_service",
         "reforme",
       ],
+      intervention_nature: ["curative", "preventive"],
+      intervention_statut: ["planifiee", "en_cours", "terminee", "signee"],
     },
   },
 } as const
