@@ -13,6 +13,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
@@ -43,6 +44,11 @@ const AuthRoute = AuthRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
+  id: '/interventions/',
+  path: '/interventions/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
+  '/interventions/': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
+  '/interventions': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
+  '/interventions/': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/demandes/'
     | '/equipements/'
+    | '/interventions/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/demandes'
     | '/equipements'
+    | '/interventions'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/demandes/'
     | '/equipements/'
+    | '/interventions/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -222,6 +234,7 @@ export interface RootRouteChildren {
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
+  InterventionsIndexRoute: typeof InterventionsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/': {
+      id: '/interventions/'
+      path: '/interventions'
+      fullPath: '/interventions/'
+      preLoaderRoute: typeof InterventionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipements/': {
@@ -351,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipementsNouveauRoute: EquipementsNouveauRoute,
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
+  InterventionsIndexRoute: InterventionsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   EquipementsIdModifierRoute: EquipementsIdModifierRoute,
