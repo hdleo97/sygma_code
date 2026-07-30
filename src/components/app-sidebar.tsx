@@ -53,6 +53,7 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Interventions",
+    url: "/interventions",
     icon: Wrench,
     roles: [
       "super_admin",
