@@ -13,8 +13,11 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
+import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
+import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
 import { Route as DemandesNouvelleRouteImport } from './routes/demandes/nouvelle'
 import { Route as DemandesIdRouteImport } from './routes/demandes/$id'
@@ -45,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
+  id: '/interventions/',
+  path: '/interventions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
   id: '/equipements/',
   path: '/equipements/',
@@ -53,6 +61,16 @@ const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
 const DemandesIndexRoute = DemandesIndexRouteImport.update({
   id: '/demandes/',
   path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
+  id: '/interventions/nouvelle',
+  path: '/interventions/nouvelle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsIdRoute = InterventionsIdRouteImport.update({
+  id: '/interventions/$id',
+  path: '/interventions/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquipementsNouveauRoute = EquipementsNouveauRouteImport.update({
@@ -114,8 +132,11 @@ export interface FileRoutesByFullPath {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/$id': typeof InterventionsIdRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
+  '/interventions/': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -131,8 +152,11 @@ export interface FileRoutesByTo {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/$id': typeof InterventionsIdRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
+  '/interventions': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -149,8 +173,11 @@ export interface FileRoutesById {
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
   '/equipements/nouveau': typeof EquipementsNouveauRoute
+  '/interventions/$id': typeof InterventionsIdRoute
+  '/interventions/nouvelle': typeof InterventionsNouvelleRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
+  '/interventions/': typeof InterventionsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -168,8 +195,11 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/$id'
+    | '/interventions/nouvelle'
     | '/demandes/'
     | '/equipements/'
+    | '/interventions/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -185,8 +215,11 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/$id'
+    | '/interventions/nouvelle'
     | '/demandes'
     | '/equipements'
+    | '/interventions'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -202,8 +235,11 @@ export interface FileRouteTypes {
     | '/demandes/$id'
     | '/demandes/nouvelle'
     | '/equipements/nouveau'
+    | '/interventions/$id'
+    | '/interventions/nouvelle'
     | '/demandes/'
     | '/equipements/'
+    | '/interventions/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -220,8 +256,11 @@ export interface RootRouteChildren {
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesNouvelleRoute: typeof DemandesNouvelleRoute
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
+  InterventionsIdRoute: typeof InterventionsIdRoute
+  InterventionsNouvelleRoute: typeof InterventionsNouvelleRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
+  InterventionsIndexRoute: typeof InterventionsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
@@ -258,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/interventions/': {
+      id: '/interventions/'
+      path: '/interventions'
+      fullPath: '/interventions/'
+      preLoaderRoute: typeof InterventionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/equipements/': {
       id: '/equipements/'
       path: '/equipements'
@@ -270,6 +316,20 @@ declare module '@tanstack/react-router' {
       path: '/demandes'
       fullPath: '/demandes/'
       preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/nouvelle': {
+      id: '/interventions/nouvelle'
+      path: '/interventions/nouvelle'
+      fullPath: '/interventions/nouvelle'
+      preLoaderRoute: typeof InterventionsNouvelleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/$id': {
+      id: '/interventions/$id'
+      path: '/interventions/$id'
+      fullPath: '/interventions/$id'
+      preLoaderRoute: typeof InterventionsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipements/nouveau': {
@@ -349,8 +409,11 @@ const rootRouteChildren: RootRouteChildren = {
   DemandesIdRoute: DemandesIdRoute,
   DemandesNouvelleRoute: DemandesNouvelleRoute,
   EquipementsNouveauRoute: EquipementsNouveauRoute,
+  InterventionsIdRoute: InterventionsIdRoute,
+  InterventionsNouvelleRoute: InterventionsNouvelleRoute,
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
+  InterventionsIndexRoute: InterventionsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   EquipementsIdModifierRoute: EquipementsIdModifierRoute,
