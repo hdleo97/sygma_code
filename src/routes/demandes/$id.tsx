@@ -296,6 +296,33 @@ function FicheDemande() {
             )}
           </div>
 
+          {isResponsable && data.statut === "validee" && (
+            <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
+              <h2 className="text-sm font-semibold text-foreground">
+                Intervention
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Créez une intervention pré-remplie à partir de cette demande
+                validée.
+              </p>
+              <Button asChild className="mt-4">
+                <Link
+                  to="/interventions/nouvelle"
+                  search={{
+                    demande: data.id,
+                    equipement: data.equipement_id ?? undefined,
+                    description: data.description,
+                  }}
+                >
+                  <Wrench className="mr-2 h-4 w-4" />
+                  Transformer en intervention
+                </Link>
+              </Button>
+            </div>
+          )}
+
+
+
           {(isResponsable || isTechnicienAffecte) && suivants.length > 0 && (
             <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
               <h2 className="text-sm font-semibold text-foreground">
