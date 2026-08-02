@@ -192,8 +192,10 @@ function FicheIntervention() {
       <Tabs defaultValue="rapport" className="mt-6">
         <TabsList>
           <TabsTrigger value="rapport">En-tête du rapport</TabsTrigger>
+          <TabsTrigger value="phases">Opérations (5 phases)</TabsTrigger>
           <TabsTrigger value="planification">Planification</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="rapport" className="space-y-4">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
