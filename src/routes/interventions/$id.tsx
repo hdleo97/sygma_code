@@ -371,15 +371,13 @@ function FicheIntervention() {
                     Terminer
                   </Button>
                 )}
-                {suivants.includes("signee") && isResponsable && (
-                  <Button
-                    variant="outline"
-                    disabled={save.isPending}
-                    onClick={() => save.mutate({ statut: "signee" })}
-                  >
-                    Signer
-                  </Button>
+                {suivants.includes("signee") && (
+                  <span className="self-center text-xs text-muted-foreground">
+                    La signature du rapport s'effectue dans l'onglet
+                    « Signatures ».
+                  </span>
                 )}
+
               </div>
             )}
           </div>
