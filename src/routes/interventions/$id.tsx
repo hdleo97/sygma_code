@@ -179,9 +179,42 @@ function FicheIntervention() {
   const isAffecte = data.intervention_techniciens.some(
     (t) => t.technicien_id === user?.id,
   );
-  const canEdit = isResponsable || isAffecte;
+  const verrouille = data.statut === "signee";
+  const canEdit = (isResponsable || isAffecte) && !verrouille;
   const dureeSaisie = computeDuree(fromLocalInput(debut), fromLocalInput(fin));
   const suivants = TRANSITIONS_INTERVENTION[data.statut];
+
+  const ops = operations.data ?? [];
+  const phasesManquantes = PHASES.filter(
+    (p) => !ops.some((o) => o.phase === p.value),
+  );
+  const phasesCompletes = phasesManquantes.length === 0;
+  const signataire =
+    [profil?.prenom, profil?.nom].filter(Boolean).join(" ") ||
+    user?.email ||
+    "Utilisateur";
+
+  const signer = (role: "superviseur" | "valideur", dataUrl: string) => {
+    const now = new Date().toISOString();
+    const patch =
+      role === "superviseur"
+        ? {
+            signature_superviseur: dataUrl,
+            signature_superviseur_nom: signataire,
+            signature_superviseur_at: now,
+          }
+        : {
+            signature_valideur: dataUrl,
+            signature_valideur_nom: signataire,
+            signature_valideur_at: now,
+          };
+    const autreSignee =
+      role === "superviseur" ? !!data.signature_valideur : !!data.signature_superviseur;
+    save.mutate(
+      autreSignee ? { ...patch, statut: "signee" as InterventionStatut } : patch,
+    );
+  };
+
 
   return (
     <div className="p-4 sm:p-6">
