@@ -113,14 +113,31 @@ function FicheIntervention() {
     if (data) {
       setDebut(toLocalInput(data.date_debut));
       setFin(toLocalInput(data.date_fin));
+      setPieces(data.pieces_utilisees ?? "");
+      setObservations(data.observations ?? "");
+      setComplementaires(data.interventions_complementaires ?? "");
     }
   }, [data]);
+
+  const operations = useQuery({
+    queryKey: ["rapport-operations", id],
+    queryFn: () => fetchOperationsRealisees(id),
+  });
 
   const save = useMutation({
     mutationFn: async (patch: {
       date_debut?: string | null;
       date_fin?: string | null;
       statut?: InterventionStatut;
+      pieces_utilisees?: string | null;
+      observations?: string | null;
+      interventions_complementaires?: string | null;
+      signature_superviseur?: string;
+      signature_superviseur_nom?: string;
+      signature_superviseur_at?: string;
+      signature_valideur?: string;
+      signature_valideur_nom?: string;
+      signature_valideur_at?: string;
     }) => {
       const { error } = await supabase
         .from("interventions")
@@ -136,6 +153,7 @@ function FicheIntervention() {
     onError: (e: unknown) =>
       toast.error(e instanceof Error ? e.message : "Mise à jour impossible"),
   });
+
 
   if (isLoading) {
     return (
