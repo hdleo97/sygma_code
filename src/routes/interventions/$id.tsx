@@ -53,6 +53,7 @@ type Row = Intervention & {
     modele: string | null;
     numero_serie: string | null;
     zone: string | null;
+    categorie: string | null;
   } | null;
   intervention_techniciens: {
     technicien_id: string;
