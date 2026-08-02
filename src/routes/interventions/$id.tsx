@@ -1,17 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { RapportPhases } from "@/components/rapport-phases";
+import { SignaturePad } from "@/components/signature-pad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/demandes";
+import { PHASES, fetchOperationsRealisees } from "@/lib/rapport-phases";
 import {
   TRANSITIONS_INTERVENTION,
   computeDuree,
@@ -24,6 +27,7 @@ import {
   type Intervention,
   type InterventionStatut,
 } from "@/lib/interventions";
+
 
 export const Route = createFileRoute("/interventions/$id")({
   component: FicheIntervention,
