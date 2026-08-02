@@ -317,8 +317,17 @@ export type Database = {
           equipement_id: string | null
           etablissement_id: string
           id: string
+          interventions_complementaires: string | null
           localisation: string | null
           nature: Database["public"]["Enums"]["intervention_nature"]
+          observations: string | null
+          pieces_utilisees: string | null
+          signature_superviseur: string | null
+          signature_superviseur_at: string | null
+          signature_superviseur_nom: string | null
+          signature_valideur: string | null
+          signature_valideur_at: string | null
+          signature_valideur_nom: string | null
           statut: Database["public"]["Enums"]["intervention_statut"]
           updated_at: string
         }
@@ -336,8 +345,17 @@ export type Database = {
           equipement_id?: string | null
           etablissement_id: string
           id?: string
+          interventions_complementaires?: string | null
           localisation?: string | null
           nature?: Database["public"]["Enums"]["intervention_nature"]
+          observations?: string | null
+          pieces_utilisees?: string | null
+          signature_superviseur?: string | null
+          signature_superviseur_at?: string | null
+          signature_superviseur_nom?: string | null
+          signature_valideur?: string | null
+          signature_valideur_at?: string | null
+          signature_valideur_nom?: string | null
           statut?: Database["public"]["Enums"]["intervention_statut"]
           updated_at?: string
         }
@@ -355,8 +373,17 @@ export type Database = {
           equipement_id?: string | null
           etablissement_id?: string
           id?: string
+          interventions_complementaires?: string | null
           localisation?: string | null
           nature?: Database["public"]["Enums"]["intervention_nature"]
+          observations?: string | null
+          pieces_utilisees?: string | null
+          signature_superviseur?: string | null
+          signature_superviseur_at?: string | null
+          signature_superviseur_nom?: string | null
+          signature_valideur?: string | null
+          signature_valideur_at?: string | null
+          signature_valideur_nom?: string | null
           statut?: Database["public"]["Enums"]["intervention_statut"]
           updated_at?: string
         }

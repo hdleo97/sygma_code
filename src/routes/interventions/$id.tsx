@@ -1,17 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { RapportPhases } from "@/components/rapport-phases";
+import { SignaturePad } from "@/components/signature-pad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/demandes";
+import { PHASES, fetchOperationsRealisees } from "@/lib/rapport-phases";
 import {
   TRANSITIONS_INTERVENTION,
   computeDuree,
@@ -24,6 +27,7 @@ import {
   type Intervention,
   type InterventionStatut,
 } from "@/lib/interventions";
+
 
 export const Route = createFileRoute("/interventions/$id")({
   component: FicheIntervention,
@@ -75,10 +79,14 @@ function Info({ label, value }: { label: string; value: string }) {
 
 function FicheIntervention() {
   const { id } = Route.useParams();
-  const { user, hasAnyRole } = useAuth();
+  const { user, profil, hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
   const [debut, setDebut] = useState("");
   const [fin, setFin] = useState("");
+  const [pieces, setPieces] = useState("");
+  const [observations, setObservations] = useState("");
+  const [complementaires, setComplementaires] = useState("");
+
 
   const isResponsable = hasAnyRole([
     "super_admin",
@@ -105,14 +113,31 @@ function FicheIntervention() {
     if (data) {
       setDebut(toLocalInput(data.date_debut));
       setFin(toLocalInput(data.date_fin));
+      setPieces(data.pieces_utilisees ?? "");
+      setObservations(data.observations ?? "");
+      setComplementaires(data.interventions_complementaires ?? "");
     }
   }, [data]);
+
+  const operations = useQuery({
+    queryKey: ["rapport-operations", id],
+    queryFn: () => fetchOperationsRealisees(id),
+  });
 
   const save = useMutation({
     mutationFn: async (patch: {
       date_debut?: string | null;
       date_fin?: string | null;
       statut?: InterventionStatut;
+      pieces_utilisees?: string | null;
+      observations?: string | null;
+      interventions_complementaires?: string | null;
+      signature_superviseur?: string;
+      signature_superviseur_nom?: string;
+      signature_superviseur_at?: string;
+      signature_valideur?: string;
+      signature_valideur_nom?: string;
+      signature_valideur_at?: string;
     }) => {
       const { error } = await supabase
         .from("interventions")
@@ -128,6 +153,7 @@ function FicheIntervention() {
     onError: (e: unknown) =>
       toast.error(e instanceof Error ? e.message : "Mise à jour impossible"),
   });
+
 
   if (isLoading) {
     return (
@@ -153,9 +179,42 @@ function FicheIntervention() {
   const isAffecte = data.intervention_techniciens.some(
     (t) => t.technicien_id === user?.id,
   );
-  const canEdit = isResponsable || isAffecte;
+  const verrouille = data.statut === "signee";
+  const canEdit = (isResponsable || isAffecte) && !verrouille;
   const dureeSaisie = computeDuree(fromLocalInput(debut), fromLocalInput(fin));
   const suivants = TRANSITIONS_INTERVENTION[data.statut];
+
+  const ops = operations.data ?? [];
+  const phasesManquantes = PHASES.filter(
+    (p) => !ops.some((o) => o.phase === p.value),
+  );
+  const phasesCompletes = phasesManquantes.length === 0;
+  const signataire =
+    [profil?.prenom, profil?.nom].filter(Boolean).join(" ") ||
+    user?.email ||
+    "Utilisateur";
+
+  const signer = (role: "superviseur" | "valideur", dataUrl: string) => {
+    const now = new Date().toISOString();
+    const patch =
+      role === "superviseur"
+        ? {
+            signature_superviseur: dataUrl,
+            signature_superviseur_nom: signataire,
+            signature_superviseur_at: now,
+          }
+        : {
+            signature_valideur: dataUrl,
+            signature_valideur_nom: signataire,
+            signature_valideur_at: now,
+          };
+    const autreSignee =
+      role === "superviseur" ? !!data.signature_valideur : !!data.signature_superviseur;
+    save.mutate(
+      autreSignee ? { ...patch, statut: "signee" as InterventionStatut } : patch,
+    );
+  };
+
 
   return (
     <div className="p-4 sm:p-6">
@@ -190,12 +249,22 @@ function FicheIntervention() {
         )}
       </div>
 
+      {verrouille && (
+        <div className="mt-4 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
+          <Lock className="h-4 w-4 shrink-0" />
+          Rapport signé et verrouillé : aucune modification n'est possible.
+        </div>
+      )}
+
       <Tabs defaultValue="rapport" className="mt-6">
-        <TabsList>
+        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
           <TabsTrigger value="rapport">En-tête du rapport</TabsTrigger>
           <TabsTrigger value="phases">Opérations (5 phases)</TabsTrigger>
+          <TabsTrigger value="compte-rendu">Compte rendu</TabsTrigger>
+          <TabsTrigger value="signature">Signatures</TabsTrigger>
           <TabsTrigger value="planification">Planification</TabsTrigger>
         </TabsList>
+
 
 
         <TabsContent value="rapport" className="space-y-4">
@@ -302,15 +371,13 @@ function FicheIntervention() {
                     Terminer
                   </Button>
                 )}
-                {suivants.includes("signee") && isResponsable && (
-                  <Button
-                    variant="outline"
-                    disabled={save.isPending}
-                    onClick={() => save.mutate({ statut: "signee" })}
-                  >
-                    Signer
-                  </Button>
+                {suivants.includes("signee") && (
+                  <span className="self-center text-xs text-muted-foreground">
+                    La signature du rapport s'effectue dans l'onglet
+                    « Signatures ».
+                  </span>
                 )}
+
               </div>
             )}
           </div>
@@ -324,6 +391,106 @@ function FicheIntervention() {
           />
         </TabsContent>
 
+        <TabsContent value="compte-rendu">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+            <div className="space-y-2">
+              <Label htmlFor="pieces">Pièces utilisées</Label>
+              <Textarea
+                id="pieces"
+                rows={4}
+                disabled={!canEdit}
+                placeholder="Référence + quantité (ex. : ROUL-6204 × 2)"
+                value={pieces}
+                onChange={(e) => setPieces(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Saisie libre en attendant le module Stocks (bons de sortie).
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="observations">Observations</Label>
+              <Textarea
+                id="observations"
+                rows={4}
+                disabled={!canEdit}
+                value={observations}
+                onChange={(e) => setObservations(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="complementaires">
+                Interventions complémentaires à réaliser prochainement
+              </Label>
+              <Textarea
+                id="complementaires"
+                rows={4}
+                disabled={!canEdit}
+                value={complementaires}
+                onChange={(e) => setComplementaires(e.target.value)}
+              />
+            </div>
+
+            {canEdit && (
+              <Button
+                disabled={save.isPending}
+                onClick={() =>
+                  save.mutate({
+                    pieces_utilisees: pieces.trim() || null,
+                    observations: observations.trim() || null,
+                    interventions_complementaires:
+                      complementaires.trim() || null,
+                  })
+                }
+              >
+                Enregistrer le compte rendu
+              </Button>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="signature">
+          {!phasesCompletes && !verrouille ? (
+            <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
+              <h2 className="text-sm font-semibold text-foreground">
+                Signatures indisponibles
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Chaque phase doit comporter au moins une opération traitée avant
+                de pouvoir signer le rapport. Phases incomplètes :
+              </p>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {phasesManquantes.map((p) => (
+                  <li key={p.value}>
+                    Phase {p.value} — {p.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <SignaturePad
+                label="Superviseur technique"
+                value={data.signature_superviseur}
+                signedAt={data.signature_superviseur_at}
+                signedBy={data.signature_superviseur_nom}
+                disabled={!canEdit}
+                isPending={save.isPending}
+                onSign={(url) => signer("superviseur", url)}
+              />
+              <SignaturePad
+                label="Valideur"
+                value={data.signature_valideur}
+                signedAt={data.signature_valideur_at}
+                signedBy={data.signature_valideur_nom}
+                disabled={!canEdit || !isResponsable}
+                isPending={save.isPending}
+                onSign={(url) => signer("valideur", url)}
+              />
+            </div>
+          )}
+        </TabsContent>
 
 
         <TabsContent value="planification">
