@@ -91,7 +91,7 @@ function FicheIntervention() {
       const { data, error } = await supabase
         .from("interventions")
         .select(
-          "*, equipements(reference, designation, marque, modele, numero_serie, zone), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
+          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
         )
         .eq("id", id)
         .maybeSingle();
