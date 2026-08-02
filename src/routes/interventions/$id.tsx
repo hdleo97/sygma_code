@@ -79,10 +79,14 @@ function Info({ label, value }: { label: string; value: string }) {
 
 function FicheIntervention() {
   const { id } = Route.useParams();
-  const { user, hasAnyRole } = useAuth();
+  const { user, profil, hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
   const [debut, setDebut] = useState("");
   const [fin, setFin] = useState("");
+  const [pieces, setPieces] = useState("");
+  const [observations, setObservations] = useState("");
+  const [complementaires, setComplementaires] = useState("");
+
 
   const isResponsable = hasAnyRole([
     "super_admin",
