@@ -315,6 +315,16 @@ function FicheIntervention() {
           </div>
         </TabsContent>
 
+        <TabsContent value="phases">
+          <RapportPhases
+            interventionId={id}
+            categorieEquipement={data.equipements?.categorie ?? null}
+            canEdit={canEdit}
+          />
+        </TabsContent>
+
+
+
         <TabsContent value="planification">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
             <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
