@@ -4,6 +4,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { RapportPhases } from "@/components/rapport-phases";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,6 +54,7 @@ type Row = Intervention & {
     modele: string | null;
     numero_serie: string | null;
     zone: string | null;
+    categorie: string | null;
   } | null;
   intervention_techniciens: {
     technicien_id: string;
@@ -90,7 +92,7 @@ function FicheIntervention() {
       const { data, error } = await supabase
         .from("interventions")
         .select(
-          "*, equipements(reference, designation, marque, modele, numero_serie, zone), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
+          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
         )
         .eq("id", id)
         .maybeSingle();
@@ -191,8 +193,10 @@ function FicheIntervention() {
       <Tabs defaultValue="rapport" className="mt-6">
         <TabsList>
           <TabsTrigger value="rapport">En-tête du rapport</TabsTrigger>
+          <TabsTrigger value="phases">Opérations (5 phases)</TabsTrigger>
           <TabsTrigger value="planification">Planification</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="rapport" className="space-y-4">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
@@ -311,6 +315,16 @@ function FicheIntervention() {
             )}
           </div>
         </TabsContent>
+
+        <TabsContent value="phases">
+          <RapportPhases
+            interventionId={id}
+            categorieEquipement={data.equipements?.categorie ?? null}
+            canEdit={canEdit}
+          />
+        </TabsContent>
+
+
 
         <TabsContent value="planification">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
