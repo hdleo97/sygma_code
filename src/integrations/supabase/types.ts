@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      checklist_operations: {
+        Row: {
+          actif: boolean
+          categorie_equipement: string | null
+          created_at: string
+          id: string
+          libelle: string
+          ordre: number
+          phase: number
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          categorie_equipement?: string | null
+          created_at?: string
+          id?: string
+          libelle: string
+          ordre?: number
+          phase: number
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          categorie_equipement?: string | null
+          created_at?: string
+          id?: string
+          libelle?: string
+          ordre?: number
+          phase?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       demandes_intervention: {
         Row: {
           created_at: string
@@ -374,6 +407,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      rapport_operations_realisees: {
+        Row: {
+          commentaire: string | null
+          created_at: string
+          cree_par: string | null
+          id: string
+          intervention_id: string
+          libelle_libre: string | null
+          operation_id: string | null
+          phase: number
+          realisee: boolean
+          updated_at: string
+        }
+        Insert: {
+          commentaire?: string | null
+          created_at?: string
+          cree_par?: string | null
+          id?: string
+          intervention_id: string
+          libelle_libre?: string | null
+          operation_id?: string | null
+          phase: number
+          realisee?: boolean
+          updated_at?: string
+        }
+        Update: {
+          commentaire?: string | null
+          created_at?: string
+          cree_par?: string | null
+          id?: string
+          intervention_id?: string
+          libelle_libre?: string | null
+          operation_id?: string | null
+          phase?: number
+          realisee?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rapport_operations_realisees_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rapport_operations_realisees_operation_id_fkey"
+            columns: ["operation_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_operations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
