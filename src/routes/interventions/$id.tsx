@@ -393,6 +393,106 @@ function FicheIntervention() {
           />
         </TabsContent>
 
+        <TabsContent value="compte-rendu">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+            <div className="space-y-2">
+              <Label htmlFor="pieces">Pièces utilisées</Label>
+              <Textarea
+                id="pieces"
+                rows={4}
+                disabled={!canEdit}
+                placeholder="Référence + quantité (ex. : ROUL-6204 × 2)"
+                value={pieces}
+                onChange={(e) => setPieces(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Saisie libre en attendant le module Stocks (bons de sortie).
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="observations">Observations</Label>
+              <Textarea
+                id="observations"
+                rows={4}
+                disabled={!canEdit}
+                value={observations}
+                onChange={(e) => setObservations(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="complementaires">
+                Interventions complémentaires à réaliser prochainement
+              </Label>
+              <Textarea
+                id="complementaires"
+                rows={4}
+                disabled={!canEdit}
+                value={complementaires}
+                onChange={(e) => setComplementaires(e.target.value)}
+              />
+            </div>
+
+            {canEdit && (
+              <Button
+                disabled={save.isPending}
+                onClick={() =>
+                  save.mutate({
+                    pieces_utilisees: pieces.trim() || null,
+                    observations: observations.trim() || null,
+                    interventions_complementaires:
+                      complementaires.trim() || null,
+                  })
+                }
+              >
+                Enregistrer le compte rendu
+              </Button>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="signature">
+          {!phasesCompletes && !verrouille ? (
+            <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
+              <h2 className="text-sm font-semibold text-foreground">
+                Signatures indisponibles
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Chaque phase doit comporter au moins une opération traitée avant
+                de pouvoir signer le rapport. Phases incomplètes :
+              </p>
+              <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+                {phasesManquantes.map((p) => (
+                  <li key={p.value}>
+                    Phase {p.value} — {p.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <SignaturePad
+                label="Superviseur technique"
+                value={data.signature_superviseur}
+                signedAt={data.signature_superviseur_at}
+                signedBy={data.signature_superviseur_nom}
+                disabled={!canEdit}
+                isPending={save.isPending}
+                onSign={(url) => signer("superviseur", url)}
+              />
+              <SignaturePad
+                label="Valideur"
+                value={data.signature_valideur}
+                signedAt={data.signature_valideur_at}
+                signedBy={data.signature_valideur_nom}
+                disabled={!canEdit || !isResponsable}
+                isPending={save.isPending}
+                onSign={(url) => signer("valideur", url)}
+              />
+            </div>
+          )}
+        </TabsContent>
 
 
         <TabsContent value="planification">
