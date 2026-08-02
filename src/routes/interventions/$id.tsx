@@ -249,12 +249,22 @@ function FicheIntervention() {
         )}
       </div>
 
+      {verrouille && (
+        <div className="mt-4 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
+          <Lock className="h-4 w-4 shrink-0" />
+          Rapport signé et verrouillé : aucune modification n'est possible.
+        </div>
+      )}
+
       <Tabs defaultValue="rapport" className="mt-6">
-        <TabsList>
+        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
           <TabsTrigger value="rapport">En-tête du rapport</TabsTrigger>
           <TabsTrigger value="phases">Opérations (5 phases)</TabsTrigger>
+          <TabsTrigger value="compte-rendu">Compte rendu</TabsTrigger>
+          <TabsTrigger value="signature">Signatures</TabsTrigger>
           <TabsTrigger value="planification">Planification</TabsTrigger>
         </TabsList>
+
 
 
         <TabsContent value="rapport" className="space-y-4">
