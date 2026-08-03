@@ -248,6 +248,70 @@ export type Database = {
         }
         Relationships: []
       }
+      fiche_de_vie_evenements: {
+        Row: {
+          created_at: string
+          date_evenement: string
+          equipement_id: string | null
+          etablissement_id: string
+          id: string
+          intervention_id: string
+          nature: Database["public"]["Enums"]["intervention_nature"]
+          resume: string | null
+          statut_final: Database["public"]["Enums"]["intervention_statut"]
+          techniciens: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_evenement?: string
+          equipement_id?: string | null
+          etablissement_id: string
+          id?: string
+          intervention_id: string
+          nature: Database["public"]["Enums"]["intervention_nature"]
+          resume?: string | null
+          statut_final: Database["public"]["Enums"]["intervention_statut"]
+          techniciens?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_evenement?: string
+          equipement_id?: string | null
+          etablissement_id?: string
+          id?: string
+          intervention_id?: string
+          nature?: Database["public"]["Enums"]["intervention_nature"]
+          resume?: string | null
+          statut_final?: Database["public"]["Enums"]["intervention_statut"]
+          techniciens?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_de_vie_evenements_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_de_vie_evenements_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_de_vie_evenements_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: true
+            referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_check: {
         Row: {
           created_at: string
