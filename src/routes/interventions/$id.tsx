@@ -250,11 +250,36 @@ function FicheIntervention() {
       </div>
 
       {verrouille && (
-        <div className="mt-4 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
           <Lock className="h-4 w-4 shrink-0" />
-          Rapport signé et verrouillé : aucune modification n'est possible.
+          <span className="flex-1">
+            Rapport signé et verrouillé : aucune modification n'est possible.
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={pdfPending}
+            onClick={() => {
+              setPdfPending(true);
+              exporterRapportPdf(id)
+                .catch((e: unknown) =>
+                  toast.error(
+                    e instanceof Error ? e.message : "Export PDF impossible",
+                  ),
+                )
+                .finally(() => setPdfPending(false));
+            }}
+          >
+            {pdfPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <FileDown className="mr-2 h-4 w-4" />
+            )}
+            Exporter en PDF
+          </Button>
         </div>
       )}
+
 
       <Tabs defaultValue="rapport" className="mt-6">
         <TabsList className="flex h-auto flex-wrap justify-start gap-1">
