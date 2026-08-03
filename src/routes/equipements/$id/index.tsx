@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Pencil } from "lucide-react";
 
 import { EquipementPhoto } from "@/components/equipement-photo";
+import { FicheDeVie } from "@/components/fiche-de-vie";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
