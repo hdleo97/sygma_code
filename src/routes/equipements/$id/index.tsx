@@ -149,16 +149,12 @@ function FicheEquipement() {
         </TabsContent>
 
         <TabsContent value="historique">
-          <div className="rounded-lg border border-dashed border-border bg-card p-10 text-center">
-            <p className="text-sm font-medium text-foreground">
-              Historique de l'équipement
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Les interventions et la fiche de vie apparaîtront ici une fois le
-              module Interventions disponible.
-            </p>
-          </div>
+          <FicheDeVie
+            equipementId={data.id}
+            equipementLabel={`${data.reference}-${data.designation}`}
+          />
         </TabsContent>
+
       </Tabs>
     </div>
   );
