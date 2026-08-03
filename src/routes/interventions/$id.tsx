@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/demandes";
+import { exporterRapportPdf } from "@/lib/rapport-pdf";
 import { PHASES, fetchOperationsRealisees } from "@/lib/rapport-phases";
 import {
   TRANSITIONS_INTERVENTION,
