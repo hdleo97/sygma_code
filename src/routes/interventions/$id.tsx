@@ -87,6 +87,7 @@ function FicheIntervention() {
   const [pieces, setPieces] = useState("");
   const [observations, setObservations] = useState("");
   const [complementaires, setComplementaires] = useState("");
+  const [pdfPending, setPdfPending] = useState(false);
 
 
   const isResponsable = hasAnyRole([
