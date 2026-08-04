@@ -76,10 +76,12 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Stocks",
+    url: "/stocks",
     icon: Boxes,
     roles: [
       "super_admin",
       "responsable_maintenance",
+      "responsable_etablissement",
       "gestionnaire_stock",
     ],
   },
