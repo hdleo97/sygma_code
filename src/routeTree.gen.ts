@@ -13,9 +13,12 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StocksIndexRouteImport } from './routes/stocks/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
+import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
+import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
 import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
 import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
@@ -48,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StocksIndexRoute = StocksIndexRouteImport.update({
+  id: '/stocks/',
+  path: '/stocks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
   id: '/interventions/',
   path: '/interventions/',
@@ -61,6 +69,16 @@ const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
 const DemandesIndexRoute = DemandesIndexRouteImport.update({
   id: '/demandes/',
   path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StocksEntreeRoute = StocksEntreeRouteImport.update({
+  id: '/stocks/entree',
+  path: '/stocks/entree',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StocksAjustementRoute = StocksAjustementRouteImport.update({
+  id: '/stocks/ajustement',
+  path: '/stocks/ajustement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
@@ -134,9 +152,12 @@ export interface FileRoutesByFullPath {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/stocks/ajustement': typeof StocksAjustementRoute
+  '/stocks/entree': typeof StocksEntreeRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -154,9 +175,12 @@ export interface FileRoutesByTo {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/stocks/ajustement': typeof StocksAjustementRoute
+  '/stocks/entree': typeof StocksEntreeRoute
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
+  '/stocks': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -175,9 +199,12 @@ export interface FileRoutesById {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/stocks/ajustement': typeof StocksAjustementRoute
+  '/stocks/entree': typeof StocksEntreeRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
@@ -197,9 +224,12 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/stocks/ajustement'
+    | '/stocks/entree'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/stocks/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -217,9 +247,12 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/stocks/ajustement'
+    | '/stocks/entree'
     | '/demandes'
     | '/equipements'
     | '/interventions'
+    | '/stocks'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -237,9 +270,12 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/stocks/ajustement'
+    | '/stocks/entree'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/stocks/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
@@ -258,9 +294,12 @@ export interface RootRouteChildren {
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
   InterventionsIdRoute: typeof InterventionsIdRoute
   InterventionsNouvelleRoute: typeof InterventionsNouvelleRoute
+  StocksAjustementRoute: typeof StocksAjustementRoute
+  StocksEntreeRoute: typeof StocksEntreeRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
+  StocksIndexRoute: typeof StocksIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
@@ -297,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stocks/': {
+      id: '/stocks/'
+      path: '/stocks'
+      fullPath: '/stocks/'
+      preLoaderRoute: typeof StocksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interventions/': {
       id: '/interventions/'
       path: '/interventions'
@@ -316,6 +362,20 @@ declare module '@tanstack/react-router' {
       path: '/demandes'
       fullPath: '/demandes/'
       preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stocks/entree': {
+      id: '/stocks/entree'
+      path: '/stocks/entree'
+      fullPath: '/stocks/entree'
+      preLoaderRoute: typeof StocksEntreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stocks/ajustement': {
+      id: '/stocks/ajustement'
+      path: '/stocks/ajustement'
+      fullPath: '/stocks/ajustement'
+      preLoaderRoute: typeof StocksAjustementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interventions/nouvelle': {
@@ -411,9 +471,12 @@ const rootRouteChildren: RootRouteChildren = {
   EquipementsNouveauRoute: EquipementsNouveauRoute,
   InterventionsIdRoute: InterventionsIdRoute,
   InterventionsNouvelleRoute: InterventionsNouvelleRoute,
+  StocksAjustementRoute: StocksAjustementRoute,
+  StocksEntreeRoute: StocksEntreeRoute,
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
+  StocksIndexRoute: StocksIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   EquipementsIdModifierRoute: EquipementsIdModifierRoute,

@@ -475,6 +475,80 @@ export type Database = {
           },
         ]
       }
+      magasins: {
+        Row: {
+          created_at: string
+          etablissement_id: string
+          id: string
+          localisation: string | null
+          nom: string
+          responsable: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          etablissement_id: string
+          id?: string
+          localisation?: string | null
+          nom: string
+          responsable?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          etablissement_id?: string
+          id?: string
+          localisation?: string | null
+          nom?: string
+          responsable?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magasins_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pieces: {
+        Row: {
+          categorie: string | null
+          code_article: string
+          created_at: string
+          designation: string
+          fournisseur: string | null
+          id: string
+          prix_unitaire: number | null
+          unite: string
+          updated_at: string
+        }
+        Insert: {
+          categorie?: string | null
+          code_article: string
+          created_at?: string
+          designation: string
+          fournisseur?: string | null
+          id?: string
+          prix_unitaire?: number | null
+          unite?: string
+          updated_at?: string
+        }
+        Update: {
+          categorie?: string | null
+          code_article?: string
+          created_at?: string
+          designation?: string
+          fournisseur?: string | null
+          id?: string
+          prix_unitaire?: number | null
+          unite?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profils_utilisateurs: {
         Row: {
           created_at: string
@@ -553,6 +627,118 @@ export type Database = {
           },
         ]
       }
+      stock_mouvements: {
+        Row: {
+          created_at: string
+          date_mouvement: string
+          etat_piece: Database["public"]["Enums"]["piece_etat"]
+          id: string
+          justification: string | null
+          magasin_id: string
+          origine: Database["public"]["Enums"]["stock_mouvement_origine"]
+          piece_id: string
+          quantite: number
+          reference: string | null
+          type: Database["public"]["Enums"]["stock_mouvement_type"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_mouvement?: string
+          etat_piece?: Database["public"]["Enums"]["piece_etat"]
+          id?: string
+          justification?: string | null
+          magasin_id: string
+          origine?: Database["public"]["Enums"]["stock_mouvement_origine"]
+          piece_id: string
+          quantite: number
+          reference?: string | null
+          type: Database["public"]["Enums"]["stock_mouvement_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_mouvement?: string
+          etat_piece?: Database["public"]["Enums"]["piece_etat"]
+          id?: string
+          justification?: string | null
+          magasin_id?: string
+          origine?: Database["public"]["Enums"]["stock_mouvement_origine"]
+          piece_id?: string
+          quantite?: number
+          reference?: string | null
+          type?: Database["public"]["Enums"]["stock_mouvement_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_mouvements_magasin_id_fkey"
+            columns: ["magasin_id"]
+            isOneToOne: false
+            referencedRelation: "magasins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_mouvements_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "pieces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_mouvements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_seuils: {
+        Row: {
+          created_at: string
+          id: string
+          magasin_id: string
+          piece_id: string
+          seuil_alerte: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          magasin_id: string
+          piece_id: string
+          seuil_alerte?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          magasin_id?: string
+          piece_id?: string
+          seuil_alerte?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_seuils_magasin_id_fkey"
+            columns: ["magasin_id"]
+            isOneToOne: false
+            referencedRelation: "magasins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_seuils_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "pieces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -605,10 +791,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_stock_actuel: {
+        Row: {
+          magasin_id: string | null
+          piece_id: string | null
+          quantite: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_mouvements_magasin_id_fkey"
+            columns: ["magasin_id"]
+            isOneToOne: false
+            referencedRelation: "magasins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_mouvements_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "pieces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       can_manage_intervention: {
+        Args: { _etab: string; _user_id: string }
+        Returns: boolean
+      }
+      can_manage_stock: {
         Args: { _etab: string; _user_id: string }
         Returns: boolean
       }
@@ -636,6 +848,7 @@ export type Database = {
         Args: { _intervention_id: string; _user_id: string }
         Returns: boolean
       }
+      magasin_etab: { Args: { _magasin_id: string }; Returns: string }
       user_in_etablissement: {
         Args: { _etab: string; _user_id: string }
         Returns: boolean
@@ -667,6 +880,9 @@ export type Database = {
         | "reforme"
       intervention_nature: "curative" | "preventive"
       intervention_statut: "planifiee" | "en_cours" | "terminee" | "signee"
+      piece_etat: "neuf" | "fonctionnel" | "hors_service"
+      stock_mouvement_origine: "commande_achat" | "cannibalisation" | "autre"
+      stock_mouvement_type: "entree" | "sortie" | "ajustement"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -822,6 +1038,9 @@ export const Constants = {
       ],
       intervention_nature: ["curative", "preventive"],
       intervention_statut: ["planifiee", "en_cours", "terminee", "signee"],
+      piece_etat: ["neuf", "fonctionnel", "hors_service"],
+      stock_mouvement_origine: ["commande_achat", "cannibalisation", "autre"],
+      stock_mouvement_type: ["entree", "sortie", "ajustement"],
     },
   },
 } as const
