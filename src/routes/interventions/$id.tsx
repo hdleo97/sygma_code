@@ -464,7 +464,7 @@ function FicheIntervention() {
                 disabled={save.isPending}
                 onClick={() =>
                   save.mutate({
-                    pieces_utilisees: pieces.trim() || null,
+                    pieces_utilisees: recapPieces || null,
                     observations: observations.trim() || null,
                     interventions_complementaires:
                       complementaires.trim() || null,
