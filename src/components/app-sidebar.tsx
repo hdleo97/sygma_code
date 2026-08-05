@@ -92,6 +92,18 @@ const modules: ModuleItem[] = [
     ],
   },
   {
+    title: "Sorties de pièces",
+    url: "/sorties",
+    icon: PackageMinus,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+      "gestionnaire_stock",
+      "technicien",
+    ],
+  },
+  {
     title: "Préventif",
     icon: CalendarClock,
     roles: [
