@@ -420,20 +420,72 @@ function FicheIntervention() {
 
         <TabsContent value="compte-rendu">
           <div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
-            <div className="space-y-2">
-              <Label htmlFor="pieces">Pièces utilisées</Label>
-              <Textarea
-                id="pieces"
-                rows={4}
-                disabled={!canEdit}
-                placeholder="Référence + quantité (ex. : ROUL-6204 × 2)"
-                value={pieces}
-                onChange={(e) => setPieces(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Saisie libre en attendant le module Stocks (bons de sortie).
-              </p>
+            <div className="space-y-3">
+              <Label>Pièces utilisées (bons de sortie)</Label>
+              {bonsQ.isLoading ? (
+                <p className="text-xs text-muted-foreground">
+                  Chargement des bons de sortie…
+                </p>
+              ) : bons.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Aucun bon de sortie validé pour cette intervention. Les
+                  pièces se rattachent depuis le module « Sorties de pièces ».
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {bons.map((b) => {
+                    const coche = bonsSelectionnes.includes(b.id);
+                    return (
+                      <div
+                        key={b.id}
+                        className="rounded-md border border-border p-3"
+                      >
+                        <label className="flex items-start gap-3">
+                          <Checkbox
+                            checked={coche}
+                            disabled={!canEdit}
+                            onCheckedChange={(v) =>
+                              setBonsSelectionnes((prev) =>
+                                v === true
+                                  ? [...new Set([...prev, b.id])]
+                                  : prev.filter((x) => x !== b.id),
+                              )
+                            }
+                          />
+                          <span className="text-sm">
+                            <span className="font-medium text-foreground">
+                              {numeroBon(b.numero)}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              — {b.magasins?.nom ?? "Magasin"} •{" "}
+                              {formatDateTime(b.date_sortie)}
+                            </span>
+                          </span>
+                        </label>
+                        <ul className="mt-2 space-y-1 pl-7 text-xs text-muted-foreground">
+                          {(
+                            b.demandes_sortie_pieces?.demandes_sortie_lignes ??
+                            []
+                          ).map((l) => (
+                            <li key={l.id}>
+                              {l.pieces?.code_article} — {l.pieces?.designation}{" "}
+                              × {Number(l.quantite_sortie ?? l.quantite_demandee)}{" "}
+                              {l.pieces?.unite ?? ""}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {recapPieces && (
+                <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/40 p-3 text-xs text-foreground">
+                  {recapPieces}
+                </pre>
+              )}
             </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="observations">Observations</Label>
