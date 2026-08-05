@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { RapportPhases } from "@/components/rapport-phases";
+import { Checkbox } from "@/components/ui/checkbox";
+import { fetchBonsSortieIntervention, numeroBon } from "@/lib/sorties";
 import { SignaturePad } from "@/components/signature-pad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,7 +86,7 @@ function FicheIntervention() {
   const queryClient = useQueryClient();
   const [debut, setDebut] = useState("");
   const [fin, setFin] = useState("");
-  const [pieces, setPieces] = useState("");
+  const [bonsSelectionnes, setBonsSelectionnes] = useState<string[]>([]);
   const [observations, setObservations] = useState("");
   const [complementaires, setComplementaires] = useState("");
   const [pdfPending, setPdfPending] = useState(false);
@@ -115,7 +117,6 @@ function FicheIntervention() {
     if (data) {
       setDebut(toLocalInput(data.date_debut));
       setFin(toLocalInput(data.date_fin));
-      setPieces(data.pieces_utilisees ?? "");
       setObservations(data.observations ?? "");
       setComplementaires(data.interventions_complementaires ?? "");
     }
@@ -125,6 +126,35 @@ function FicheIntervention() {
     queryKey: ["rapport-operations", id],
     queryFn: () => fetchOperationsRealisees(id),
   });
+
+  const bonsQ = useQuery({
+    queryKey: ["bons-sortie", id],
+    queryFn: () => fetchBonsSortieIntervention(id),
+  });
+  const bons = bonsQ.data ?? [];
+
+  useEffect(() => {
+    if (bonsQ.data) setBonsSelectionnes(bonsQ.data.map((b) => b.id));
+  }, [bonsQ.data]);
+
+  const recapPieces = bons
+    .filter((b) => bonsSelectionnes.includes(b.id))
+    .map((b) => {
+      const lignes = (
+        b.demandes_sortie_pieces?.demandes_sortie_lignes ?? []
+      ).map(
+        (l) =>
+          `  - ${l.pieces?.code_article ?? ""} ${l.pieces?.designation ?? ""} × ${Number(
+            l.quantite_sortie ?? l.quantite_demandee,
+          )} ${l.pieces?.unite ?? ""}`.trimEnd(),
+      );
+      return [
+        `${numeroBon(b.numero)} — ${b.magasins?.nom ?? "Magasin"} (${formatDateTime(b.date_sortie)})`,
+        ...lignes,
+      ].join("\n");
+    })
+    .join("\n");
+
 
   const save = useMutation({
     mutationFn: async (patch: {
@@ -420,20 +450,72 @@ function FicheIntervention() {
 
         <TabsContent value="compte-rendu">
           <div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
-            <div className="space-y-2">
-              <Label htmlFor="pieces">Pièces utilisées</Label>
-              <Textarea
-                id="pieces"
-                rows={4}
-                disabled={!canEdit}
-                placeholder="Référence + quantité (ex. : ROUL-6204 × 2)"
-                value={pieces}
-                onChange={(e) => setPieces(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Saisie libre en attendant le module Stocks (bons de sortie).
-              </p>
+            <div className="space-y-3">
+              <Label>Pièces utilisées (bons de sortie)</Label>
+              {bonsQ.isLoading ? (
+                <p className="text-xs text-muted-foreground">
+                  Chargement des bons de sortie…
+                </p>
+              ) : bons.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Aucun bon de sortie validé pour cette intervention. Les
+                  pièces se rattachent depuis le module « Sorties de pièces ».
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {bons.map((b) => {
+                    const coche = bonsSelectionnes.includes(b.id);
+                    return (
+                      <div
+                        key={b.id}
+                        className="rounded-md border border-border p-3"
+                      >
+                        <label className="flex items-start gap-3">
+                          <Checkbox
+                            checked={coche}
+                            disabled={!canEdit}
+                            onCheckedChange={(v) =>
+                              setBonsSelectionnes((prev) =>
+                                v === true
+                                  ? [...new Set([...prev, b.id])]
+                                  : prev.filter((x) => x !== b.id),
+                              )
+                            }
+                          />
+                          <span className="text-sm">
+                            <span className="font-medium text-foreground">
+                              {numeroBon(b.numero)}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              — {b.magasins?.nom ?? "Magasin"} •{" "}
+                              {formatDateTime(b.date_sortie)}
+                            </span>
+                          </span>
+                        </label>
+                        <ul className="mt-2 space-y-1 pl-7 text-xs text-muted-foreground">
+                          {(
+                            b.demandes_sortie_pieces?.demandes_sortie_lignes ??
+                            []
+                          ).map((l) => (
+                            <li key={l.id}>
+                              {l.pieces?.code_article} — {l.pieces?.designation}{" "}
+                              × {Number(l.quantite_sortie ?? l.quantite_demandee)}{" "}
+                              {l.pieces?.unite ?? ""}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {recapPieces && (
+                <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/40 p-3 text-xs text-foreground">
+                  {recapPieces}
+                </pre>
+              )}
             </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="observations">Observations</Label>
@@ -464,7 +546,7 @@ function FicheIntervention() {
                 disabled={save.isPending}
                 onClick={() =>
                   save.mutate({
-                    pieces_utilisees: pieces.trim() || null,
+                    pieces_utilisees: recapPieces || null,
                     observations: observations.trim() || null,
                     interventions_complementaires:
                       complementaires.trim() || null,

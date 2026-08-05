@@ -5,6 +5,7 @@ import {
   Wrench,
   Cog,
   Boxes,
+  PackageMinus,
   CalendarClock,
   Users,
   FileBarChart,
@@ -29,7 +30,13 @@ import { useAuth, type AppRole } from "@/lib/auth-context";
 type ModuleItem = {
   title: string;
   icon: typeof LayoutDashboard;
-  url?: "/" | "/equipements" | "/demandes" | "/interventions" | "/stocks";
+  url?:
+    | "/"
+    | "/equipements"
+    | "/demandes"
+    | "/interventions"
+    | "/stocks"
+    | "/sorties";
   roles: AppRole[] | "all";
 };
 
@@ -83,6 +90,18 @@ const modules: ModuleItem[] = [
       "responsable_maintenance",
       "responsable_etablissement",
       "gestionnaire_stock",
+    ],
+  },
+  {
+    title: "Sorties de pièces",
+    url: "/sorties",
+    icon: PackageMinus,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+      "gestionnaire_stock",
+      "technicien",
     ],
   },
   {
