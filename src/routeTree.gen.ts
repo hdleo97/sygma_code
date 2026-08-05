@@ -14,6 +14,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StocksIndexRouteImport } from './routes/stocks/index'
+import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
@@ -54,6 +55,11 @@ const IndexRoute = IndexRouteImport.update({
 const StocksIndexRoute = StocksIndexRouteImport.update({
   id: '/stocks/',
   path: '/stocks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SortiesIndexRoute = SortiesIndexRouteImport.update({
+  id: '/sorties/',
+  path: '/sorties/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
+  '/sorties': typeof SortiesIndexRoute
   '/stocks': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/demandes'
     | '/equipements'
     | '/interventions'
+    | '/sorties'
     | '/stocks'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
+  SortiesIndexRoute: typeof SortiesIndexRoute
   StocksIndexRoute: typeof StocksIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -341,6 +354,13 @@ declare module '@tanstack/react-router' {
       path: '/stocks'
       fullPath: '/stocks/'
       preLoaderRoute: typeof StocksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sorties/': {
+      id: '/sorties/'
+      path: '/sorties'
+      fullPath: '/sorties/'
+      preLoaderRoute: typeof SortiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interventions/': {
@@ -476,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
+  SortiesIndexRoute: SortiesIndexRoute,
   StocksIndexRoute: StocksIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
