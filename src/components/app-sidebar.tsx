@@ -5,6 +5,7 @@ import {
   Wrench,
   Cog,
   Boxes,
+  PackageMinus,
   CalendarClock,
   Users,
   FileBarChart,
