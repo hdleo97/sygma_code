@@ -84,7 +84,7 @@ function FicheIntervention() {
   const queryClient = useQueryClient();
   const [debut, setDebut] = useState("");
   const [fin, setFin] = useState("");
-  const [pieces, setPieces] = useState("");
+  const [bonsSelectionnes, setBonsSelectionnes] = useState<string[]>([]);
   const [observations, setObservations] = useState("");
   const [complementaires, setComplementaires] = useState("");
   const [pdfPending, setPdfPending] = useState(false);
