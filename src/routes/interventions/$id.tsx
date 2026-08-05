@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { RapportPhases } from "@/components/rapport-phases";
+import { Checkbox } from "@/components/ui/checkbox";
+import { fetchBonsSortieIntervention, numeroBon } from "@/lib/sorties";
 import { SignaturePad } from "@/components/signature-pad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
