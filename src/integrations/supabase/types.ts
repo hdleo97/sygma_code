@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      bons_sortie: {
+        Row: {
+          created_at: string
+          cree_par: string | null
+          date_sortie: string
+          demande_id: string
+          etablissement_id: string
+          id: string
+          intervention_id: string | null
+          magasin_id: string
+          numero: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cree_par?: string | null
+          date_sortie?: string
+          demande_id: string
+          etablissement_id: string
+          id?: string
+          intervention_id?: string | null
+          magasin_id: string
+          numero?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cree_par?: string | null
+          date_sortie?: string
+          demande_id?: string
+          etablissement_id?: string
+          id?: string
+          intervention_id?: string | null
+          magasin_id?: string
+          numero?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bons_sortie_cree_par_fkey"
+            columns: ["cree_par"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_sortie_demande_id_fkey"
+            columns: ["demande_id"]
+            isOneToOne: true
+            referencedRelation: "demandes_sortie_pieces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_sortie_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_sortie_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_sortie_magasin_id_fkey"
+            columns: ["magasin_id"]
+            isOneToOne: false
+            referencedRelation: "magasins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checklist_operations: {
         Row: {
           actif: boolean
@@ -152,6 +227,148 @@ export type Database = {
             columns: ["demande_id"]
             isOneToOne: false
             referencedRelation: "demandes_intervention"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demandes_sortie_lignes: {
+        Row: {
+          created_at: string
+          demande_id: string
+          id: string
+          piece_id: string
+          quantite_demandee: number
+          quantite_sortie: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          demande_id: string
+          id?: string
+          piece_id: string
+          quantite_demandee: number
+          quantite_sortie?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          demande_id?: string
+          id?: string
+          piece_id?: string
+          quantite_demandee?: number
+          quantite_sortie?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demandes_sortie_lignes_demande_id_fkey"
+            columns: ["demande_id"]
+            isOneToOne: false
+            referencedRelation: "demandes_sortie_pieces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_lignes_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "pieces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demandes_sortie_pieces: {
+        Row: {
+          created_at: string
+          equipement_id: string | null
+          etablissement_id: string
+          id: string
+          intervention_id: string | null
+          justification: string | null
+          motif_refus: string | null
+          statut: Database["public"]["Enums"]["ds_statut"]
+          technicien_id: string
+          traite_at: string | null
+          traite_par: string | null
+          updated_at: string
+          urgence: Database["public"]["Enums"]["di_priorite"]
+          valide_at: string | null
+          valide_par: string | null
+        }
+        Insert: {
+          created_at?: string
+          equipement_id?: string | null
+          etablissement_id: string
+          id?: string
+          intervention_id?: string | null
+          justification?: string | null
+          motif_refus?: string | null
+          statut?: Database["public"]["Enums"]["ds_statut"]
+          technicien_id: string
+          traite_at?: string | null
+          traite_par?: string | null
+          updated_at?: string
+          urgence?: Database["public"]["Enums"]["di_priorite"]
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Update: {
+          created_at?: string
+          equipement_id?: string | null
+          etablissement_id?: string
+          id?: string
+          intervention_id?: string | null
+          justification?: string | null
+          motif_refus?: string | null
+          statut?: Database["public"]["Enums"]["ds_statut"]
+          technicien_id?: string
+          traite_at?: string | null
+          traite_par?: string | null
+          updated_at?: string
+          urgence?: Database["public"]["Enums"]["di_priorite"]
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demandes_sortie_pieces_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_pieces_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_pieces_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_pieces_technicien_id_fkey"
+            columns: ["technicien_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_pieces_traite_par_fkey"
+            columns: ["traite_par"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_sortie_pieces_valide_par_fkey"
+            columns: ["valide_par"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
             referencedColumns: ["id"]
           },
         ]
@@ -816,6 +1033,10 @@ export type Database = {
       }
     }
     Functions: {
+      can_manage_demande_sortie: {
+        Args: { _demande_id: string; _user_id: string }
+        Returns: boolean
+      }
       can_manage_intervention: {
         Args: { _etab: string; _user_id: string }
         Returns: boolean
@@ -825,6 +1046,14 @@ export type Database = {
         Returns: boolean
       }
       can_view_demande: {
+        Args: { _demande_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_view_demande_sortie: {
+        Args: { _demande_id: string; _user_id: string }
+        Returns: boolean
+      }
+      demande_sortie_is_owner_editable: {
         Args: { _demande_id: string; _user_id: string }
         Returns: boolean
       }
@@ -872,6 +1101,7 @@ export type Database = {
         | "terminee"
         | "cloturee"
         | "refusee"
+      ds_statut: "demande_creee" | "validee" | "traitee" | "refusee"
       equipement_statut:
         | "en_service"
         | "en_panne"
@@ -1029,6 +1259,7 @@ export const Constants = {
         "cloturee",
         "refusee",
       ],
+      ds_statut: ["demande_creee", "validee", "traitee", "refusee"],
       equipement_statut: [
         "en_service",
         "en_panne",
