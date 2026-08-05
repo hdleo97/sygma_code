@@ -29,7 +29,13 @@ import { useAuth, type AppRole } from "@/lib/auth-context";
 type ModuleItem = {
   title: string;
   icon: typeof LayoutDashboard;
-  url?: "/" | "/equipements" | "/demandes" | "/interventions" | "/stocks";
+  url?:
+    | "/"
+    | "/equipements"
+    | "/demandes"
+    | "/interventions"
+    | "/stocks"
+    | "/sorties";
   roles: AppRole[] | "all";
 };
 
