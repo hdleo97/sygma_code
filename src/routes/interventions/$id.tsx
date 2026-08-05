@@ -115,7 +115,7 @@ function FicheIntervention() {
     if (data) {
       setDebut(toLocalInput(data.date_debut));
       setFin(toLocalInput(data.date_fin));
-      setPieces(data.pieces_utilisees ?? "");
+      setObservations(data.observations ?? "");
       setObservations(data.observations ?? "");
       setComplementaires(data.interventions_complementaires ?? "");
     }
