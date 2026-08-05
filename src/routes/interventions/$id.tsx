@@ -116,7 +116,6 @@ function FicheIntervention() {
       setDebut(toLocalInput(data.date_debut));
       setFin(toLocalInput(data.date_fin));
       setObservations(data.observations ?? "");
-      setObservations(data.observations ?? "");
       setComplementaires(data.interventions_complementaires ?? "");
     }
   }, [data]);
@@ -125,6 +124,35 @@ function FicheIntervention() {
     queryKey: ["rapport-operations", id],
     queryFn: () => fetchOperationsRealisees(id),
   });
+
+  const bonsQ = useQuery({
+    queryKey: ["bons-sortie", id],
+    queryFn: () => fetchBonsSortieIntervention(id),
+  });
+  const bons = bonsQ.data ?? [];
+
+  useEffect(() => {
+    if (bonsQ.data) setBonsSelectionnes(bonsQ.data.map((b) => b.id));
+  }, [bonsQ.data]);
+
+  const recapPieces = bons
+    .filter((b) => bonsSelectionnes.includes(b.id))
+    .map((b) => {
+      const lignes = (
+        b.demandes_sortie_pieces?.demandes_sortie_lignes ?? []
+      ).map(
+        (l) =>
+          `  - ${l.pieces?.code_article ?? ""} ${l.pieces?.designation ?? ""} × ${Number(
+            l.quantite_sortie ?? l.quantite_demandee,
+          )} ${l.pieces?.unite ?? ""}`.trimEnd(),
+      );
+      return [
+        `${numeroBon(b.numero)} — ${b.magasins?.nom ?? "Magasin"} (${formatDateTime(b.date_sortie)})`,
+        ...lignes,
+      ].join("\n");
+    })
+    .join("\n");
+
 
   const save = useMutation({
     mutationFn: async (patch: {
