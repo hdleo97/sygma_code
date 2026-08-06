@@ -6,6 +6,8 @@ import {
   Cog,
   Boxes,
   PackageMinus,
+  ShoppingCart,
+
   CalendarClock,
   Users,
   FileBarChart,
