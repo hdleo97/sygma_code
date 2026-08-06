@@ -107,6 +107,18 @@ const modules: ModuleItem[] = [
     ],
   },
   {
+    title: "Commandes d'achat",
+    url: "/commandes",
+    icon: ShoppingCart,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+      "gestionnaire_stock",
+    ],
+  },
+  {
+
     title: "Préventif",
     icon: CalendarClock,
     roles: [
