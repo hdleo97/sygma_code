@@ -148,7 +148,7 @@ function CommandesListe() {
             Excel
           </Button>
           <Button asChild>
-            <Link to="/commandes/nouvelle">
+            <Link to="/commandes/nouvelle" search={{ pieces: "", magasin: "" }}>
               <Plus className="mr-2 h-4 w-4" />
               Nouvelle commande
             </Link>
