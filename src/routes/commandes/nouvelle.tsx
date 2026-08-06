@@ -68,9 +68,9 @@ function NouvelleCommande() {
 
   useEffect(() => {
     if (prefilled || !piecesParam) return;
-    const ids = piecesParam.split(",").filter(Boolean);
+    const ids: string[] = piecesParam.split(",").filter(Boolean);
     if (ids.length === 0) return;
-    setLignes(ids.map((id) => ({ piece_id: id, quantite: "1", prix: "" })));
+    setLignes(ids.map((id: string) => ({ piece_id: id, quantite: "1", prix: "" })));
     setPrefilled(true);
   }, [piecesParam, prefilled]);
 
