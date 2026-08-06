@@ -36,9 +36,11 @@ type ModuleItem = {
     | "/demandes"
     | "/interventions"
     | "/stocks"
-    | "/sorties";
+    | "/sorties"
+    | "/commandes";
   roles: AppRole[] | "all";
 };
+
 
 const ALL_ROLES: AppRole[] = [
   "super_admin",
