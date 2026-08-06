@@ -29,6 +29,7 @@ import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nou
 import { Route as DemandesNouvelleRouteImport } from './routes/demandes/nouvelle'
 import { Route as DemandesIdRouteImport } from './routes/demandes/$id'
 import { Route as CommandesNouvelleRouteImport } from './routes/commandes/nouvelle'
+import { Route as CommandesIdRouteImport } from './routes/commandes/$id'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as EquipementsIdIndexRouteImport } from './routes/equipements/$id/index'
@@ -136,6 +137,11 @@ const CommandesNouvelleRoute = CommandesNouvelleRouteImport.update({
   path: '/commandes/nouvelle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandesIdRoute = CommandesIdRouteImport.update({
+  id: '/commandes/$id',
+  path: '/commandes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/commandes/$id': typeof CommandesIdRoute
   '/commandes/nouvelle': typeof CommandesNouvelleRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/commandes/$id': typeof CommandesIdRoute
   '/commandes/nouvelle': typeof CommandesNouvelleRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/commandes/$id': typeof CommandesIdRoute
   '/commandes/nouvelle': typeof CommandesNouvelleRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/nouvelle': typeof DemandesNouvelleRoute
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/commandes/$id'
     | '/commandes/nouvelle'
     | '/demandes/$id'
     | '/demandes/nouvelle'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/commandes/$id'
     | '/commandes/nouvelle'
     | '/demandes/$id'
     | '/demandes/nouvelle'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/commandes/$id'
     | '/commandes/nouvelle'
     | '/demandes/$id'
     | '/demandes/nouvelle'
@@ -349,6 +361,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  CommandesIdRoute: typeof CommandesIdRoute
   CommandesNouvelleRoute: typeof CommandesNouvelleRoute
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesNouvelleRoute: typeof DemandesNouvelleRoute
@@ -513,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandesNouvelleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commandes/$id': {
+      id: '/commandes/$id'
+      path: '/commandes/$id'
+      fullPath: '/commandes/$id'
+      preLoaderRoute: typeof CommandesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -566,6 +586,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  CommandesIdRoute: CommandesIdRoute,
   CommandesNouvelleRoute: CommandesNouvelleRoute,
   DemandesIdRoute: DemandesIdRoute,
   DemandesNouvelleRoute: DemandesNouvelleRoute,
