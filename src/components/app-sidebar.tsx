@@ -6,6 +6,8 @@ import {
   Cog,
   Boxes,
   PackageMinus,
+  ShoppingCart,
+
   CalendarClock,
   Users,
   FileBarChart,
@@ -36,9 +38,11 @@ type ModuleItem = {
     | "/demandes"
     | "/interventions"
     | "/stocks"
-    | "/sorties";
+    | "/sorties"
+    | "/commandes";
   roles: AppRole[] | "all";
 };
+
 
 const ALL_ROLES: AppRole[] = [
   "super_admin",
@@ -105,6 +109,18 @@ const modules: ModuleItem[] = [
     ],
   },
   {
+    title: "Commandes d'achat",
+    url: "/commandes",
+    icon: ShoppingCart,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+      "gestionnaire_stock",
+    ],
+  },
+  {
+
     title: "Préventif",
     icon: CalendarClock,
     roles: [
