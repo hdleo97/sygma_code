@@ -18,6 +18,7 @@ import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
+import { Route as CommandesIndexRouteImport } from './routes/commandes/index'
 import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
 import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
 import { Route as SortiesNouvelleRouteImport } from './routes/sorties/nouvelle'
@@ -77,6 +78,11 @@ const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
 const DemandesIndexRoute = DemandesIndexRouteImport.update({
   id: '/demandes/',
   path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommandesIndexRoute = CommandesIndexRouteImport.update({
+  id: '/commandes/',
+  path: '/commandes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StocksEntreeRoute = StocksEntreeRouteImport.update({
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
   '/stocks/entree': typeof StocksEntreeRoute
+  '/commandes/': typeof CommandesIndexRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
   '/stocks/entree': typeof StocksEntreeRoute
+  '/commandes': typeof CommandesIndexRoute
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
   '/stocks/entree': typeof StocksEntreeRoute
+  '/commandes/': typeof CommandesIndexRoute
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
     | '/stocks/entree'
+    | '/commandes/'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
     | '/stocks/entree'
+    | '/commandes'
     | '/demandes'
     | '/equipements'
     | '/interventions'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
     | '/stocks/entree'
+    | '/commandes/'
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   SortiesNouvelleRoute: typeof SortiesNouvelleRoute
   StocksAjustementRoute: typeof StocksAjustementRoute
   StocksEntreeRoute: typeof StocksEntreeRoute
+  CommandesIndexRoute: typeof CommandesIndexRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
@@ -408,6 +421,13 @@ declare module '@tanstack/react-router' {
       path: '/demandes'
       fullPath: '/demandes/'
       preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commandes/': {
+      id: '/commandes/'
+      path: '/commandes'
+      fullPath: '/commandes/'
+      preLoaderRoute: typeof CommandesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stocks/entree': {
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   SortiesNouvelleRoute: SortiesNouvelleRoute,
   StocksAjustementRoute: StocksAjustementRoute,
   StocksEntreeRoute: StocksEntreeRoute,
+  CommandesIndexRoute: CommandesIndexRoute,
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
