@@ -122,6 +122,127 @@ export type Database = {
         }
         Relationships: []
       }
+      commandes_achat: {
+        Row: {
+          created_at: string
+          date_commande: string | null
+          demandeur_id: string | null
+          etablissement_id: string
+          fournisseur: string
+          id: string
+          magasin_id: string | null
+          montant_estime: number | null
+          notes: string | null
+          numero: number
+          pieces_jointes: string[]
+          reference: string | null
+          statut: Database["public"]["Enums"]["commande_statut"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_commande?: string | null
+          demandeur_id?: string | null
+          etablissement_id: string
+          fournisseur: string
+          id?: string
+          magasin_id?: string | null
+          montant_estime?: number | null
+          notes?: string | null
+          numero?: number
+          pieces_jointes?: string[]
+          reference?: string | null
+          statut?: Database["public"]["Enums"]["commande_statut"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_commande?: string | null
+          demandeur_id?: string | null
+          etablissement_id?: string
+          fournisseur?: string
+          id?: string
+          magasin_id?: string | null
+          montant_estime?: number | null
+          notes?: string | null
+          numero?: number
+          pieces_jointes?: string[]
+          reference?: string | null
+          statut?: Database["public"]["Enums"]["commande_statut"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commandes_achat_demandeur_id_fkey"
+            columns: ["demandeur_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commandes_achat_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commandes_achat_magasin_id_fkey"
+            columns: ["magasin_id"]
+            isOneToOne: false
+            referencedRelation: "magasins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commandes_achat_lignes: {
+        Row: {
+          commande_id: string
+          created_at: string
+          id: string
+          piece_id: string
+          prix_unitaire: number | null
+          quantite_commandee: number
+          quantite_recue: number
+          updated_at: string
+        }
+        Insert: {
+          commande_id: string
+          created_at?: string
+          id?: string
+          piece_id: string
+          prix_unitaire?: number | null
+          quantite_commandee: number
+          quantite_recue?: number
+          updated_at?: string
+        }
+        Update: {
+          commande_id?: string
+          created_at?: string
+          id?: string
+          piece_id?: string
+          prix_unitaire?: number | null
+          quantite_commandee?: number
+          quantite_recue?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commandes_achat_lignes_commande_id_fkey"
+            columns: ["commande_id"]
+            isOneToOne: false
+            referencedRelation: "commandes_achat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commandes_achat_lignes_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "pieces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demandes_intervention: {
         Row: {
           created_at: string
@@ -1033,6 +1154,10 @@ export type Database = {
       }
     }
     Functions: {
+      can_manage_commande: {
+        Args: { _commande_id: string; _user_id: string }
+        Returns: boolean
+      }
       can_manage_demande_sortie: {
         Args: { _demande_id: string; _user_id: string }
         Returns: boolean
@@ -1078,6 +1203,10 @@ export type Database = {
         Returns: boolean
       }
       magasin_etab: { Args: { _magasin_id: string }; Returns: string }
+      reception_commande: {
+        Args: { _commande_id: string; _lignes: Json; _magasin_id: string }
+        Returns: undefined
+      }
       user_in_etablissement: {
         Args: { _etab: string; _user_id: string }
         Returns: boolean
@@ -1092,6 +1221,12 @@ export type Database = {
         | "gestionnaire_stock"
         | "prestataire"
         | "responsable_etablissement"
+      commande_statut:
+        | "a_commander"
+        | "commandee"
+        | "recue_partiellement"
+        | "recue"
+        | "cloturee"
       di_priorite: "faible" | "moyenne" | "haute" | "critique"
       di_statut:
         | "nouvelle"
@@ -1248,6 +1383,13 @@ export const Constants = {
         "gestionnaire_stock",
         "prestataire",
         "responsable_etablissement",
+      ],
+      commande_statut: [
+        "a_commander",
+        "commandee",
+        "recue_partiellement",
+        "recue",
+        "cloturee",
       ],
       di_priorite: ["faible", "moyenne", "haute", "critique"],
       di_statut: [
