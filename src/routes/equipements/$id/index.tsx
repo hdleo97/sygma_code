@@ -51,7 +51,7 @@ function FicheEquipement() {
   const { id } = Route.useParams();
   const { etablissements } = useAuth();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["equipement", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -63,6 +63,7 @@ function FicheEquipement() {
       return data as Equipement | null;
     },
   });
+
 
   if (isLoading) {
     return (
