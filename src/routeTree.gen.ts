@@ -24,6 +24,7 @@ import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
 import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
 import { Route as SortiesNouvelleRouteImport } from './routes/sorties/nouvelle'
 import { Route as SortiesIdRouteImport } from './routes/sorties/$id'
+import { Route as PreventifNouveauRouteImport } from './routes/preventif/nouveau'
 import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
 import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
@@ -113,6 +114,11 @@ const SortiesIdRoute = SortiesIdRouteImport.update({
   path: '/sorties/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreventifNouveauRoute = PreventifNouveauRouteImport.update({
+  id: '/preventif/nouveau',
+  path: '/preventif/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
   id: '/interventions/nouvelle',
   path: '/interventions/nouvelle',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
   InterventionsIdRoute: typeof InterventionsIdRoute
   InterventionsNouvelleRoute: typeof InterventionsNouvelleRoute
+  PreventifNouveauRoute: typeof PreventifNouveauRoute
   SortiesIdRoute: typeof SortiesIdRoute
   SortiesNouvelleRoute: typeof SortiesNouvelleRoute
   StocksAjustementRoute: typeof StocksAjustementRoute
@@ -504,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SortiesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/preventif/nouveau': {
+      id: '/preventif/nouveau'
+      path: '/preventif/nouveau'
+      fullPath: '/preventif/nouveau'
+      preLoaderRoute: typeof PreventifNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interventions/nouvelle': {
       id: '/interventions/nouvelle'
       path: '/interventions/nouvelle'
@@ -613,6 +633,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipementsNouveauRoute: EquipementsNouveauRoute,
   InterventionsIdRoute: InterventionsIdRoute,
   InterventionsNouvelleRoute: InterventionsNouvelleRoute,
+  PreventifNouveauRoute: PreventifNouveauRoute,
   SortiesIdRoute: SortiesIdRoute,
   SortiesNouvelleRoute: SortiesNouvelleRoute,
   StocksAjustementRoute: StocksAjustementRoute,
