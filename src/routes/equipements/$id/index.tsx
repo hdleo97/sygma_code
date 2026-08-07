@@ -159,7 +159,16 @@ function FicheEquipement() {
           />
         </TabsContent>
 
+        <TabsContent value="documents">
+          <EquipementDocuments
+            equipementId={data.id}
+            manuelPath={data.manuel_path}
+            gammePath={data.gamme_path}
+            onUploaded={() => void refetch()}
+          />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
