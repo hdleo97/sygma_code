@@ -124,7 +124,9 @@ const modules: ModuleItem[] = [
   {
 
     title: "Préventif",
+    url: "/preventif",
     icon: CalendarClock,
+
     roles: [
       "super_admin",
       "responsable_maintenance",
