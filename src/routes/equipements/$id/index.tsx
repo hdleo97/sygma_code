@@ -129,7 +129,9 @@ function FicheEquipement() {
         <TabsList>
           <TabsTrigger value="fiche">Fiche</TabsTrigger>
           <TabsTrigger value="historique">Historique</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="fiche">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
