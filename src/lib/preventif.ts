@@ -257,7 +257,9 @@ export async function uploadDocumentEquipement(
 
   const { error: updErr } = await supabase
     .from("equipements")
-    .update({ [kind]: path })
+    .update(
+      kind === "manuel_path" ? { manuel_path: path } : { gamme_path: path },
+    )
     .eq("id", equipementId);
   if (updErr) throw updErr;
   return path;
