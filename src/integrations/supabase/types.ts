@@ -502,7 +502,9 @@ export type Database = {
           designation: string
           etablissement_id: string
           fournisseur: string | null
+          gamme_path: string | null
           id: string
+          manuel_path: string | null
           marque: string | null
           modele: string | null
           numero_serie: string | null
@@ -519,7 +521,9 @@ export type Database = {
           designation: string
           etablissement_id: string
           fournisseur?: string | null
+          gamme_path?: string | null
           id?: string
+          manuel_path?: string | null
           marque?: string | null
           modele?: string | null
           numero_serie?: string | null
@@ -536,7 +540,9 @@ export type Database = {
           designation?: string
           etablissement_id?: string
           fournisseur?: string | null
+          gamme_path?: string | null
           id?: string
+          manuel_path?: string | null
           marque?: string | null
           modele?: string | null
           numero_serie?: string | null
@@ -593,12 +599,13 @@ export type Database = {
           equipement_id: string | null
           etablissement_id: string
           id: string
-          intervention_id: string
+          intervention_id: string | null
           nature: Database["public"]["Enums"]["intervention_nature"]
           resume: string | null
           statut_final: Database["public"]["Enums"]["intervention_statut"]
           techniciens: string | null
           updated_at: string
+          visite_id: string | null
         }
         Insert: {
           created_at?: string
@@ -606,12 +613,13 @@ export type Database = {
           equipement_id?: string | null
           etablissement_id: string
           id?: string
-          intervention_id: string
+          intervention_id?: string | null
           nature: Database["public"]["Enums"]["intervention_nature"]
           resume?: string | null
           statut_final: Database["public"]["Enums"]["intervention_statut"]
           techniciens?: string | null
           updated_at?: string
+          visite_id?: string | null
         }
         Update: {
           created_at?: string
@@ -619,12 +627,13 @@ export type Database = {
           equipement_id?: string | null
           etablissement_id?: string
           id?: string
-          intervention_id?: string
+          intervention_id?: string | null
           nature?: Database["public"]["Enums"]["intervention_nature"]
           resume?: string | null
           statut_final?: Database["public"]["Enums"]["intervention_statut"]
           techniciens?: string | null
           updated_at?: string
+          visite_id?: string | null
         }
         Relationships: [
           {
@@ -646,6 +655,13 @@ export type Database = {
             columns: ["intervention_id"]
             isOneToOne: true
             referencedRelation: "interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_de_vie_evenements_visite_id_fkey"
+            columns: ["visite_id"]
+            isOneToOne: false
+            referencedRelation: "visites_quotidiennes"
             referencedColumns: ["id"]
           },
         ]
@@ -887,6 +903,136 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_echeances: {
+        Row: {
+          compteur_dernier_declenchement: number
+          compteur_releve: number
+          created_at: string
+          derniere_execution: string | null
+          equipement_id: string
+          id: string
+          plan_id: string
+          prochaine_echeance: string | null
+          updated_at: string
+        }
+        Insert: {
+          compteur_dernier_declenchement?: number
+          compteur_releve?: number
+          created_at?: string
+          derniere_execution?: string | null
+          equipement_id: string
+          id?: string
+          plan_id: string
+          prochaine_echeance?: string | null
+          updated_at?: string
+        }
+        Update: {
+          compteur_dernier_declenchement?: number
+          compteur_releve?: number
+          created_at?: string
+          derniere_execution?: string | null
+          equipement_id?: string
+          id?: string
+          plan_id?: string
+          prochaine_echeance?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_echeances_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_echeances_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans_preventifs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans_preventifs: {
+        Row: {
+          actif: boolean
+          categorie_equipement: string | null
+          checklist_categorie: string | null
+          created_at: string
+          cree_par: string | null
+          date_debut: string
+          description: string | null
+          duree_estimee_minutes: number | null
+          equipement_id: string | null
+          etablissement_id: string
+          id: string
+          libelle: string
+          periodicite: Database["public"]["Enums"]["periodicite_type"]
+          periodicite_valeur: number
+          unite_compteur: string | null
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          categorie_equipement?: string | null
+          checklist_categorie?: string | null
+          created_at?: string
+          cree_par?: string | null
+          date_debut?: string
+          description?: string | null
+          duree_estimee_minutes?: number | null
+          equipement_id?: string | null
+          etablissement_id: string
+          id?: string
+          libelle: string
+          periodicite?: Database["public"]["Enums"]["periodicite_type"]
+          periodicite_valeur: number
+          unite_compteur?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          categorie_equipement?: string | null
+          checklist_categorie?: string | null
+          created_at?: string
+          cree_par?: string | null
+          date_debut?: string
+          description?: string | null
+          duree_estimee_minutes?: number | null
+          equipement_id?: string | null
+          etablissement_id?: string
+          id?: string
+          libelle?: string
+          periodicite?: Database["public"]["Enums"]["periodicite_type"]
+          periodicite_valeur?: number
+          unite_compteur?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plans_preventifs_cree_par_fkey"
+            columns: ["cree_par"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_preventifs_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_preventifs_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profils_utilisateurs: {
         Row: {
           created_at: string
@@ -1127,6 +1273,118 @@ export type Database = {
           },
         ]
       }
+      visites_quotidiennes: {
+        Row: {
+          created_at: string
+          date_visite: string
+          equipement_id: string
+          etablissement_id: string
+          id: string
+          observations: string | null
+          signature: string | null
+          signature_at: string | null
+          signature_nom: string | null
+          technicien_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_visite?: string
+          equipement_id: string
+          etablissement_id: string
+          id?: string
+          observations?: string | null
+          signature?: string | null
+          signature_at?: string | null
+          signature_nom?: string | null
+          technicien_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_visite?: string
+          equipement_id?: string
+          etablissement_id?: string
+          id?: string
+          observations?: string | null
+          signature?: string | null
+          signature_at?: string | null
+          signature_nom?: string | null
+          technicien_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visites_quotidiennes_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visites_quotidiennes_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visites_quotidiennes_technicien_id_fkey"
+            columns: ["technicien_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visites_quotidiennes_operations: {
+        Row: {
+          commentaire: string | null
+          conforme: boolean
+          created_at: string
+          id: string
+          libelle_libre: string | null
+          operation_id: string | null
+          updated_at: string
+          visite_id: string
+        }
+        Insert: {
+          commentaire?: string | null
+          conforme?: boolean
+          created_at?: string
+          id?: string
+          libelle_libre?: string | null
+          operation_id?: string | null
+          updated_at?: string
+          visite_id: string
+        }
+        Update: {
+          commentaire?: string | null
+          conforme?: boolean
+          created_at?: string
+          id?: string
+          libelle_libre?: string | null
+          operation_id?: string | null
+          updated_at?: string
+          visite_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visites_quotidiennes_operations_operation_id_fkey"
+            columns: ["operation_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_operations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visites_quotidiennes_operations_visite_id_fkey"
+            columns: ["visite_id"]
+            isOneToOne: false
+            referencedRelation: "visites_quotidiennes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       v_stock_actuel: {
@@ -1154,6 +1412,10 @@ export type Database = {
       }
     }
     Functions: {
+      can_edit_visite: {
+        Args: { _user_id: string; _visite_id: string }
+        Returns: boolean
+      }
       can_manage_commande: {
         Args: { _commande_id: string; _user_id: string }
         Returns: boolean
@@ -1178,6 +1440,10 @@ export type Database = {
         Args: { _demande_id: string; _user_id: string }
         Returns: boolean
       }
+      can_view_visite: {
+        Args: { _user_id: string; _visite_id: string }
+        Returns: boolean
+      }
       demande_sortie_is_owner_editable: {
         Args: { _demande_id: string; _user_id: string }
         Returns: boolean
@@ -1189,6 +1455,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      generer_interventions_preventives: { Args: never; Returns: number }
       has_global_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -1245,6 +1512,7 @@ export type Database = {
         | "reforme"
       intervention_nature: "curative" | "preventive"
       intervention_statut: "planifiee" | "en_cours" | "terminee" | "signee"
+      periodicite_type: "temps" | "compteur"
       piece_etat: "neuf" | "fonctionnel" | "hors_service"
       stock_mouvement_origine: "commande_achat" | "cannibalisation" | "autre"
       stock_mouvement_type: "entree" | "sortie" | "ajustement"
@@ -1411,6 +1679,7 @@ export const Constants = {
       ],
       intervention_nature: ["curative", "preventive"],
       intervention_statut: ["planifiee", "en_cours", "terminee", "signee"],
+      periodicite_type: ["temps", "compteur"],
       piece_etat: ["neuf", "fonctionnel", "hors_service"],
       stock_mouvement_origine: ["commande_achat", "cannibalisation", "autre"],
       stock_mouvement_type: ["entree", "sortie", "ajustement"],
