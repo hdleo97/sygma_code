@@ -39,7 +39,9 @@ type ModuleItem = {
     | "/interventions"
     | "/stocks"
     | "/sorties"
+    | "/preventif"
     | "/commandes";
+
   roles: AppRole[] | "all";
 };
 
