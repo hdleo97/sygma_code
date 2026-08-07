@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StocksIndexRouteImport } from './routes/stocks/index'
 import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
+import { Route as PreventifIndexRouteImport } from './routes/preventif/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
@@ -65,6 +66,11 @@ const StocksIndexRoute = StocksIndexRouteImport.update({
 const SortiesIndexRoute = SortiesIndexRouteImport.update({
   id: '/sorties/',
   path: '/sorties/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifIndexRoute = PreventifIndexRouteImport.update({
+  id: '/preventif/',
+  path: '/preventif/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/preventif/': typeof PreventifIndexRoute
   '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
+  '/preventif': typeof PreventifIndexRoute
   '/sorties': typeof SortiesIndexRoute
   '/stocks': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/preventif/': typeof PreventifIndexRoute
   '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/preventif/'
     | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
@@ -317,6 +327,7 @@ export interface FileRouteTypes {
     | '/demandes'
     | '/equipements'
     | '/interventions'
+    | '/preventif'
     | '/sorties'
     | '/stocks'
     | '/.lovable/oauth/consent'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/preventif/'
     | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
+  PreventifIndexRoute: typeof PreventifIndexRoute
   SortiesIndexRoute: typeof SortiesIndexRoute
   StocksIndexRoute: typeof StocksIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -426,6 +439,13 @@ declare module '@tanstack/react-router' {
       path: '/sorties'
       fullPath: '/sorties/'
       preLoaderRoute: typeof SortiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/': {
+      id: '/preventif/'
+      path: '/preventif'
+      fullPath: '/preventif/'
+      preLoaderRoute: typeof PreventifIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interventions/': {
@@ -601,6 +621,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
+  PreventifIndexRoute: PreventifIndexRoute,
   SortiesIndexRoute: SortiesIndexRoute,
   StocksIndexRoute: StocksIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
