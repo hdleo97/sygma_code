@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Pencil } from "lucide-react";
 
+import { EquipementDocuments } from "@/components/equipement-documents";
 import { EquipementPhoto } from "@/components/equipement-photo";
+
 import { FicheDeVie } from "@/components/fiche-de-vie";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
