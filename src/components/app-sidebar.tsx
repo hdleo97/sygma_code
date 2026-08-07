@@ -39,7 +39,9 @@ type ModuleItem = {
     | "/interventions"
     | "/stocks"
     | "/sorties"
+    | "/preventif"
     | "/commandes";
+
   roles: AppRole[] | "all";
 };
 
@@ -122,7 +124,9 @@ const modules: ModuleItem[] = [
   {
 
     title: "Préventif",
+    url: "/preventif",
     icon: CalendarClock,
+
     roles: [
       "super_admin",
       "responsable_maintenance",

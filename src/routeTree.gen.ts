@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StocksIndexRouteImport } from './routes/stocks/index'
 import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
+import { Route as PreventifIndexRouteImport } from './routes/preventif/index'
 import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
 import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
 import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
@@ -23,6 +24,8 @@ import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
 import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
 import { Route as SortiesNouvelleRouteImport } from './routes/sorties/nouvelle'
 import { Route as SortiesIdRouteImport } from './routes/sorties/$id'
+import { Route as PreventifVisiteRouteImport } from './routes/preventif/visite'
+import { Route as PreventifNouveauRouteImport } from './routes/preventif/nouveau'
 import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
 import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
 import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
@@ -67,6 +70,11 @@ const SortiesIndexRoute = SortiesIndexRouteImport.update({
   path: '/sorties/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreventifIndexRoute = PreventifIndexRouteImport.update({
+  id: '/preventif/',
+  path: '/preventif/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
   id: '/interventions/',
   path: '/interventions/',
@@ -105,6 +113,16 @@ const SortiesNouvelleRoute = SortiesNouvelleRouteImport.update({
 const SortiesIdRoute = SortiesIdRouteImport.update({
   id: '/sorties/$id',
   path: '/sorties/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifVisiteRoute = PreventifVisiteRouteImport.update({
+  id: '/preventif/visite',
+  path: '/preventif/visite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifNouveauRoute = PreventifNouveauRouteImport.update({
+  id: '/preventif/nouveau',
+  path: '/preventif/nouveau',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
@@ -190,6 +208,8 @@ export interface FileRoutesByFullPath {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
+  '/preventif/visite': typeof PreventifVisiteRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -198,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/preventif/': typeof PreventifIndexRoute
   '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -219,6 +240,8 @@ export interface FileRoutesByTo {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
+  '/preventif/visite': typeof PreventifVisiteRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -227,6 +250,7 @@ export interface FileRoutesByTo {
   '/demandes': typeof DemandesIndexRoute
   '/equipements': typeof EquipementsIndexRoute
   '/interventions': typeof InterventionsIndexRoute
+  '/preventif': typeof PreventifIndexRoute
   '/sorties': typeof SortiesIndexRoute
   '/stocks': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -249,6 +273,8 @@ export interface FileRoutesById {
   '/equipements/nouveau': typeof EquipementsNouveauRoute
   '/interventions/$id': typeof InterventionsIdRoute
   '/interventions/nouvelle': typeof InterventionsNouvelleRoute
+  '/preventif/nouveau': typeof PreventifNouveauRoute
+  '/preventif/visite': typeof PreventifVisiteRoute
   '/sorties/$id': typeof SortiesIdRoute
   '/sorties/nouvelle': typeof SortiesNouvelleRoute
   '/stocks/ajustement': typeof StocksAjustementRoute
@@ -257,6 +283,7 @@ export interface FileRoutesById {
   '/demandes/': typeof DemandesIndexRoute
   '/equipements/': typeof EquipementsIndexRoute
   '/interventions/': typeof InterventionsIndexRoute
+  '/preventif/': typeof PreventifIndexRoute
   '/sorties/': typeof SortiesIndexRoute
   '/stocks/': typeof StocksIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -280,6 +307,8 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
+    | '/preventif/visite'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -288,6 +317,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/preventif/'
     | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
@@ -309,6 +339,8 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
+    | '/preventif/visite'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -317,6 +349,7 @@ export interface FileRouteTypes {
     | '/demandes'
     | '/equipements'
     | '/interventions'
+    | '/preventif'
     | '/sorties'
     | '/stocks'
     | '/.lovable/oauth/consent'
@@ -338,6 +371,8 @@ export interface FileRouteTypes {
     | '/equipements/nouveau'
     | '/interventions/$id'
     | '/interventions/nouvelle'
+    | '/preventif/nouveau'
+    | '/preventif/visite'
     | '/sorties/$id'
     | '/sorties/nouvelle'
     | '/stocks/ajustement'
@@ -346,6 +381,7 @@ export interface FileRouteTypes {
     | '/demandes/'
     | '/equipements/'
     | '/interventions/'
+    | '/preventif/'
     | '/sorties/'
     | '/stocks/'
     | '/.lovable/oauth/consent'
@@ -368,6 +404,8 @@ export interface RootRouteChildren {
   EquipementsNouveauRoute: typeof EquipementsNouveauRoute
   InterventionsIdRoute: typeof InterventionsIdRoute
   InterventionsNouvelleRoute: typeof InterventionsNouvelleRoute
+  PreventifNouveauRoute: typeof PreventifNouveauRoute
+  PreventifVisiteRoute: typeof PreventifVisiteRoute
   SortiesIdRoute: typeof SortiesIdRoute
   SortiesNouvelleRoute: typeof SortiesNouvelleRoute
   StocksAjustementRoute: typeof StocksAjustementRoute
@@ -376,6 +414,7 @@ export interface RootRouteChildren {
   DemandesIndexRoute: typeof DemandesIndexRoute
   EquipementsIndexRoute: typeof EquipementsIndexRoute
   InterventionsIndexRoute: typeof InterventionsIndexRoute
+  PreventifIndexRoute: typeof PreventifIndexRoute
   SortiesIndexRoute: typeof SortiesIndexRoute
   StocksIndexRoute: typeof StocksIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -426,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/sorties'
       fullPath: '/sorties/'
       preLoaderRoute: typeof SortiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/': {
+      id: '/preventif/'
+      path: '/preventif'
+      fullPath: '/preventif/'
+      preLoaderRoute: typeof PreventifIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interventions/': {
@@ -482,6 +528,20 @@ declare module '@tanstack/react-router' {
       path: '/sorties/$id'
       fullPath: '/sorties/$id'
       preLoaderRoute: typeof SortiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/visite': {
+      id: '/preventif/visite'
+      path: '/preventif/visite'
+      fullPath: '/preventif/visite'
+      preLoaderRoute: typeof PreventifVisiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/nouveau': {
+      id: '/preventif/nouveau'
+      path: '/preventif/nouveau'
+      fullPath: '/preventif/nouveau'
+      preLoaderRoute: typeof PreventifNouveauRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interventions/nouvelle': {
@@ -593,6 +653,8 @@ const rootRouteChildren: RootRouteChildren = {
   EquipementsNouveauRoute: EquipementsNouveauRoute,
   InterventionsIdRoute: InterventionsIdRoute,
   InterventionsNouvelleRoute: InterventionsNouvelleRoute,
+  PreventifNouveauRoute: PreventifNouveauRoute,
+  PreventifVisiteRoute: PreventifVisiteRoute,
   SortiesIdRoute: SortiesIdRoute,
   SortiesNouvelleRoute: SortiesNouvelleRoute,
   StocksAjustementRoute: StocksAjustementRoute,
@@ -601,6 +663,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemandesIndexRoute: DemandesIndexRoute,
   EquipementsIndexRoute: EquipementsIndexRoute,
   InterventionsIndexRoute: InterventionsIndexRoute,
+  PreventifIndexRoute: PreventifIndexRoute,
   SortiesIndexRoute: SortiesIndexRoute,
   StocksIndexRoute: StocksIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,

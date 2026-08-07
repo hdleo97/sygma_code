@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Pencil } from "lucide-react";
 
+import { EquipementDocuments } from "@/components/equipement-documents";
 import { EquipementPhoto } from "@/components/equipement-photo";
+
 import { FicheDeVie } from "@/components/fiche-de-vie";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,7 +53,7 @@ function FicheEquipement() {
   const { id } = Route.useParams();
   const { etablissements } = useAuth();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["equipement", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -63,6 +65,7 @@ function FicheEquipement() {
       return data as Equipement | null;
     },
   });
+
 
   if (isLoading) {
     return (
@@ -128,7 +131,9 @@ function FicheEquipement() {
         <TabsList>
           <TabsTrigger value="fiche">Fiche</TabsTrigger>
           <TabsTrigger value="historique">Historique</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="fiche">
           <div className="rounded-lg border border-border bg-card p-4 sm:p-6">
@@ -156,7 +161,16 @@ function FicheEquipement() {
           />
         </TabsContent>
 
+        <TabsContent value="documents">
+          <EquipementDocuments
+            equipementId={data.id}
+            manuelPath={data.manuel_path}
+            gammePath={data.gamme_path}
+            onUploaded={() => void refetch()}
+          />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
