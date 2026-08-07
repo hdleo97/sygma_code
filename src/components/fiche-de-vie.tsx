@@ -158,29 +158,31 @@ export function FicheDeVie({ equipementId, equipementLabel }: Props) {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pdfId === r.intervention_id}
-                    onClick={() => exportPdf(r.intervention_id)}
-                  >
-                    {pdfId === r.intervention_id ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <FileDown className="mr-2 h-4 w-4" />
-                    )}
-                    Rapport PDF
-                  </Button>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link
-                      to="/interventions/$id"
-                      params={{ id: r.intervention_id }}
+                {r.intervention_id && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={pdfId === r.intervention_id}
+                      onClick={() => exportPdf(r.intervention_id!)}
                     >
-                      Ouvrir
-                    </Link>
-                  </Button>
-                </div>
+                      {pdfId === r.intervention_id ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <FileDown className="mr-2 h-4 w-4" />
+                      )}
+                      Rapport PDF
+                    </Button>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link
+                        to="/interventions/$id"
+                        params={{ id: r.intervention_id }}
+                      >
+                        Ouvrir
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </div>
               {r.techniciens && (
                 <p className="mt-3 text-sm text-muted-foreground">
