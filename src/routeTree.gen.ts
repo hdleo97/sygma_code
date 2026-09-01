@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TechniciensRouteImport } from './routes/techniciens'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrestatairesRouteImport } from './routes/prestataires'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -40,9 +42,19 @@ import { Route as EquipementsIdModifierRouteImport } from './routes/equipements/
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
+const TechniciensRoute = TechniciensRouteImport.update({
+  id: '/techniciens',
+  path: '/techniciens',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrestatairesRoute = PrestatairesRouteImport.update({
+  id: '/prestataires',
+  path: '/prestataires',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -198,7 +210,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/commandes/$id': typeof CommandesIdRoute
@@ -230,7 +244,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/commandes/$id': typeof CommandesIdRoute
@@ -263,7 +279,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/commandes/$id': typeof CommandesIdRoute
@@ -297,7 +315,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/prestataires'
     | '/reset-password'
+    | '/techniciens'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/commandes/$id'
@@ -329,7 +349,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/prestataires'
     | '/reset-password'
+    | '/techniciens'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/commandes/$id'
@@ -361,7 +383,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/prestataires'
     | '/reset-password'
+    | '/techniciens'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/commandes/$id'
@@ -394,7 +418,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
+  PrestatairesRoute: typeof PrestatairesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TechniciensRoute: typeof TechniciensRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   CommandesIdRoute: typeof CommandesIdRoute
@@ -425,11 +451,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/techniciens': {
+      id: '/techniciens'
+      path: '/techniciens'
+      fullPath: '/techniciens'
+      preLoaderRoute: typeof TechniciensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prestataires': {
+      id: '/prestataires'
+      path: '/prestataires'
+      fullPath: '/prestataires'
+      preLoaderRoute: typeof PrestatairesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -642,7 +682,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
+  PrestatairesRoute: PrestatairesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TechniciensRoute: TechniciensRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
