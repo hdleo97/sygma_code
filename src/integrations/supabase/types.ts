@@ -253,6 +253,7 @@ export type Database = {
           id: string
           localisation: string | null
           pieces_jointes: string[]
+          prestataire_id: string | null
           priorite: Database["public"]["Enums"]["di_priorite"]
           statut: Database["public"]["Enums"]["di_statut"]
           technicien_id: string | null
@@ -267,6 +268,7 @@ export type Database = {
           id?: string
           localisation?: string | null
           pieces_jointes?: string[]
+          prestataire_id?: string | null
           priorite?: Database["public"]["Enums"]["di_priorite"]
           statut?: Database["public"]["Enums"]["di_statut"]
           technicien_id?: string | null
@@ -281,6 +283,7 @@ export type Database = {
           id?: string
           localisation?: string | null
           pieces_jointes?: string[]
+          prestataire_id?: string | null
           priorite?: Database["public"]["Enums"]["di_priorite"]
           statut?: Database["public"]["Enums"]["di_statut"]
           technicien_id?: string | null
@@ -306,6 +309,13 @@ export type Database = {
             columns: ["etablissement_id"]
             isOneToOne: false
             referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demandes_intervention_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
             referencedColumns: ["id"]
           },
           {
@@ -740,6 +750,7 @@ export type Database = {
           nature: Database["public"]["Enums"]["intervention_nature"]
           observations: string | null
           pieces_utilisees: string | null
+          prestataire_id: string | null
           signature_superviseur: string | null
           signature_superviseur_at: string | null
           signature_superviseur_nom: string | null
@@ -768,6 +779,7 @@ export type Database = {
           nature?: Database["public"]["Enums"]["intervention_nature"]
           observations?: string | null
           pieces_utilisees?: string | null
+          prestataire_id?: string | null
           signature_superviseur?: string | null
           signature_superviseur_at?: string | null
           signature_superviseur_nom?: string | null
@@ -796,6 +808,7 @@ export type Database = {
           nature?: Database["public"]["Enums"]["intervention_nature"]
           observations?: string | null
           pieces_utilisees?: string | null
+          prestataire_id?: string | null
           signature_superviseur?: string | null
           signature_superviseur_at?: string | null
           signature_superviseur_nom?: string | null
@@ -825,6 +838,13 @@ export type Database = {
             columns: ["etablissement_id"]
             isOneToOne: false
             referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
             referencedColumns: ["id"]
           },
         ]
@@ -1033,29 +1053,111 @@ export type Database = {
           },
         ]
       }
+      prestataires: {
+        Row: {
+          actif: boolean
+          contact_email: string | null
+          contact_nom: string | null
+          contact_telephone: string | null
+          contrat_debut: string | null
+          contrat_fin: string | null
+          contrat_notes: string | null
+          contrat_reference: string | null
+          created_at: string
+          etablissement_id: string | null
+          id: string
+          raison_sociale: string
+          specialite: string | null
+          updated_at: string
+          user_id: string | null
+          zone_intervention: string | null
+        }
+        Insert: {
+          actif?: boolean
+          contact_email?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          contrat_debut?: string | null
+          contrat_fin?: string | null
+          contrat_notes?: string | null
+          contrat_reference?: string | null
+          created_at?: string
+          etablissement_id?: string | null
+          id?: string
+          raison_sociale: string
+          specialite?: string | null
+          updated_at?: string
+          user_id?: string | null
+          zone_intervention?: string | null
+        }
+        Update: {
+          actif?: boolean
+          contact_email?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          contrat_debut?: string | null
+          contrat_fin?: string | null
+          contrat_notes?: string | null
+          contrat_reference?: string | null
+          created_at?: string
+          etablissement_id?: string | null
+          id?: string
+          raison_sociale?: string
+          specialite?: string | null
+          updated_at?: string
+          user_id?: string | null
+          zone_intervention?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profils_utilisateurs: {
         Row: {
+          competences: string[]
           created_at: string
+          disponibilite: string
           id: string
           nom: string | null
           prenom: string | null
+          superieur_id: string | null
           updated_at: string
         }
         Insert: {
+          competences?: string[]
           created_at?: string
+          disponibilite?: string
           id: string
           nom?: string | null
           prenom?: string | null
+          superieur_id?: string | null
           updated_at?: string
         }
         Update: {
+          competences?: string[]
           created_at?: string
+          disponibilite?: string
           id?: string
           nom?: string | null
           prenom?: string | null
+          superieur_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profils_utilisateurs_superieur_id_fkey"
+            columns: ["superieur_id"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rapport_operations_realisees: {
         Row: {
