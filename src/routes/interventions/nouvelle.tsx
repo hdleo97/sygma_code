@@ -25,6 +25,7 @@ import {
   technicienName,
   type InterventionNature,
 } from "@/lib/interventions";
+import { fetchPrestataires } from "@/lib/prestataires";
 
 type Search = {
   demande?: string;
@@ -74,6 +75,12 @@ function NouvelleIntervention() {
   const [datePlanifiee, setDatePlanifiee] = useState("");
   const [dureeEstimee, setDureeEstimee] = useState("");
   const [techniciens, setTechniciens] = useState<string[]>([]);
+  const [prestataireId, setPrestataireId] = useState("none");
+
+  const { data: prestataires } = useQuery({
+    queryKey: ["prestataires", currentEtablissementId],
+    queryFn: () => fetchPrestataires(currentEtablissementId),
+  });
 
   const { data: equipements } = useQuery({
     queryKey: ["equipements-select", currentEtablissementId],
@@ -119,6 +126,7 @@ function NouvelleIntervention() {
           date_appel: new Date().toISOString(),
           date_planifiee: fromLocalInput(datePlanifiee),
           duree_estimee_minutes: dureeEstimee ? Number(dureeEstimee) : null,
+          prestataire_id: prestataireId === "none" ? null : prestataireId,
         })
         .select("id")
         .single();
@@ -267,6 +275,24 @@ function NouvelleIntervention() {
               </label>
             ))}
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Prestataire externe (optionnel)</Label>
+          <Select value={prestataireId} onValueChange={setPrestataireId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Aucun" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Aucun (équipe interne)</SelectItem>
+              {(prestataires ?? []).map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.raison_sociale}
+                  {p.specialite ? ` — ${p.specialite}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex gap-2">
