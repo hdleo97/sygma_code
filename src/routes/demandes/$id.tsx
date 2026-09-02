@@ -28,6 +28,7 @@ import {
   type DemandeHistorique,
   type DemandeStatut,
 } from "@/lib/demandes";
+import { fetchPrestataires } from "@/lib/prestataires";
 
 export const Route = createFileRoute("/demandes/$id")({
   component: FicheDemande,
@@ -97,6 +98,7 @@ function FicheDemande() {
   const { user, hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
   const [technicienId, setTechnicienId] = useState("");
+  const [prestataireId, setPrestataireId] = useState("none");
 
   const isResponsable = hasAnyRole(["super_admin", "responsable_maintenance"]);
 
@@ -150,17 +152,28 @@ function FicheDemande() {
     enabled: isResponsable,
   });
 
+  const { data: prestataires } = useQuery({
+    queryKey: ["prestataires-di"],
+    queryFn: () => fetchPrestataires(),
+  });
+
   const changeStatut = useMutation({
     mutationFn: async ({
       statut,
       technicien,
+      prestataire,
     }: {
       statut: DemandeStatut;
       technicien?: string | null;
+      prestataire?: string | null;
     }) => {
-      const payload: { statut: DemandeStatut; technicien_id?: string | null } =
-        { statut };
+      const payload: {
+        statut: DemandeStatut;
+        technicien_id?: string | null;
+        prestataire_id?: string | null;
+      } = { statut };
       if (technicien !== undefined) payload.technicien_id = technicien;
+      if (prestataire !== undefined) payload.prestataire_id = prestataire;
       const { error } = await supabase
         .from("demandes_intervention")
         .update(payload)
@@ -266,6 +279,14 @@ function FicheDemande() {
               <Info
                 label="Technicien affecté"
                 value={personName(data.technicien)}
+              />
+              <Info
+                label="Prestataire externe"
+                value={
+                  (prestataires ?? []).find(
+                    (p) => p.id === data.prestataire_id,
+                  )?.raison_sociale ?? "—"
+                }
               />
               <Info
                 label="Dernière mise à jour"

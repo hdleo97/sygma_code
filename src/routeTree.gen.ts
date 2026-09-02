@@ -13,6 +13,7 @@ import { Route as TechniciensRouteImport } from './routes/techniciens'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrestatairesRouteImport } from './routes/prestataires'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as EtablissementsRouteImport } from './routes/etablissements'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StocksIndexRouteImport } from './routes/stocks/index'
@@ -60,6 +61,11 @@ const PrestatairesRoute = PrestatairesRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EtablissementsRoute = EtablissementsRouteImport.update({
+  id: '/etablissements',
+  path: '/etablissements',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -209,6 +215,7 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/etablissements'
     | '/mcp'
     | '/prestataires'
     | '/reset-password'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/etablissements'
     | '/mcp'
     | '/prestataires'
     | '/reset-password'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/etablissements'
     | '/mcp'
     | '/prestataires'
     | '/reset-password'
@@ -417,6 +429,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  EtablissementsRoute: typeof EtablissementsRoute
   McpRoute: typeof McpRoute
   PrestatairesRoute: typeof PrestatairesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -477,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etablissements': {
+      id: '/etablissements'
+      path: '/etablissements'
+      fullPath: '/etablissements'
+      preLoaderRoute: typeof EtablissementsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -681,6 +701,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  EtablissementsRoute: EtablissementsRoute,
   McpRoute: McpRoute,
   PrestatairesRoute: PrestatairesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
