@@ -28,6 +28,7 @@ import {
   type DemandeHistorique,
   type DemandeStatut,
 } from "@/lib/demandes";
+import { fetchPrestataires } from "@/lib/prestataires";
 
 export const Route = createFileRoute("/demandes/$id")({
   component: FicheDemande,
@@ -97,6 +98,7 @@ function FicheDemande() {
   const { user, hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
   const [technicienId, setTechnicienId] = useState("");
+  const [prestataireId, setPrestataireId] = useState("none");
 
   const isResponsable = hasAnyRole(["super_admin", "responsable_maintenance"]);
 
