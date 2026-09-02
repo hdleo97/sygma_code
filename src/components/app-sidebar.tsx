@@ -10,6 +10,8 @@ import {
 
   CalendarClock,
   Users,
+  Building,
+  Building2,
   FileBarChart,
   Settings,
   LogOut,
@@ -40,7 +42,10 @@ type ModuleItem = {
     | "/stocks"
     | "/sorties"
     | "/preventif"
-    | "/commandes";
+    | "/commandes"
+    | "/techniciens"
+    | "/prestataires"
+    | "/etablissements";
 
   roles: AppRole[] | "all";
 };
@@ -135,7 +140,28 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Techniciens",
+    url: "/techniciens",
     icon: Users,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+    ],
+  },
+  {
+    title: "Prestataires",
+    url: "/prestataires",
+    icon: Building,
+    roles: [
+      "super_admin",
+      "responsable_maintenance",
+      "responsable_etablissement",
+    ],
+  },
+  {
+    title: "Établissements",
+    url: "/etablissements",
+    icon: Building2,
     roles: [
       "super_admin",
       "responsable_maintenance",
