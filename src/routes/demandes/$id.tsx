@@ -152,17 +152,28 @@ function FicheDemande() {
     enabled: isResponsable,
   });
 
+  const { data: prestataires } = useQuery({
+    queryKey: ["prestataires-di"],
+    queryFn: () => fetchPrestataires(),
+  });
+
   const changeStatut = useMutation({
     mutationFn: async ({
       statut,
       technicien,
+      prestataire,
     }: {
       statut: DemandeStatut;
       technicien?: string | null;
+      prestataire?: string | null;
     }) => {
-      const payload: { statut: DemandeStatut; technicien_id?: string | null } =
-        { statut };
+      const payload: {
+        statut: DemandeStatut;
+        technicien_id?: string | null;
+        prestataire_id?: string | null;
+      } = { statut };
       if (technicien !== undefined) payload.technicien_id = technicien;
+      if (prestataire !== undefined) payload.prestataire_id = prestataire;
       const { error } = await supabase
         .from("demandes_intervention")
         .update(payload)
