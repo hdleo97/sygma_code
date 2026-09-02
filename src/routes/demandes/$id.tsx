@@ -281,6 +281,14 @@ function FicheDemande() {
                 value={personName(data.technicien)}
               />
               <Info
+                label="Prestataire externe"
+                value={
+                  (prestataires ?? []).find(
+                    (p) => p.id === data.prestataire_id,
+                  )?.raison_sociale ?? "—"
+                }
+              />
+              <Info
                 label="Dernière mise à jour"
                 value={formatDateTime(data.updated_at)}
               />
