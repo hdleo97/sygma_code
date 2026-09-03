@@ -114,6 +114,21 @@ function FicheIntervention() {
     },
   });
 
+  // Portail prestataire : la fiche prestataire liée au compte connecté.
+  const { data: monPrestataireId } = useQuery({
+    queryKey: ["mon-prestataire", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("prestataires")
+        .select("id")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.id ?? null;
+    },
+  });
+
   useEffect(() => {
     if (data) {
       setDebut(toLocalInput(data.date_debut));
