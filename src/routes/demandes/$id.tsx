@@ -407,11 +407,16 @@ function FicheDemande() {
                 )}
                 {canDo("affectee") && (
                   <Button
-                    disabled={changeStatut.isPending || !technicienId}
+                    disabled={
+                      changeStatut.isPending ||
+                      (!technicienId && prestataireId === "none")
+                    }
                     onClick={() =>
                       changeStatut.mutate({
                         statut: "affectee",
-                        technicien: technicienId,
+                        technicien: technicienId || null,
+                        prestataire:
+                          prestataireId === "none" ? null : prestataireId,
                       })
                     }
                   >
