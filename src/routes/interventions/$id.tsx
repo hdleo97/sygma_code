@@ -67,6 +67,7 @@ type Row = Intervention & {
     technicien_id: string;
     profils_utilisateurs: { nom: string | null; prenom: string | null } | null;
   }[];
+  prestataires: { raison_sociale: string; specialite: string | null } | null;
 };
 
 function Info({ label, value }: { label: string; value: string }) {
@@ -104,12 +105,27 @@ function FicheIntervention() {
       const { data, error } = await supabase
         .from("interventions")
         .select(
-          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
+          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), prestataires(raison_sociale, specialite), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
         )
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
       return data as unknown as Row | null;
+    },
+  });
+
+  // Portail prestataire : la fiche prestataire liée au compte connecté.
+  const { data: monPrestataireId } = useQuery({
+    queryKey: ["mon-prestataire", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("prestataires")
+        .select("id")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.id ?? null;
     },
   });
 
@@ -208,9 +224,9 @@ function FicheIntervention() {
     );
   }
 
-  const isAffecte = data.intervention_techniciens.some(
-    (t) => t.technicien_id === user?.id,
-  );
+  const isAffecte =
+    data.intervention_techniciens.some((t) => t.technicien_id === user?.id) ||
+    (!!monPrestataireId && data.prestataire_id === monPrestataireId);
   const verrouille = data.statut === "signee";
   const canEdit = (isResponsable || isAffecte) && !verrouille;
   const dureeSaisie = computeDuree(fromLocalInput(debut), fromLocalInput(fin));
@@ -630,6 +646,10 @@ function FicheIntervention() {
                         )
                         .join(", ")
                 }
+              />
+              <Info
+                label="Prestataire externe"
+                value={data.prestataires?.raison_sociale ?? "—"}
               />
               <Info label="Créée le" value={formatDateTime(data.created_at)} />
             </dl>
