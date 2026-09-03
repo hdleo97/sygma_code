@@ -10,6 +10,7 @@ export type AppUserRow = {
   prenom: string | null;
   roles: string[];
   etablissements: string[];
+  actif: boolean;
 };
 
 const ROLES = [
@@ -56,14 +57,21 @@ export const listAppUsers = createServerFn({ method: "GET" })
         supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       ]);
 
-    const emails = new Map(
-      (authRes.data?.users ?? []).map((u) => [u.id, u.email ?? null]),
+    const authUsers = new Map(
+      (authRes.data?.users ?? []).map((u) => [
+        u.id,
+        {
+          email: u.email ?? null,
+          actif: !(u as { banned_until?: string | null }).banned_until,
+        },
+      ]),
     );
 
     return (profils ?? [])
       .map((p) => ({
         id: p.id,
-        email: emails.get(p.id) ?? null,
+        email: authUsers.get(p.id)?.email ?? null,
+        actif: authUsers.get(p.id)?.actif ?? true,
         nom: p.nom,
         prenom: p.prenom,
         roles: (roles ?? [])
