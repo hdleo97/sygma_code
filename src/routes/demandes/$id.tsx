@@ -371,6 +371,28 @@ function FicheDemande() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label>Prestataire externe (au lieu ou en plus)</Label>
+                    <Select
+                      value={prestataireId}
+                      onValueChange={setPrestataireId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Aucun" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">
+                          Aucun (équipe interne)
+                        </SelectItem>
+                        {(prestataires ?? []).map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.raison_sociale}
+                            {p.specialite ? ` — ${p.specialite}` : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               )}
 
