@@ -67,6 +67,7 @@ type Row = Intervention & {
     technicien_id: string;
     profils_utilisateurs: { nom: string | null; prenom: string | null } | null;
   }[];
+  prestataires: { raison_sociale: string; specialite: string | null } | null;
 };
 
 function Info({ label, value }: { label: string; value: string }) {
@@ -104,7 +105,7 @@ function FicheIntervention() {
       const { data, error } = await supabase
         .from("interventions")
         .select(
-          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
+          "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), prestataires(raison_sociale, specialite), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
         )
         .eq("id", id)
         .maybeSingle();
@@ -630,6 +631,10 @@ function FicheIntervention() {
                         )
                         .join(", ")
                 }
+              />
+              <Info
+                label="Prestataire externe"
+                value={data.prestataires?.raison_sociale ?? "—"}
               />
               <Info label="Créée le" value={formatDateTime(data.created_at)} />
             </dl>
