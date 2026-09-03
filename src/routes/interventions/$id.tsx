@@ -224,9 +224,9 @@ function FicheIntervention() {
     );
   }
 
-  const isAffecte = data.intervention_techniciens.some(
-    (t) => t.technicien_id === user?.id,
-  );
+  const isAffecte =
+    data.intervention_techniciens.some((t) => t.technicien_id === user?.id) ||
+    (!!monPrestataireId && data.prestataire_id === monPrestataireId);
   const verrouille = data.statut === "signee";
   const canEdit = (isResponsable || isAffecte) && !verrouille;
   const dureeSaisie = computeDuree(fromLocalInput(debut), fromLocalInput(fin));
