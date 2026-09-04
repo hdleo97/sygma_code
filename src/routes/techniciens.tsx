@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ComptesUtilisateurs } from "@/components/comptes-utilisateurs";
 import { useAuth } from "@/lib/auth-context";
 import { formatDuree } from "@/lib/interventions";
 import {
@@ -58,7 +59,8 @@ export const Route = createFileRoute("/techniciens")({
 });
 
 function TechniciensPage() {
-  const { currentEtablissementId } = useAuth();
+  const { currentEtablissementId, hasAnyRole } = useAuth();
+  const canAdmin = hasAnyRole(["super_admin", "responsable_maintenance"]);
   const queryClient = useQueryClient();
   const [edited, setEdited] = useState<Profil | null>(null);
 
@@ -99,6 +101,7 @@ function TechniciensPage() {
         <TabsList>
           <TabsTrigger value="equipe">Équipe</TabsTrigger>
           <TabsTrigger value="planning">Planning</TabsTrigger>
+          {canAdmin && <TabsTrigger value="comptes">Comptes</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="equipe" className="mt-4">
@@ -235,6 +238,11 @@ function TechniciensPage() {
             );
           })}
         </TabsContent>
+        {canAdmin && (
+          <TabsContent value="comptes" className="mt-4">
+            <ComptesUtilisateurs />
+          </TabsContent>
+        )}
       </Tabs>
 
       <EditDialog
