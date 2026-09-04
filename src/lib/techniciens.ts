@@ -38,16 +38,23 @@ export function profilName(p: {
 
 /** Techniciens internes (rôles technicien / prestataire) avec leur profil complet. */
 export async function fetchTechnicienProfils(): Promise<Profil[]> {
-  const { data, error } = await supabase
+  const { data: roles, error: rolesError } = await supabase
     .from("user_roles")
-    .select("user_id, profils_utilisateurs(*)")
+    .select("user_id")
     .in("role", ["technicien", "prestataire"]);
-  if (error) throw error;
-  const profils = (data ?? [])
-    .map((r) => r.profils_utilisateurs as unknown as Profil | null)
-    .filter((p): p is Profil => !!p);
+  if (rolesError) throw rolesError;
+
+  const ids = [...new Set((roles ?? []).map((r) => r.user_id))];
+  if (ids.length === 0) return [];
+
+  const { data: profils, error: profilsError } = await supabase
+    .from("profils_utilisateurs")
+    .select("*")
+    .in("id", ids);
+  if (profilsError) throw profilsError;
+
   const seen = new Set<string>();
-  return profils
+  return (profils ?? [])
     .filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)))
     .sort((a, b) => profilName(a).localeCompare(profilName(b)));
 }
