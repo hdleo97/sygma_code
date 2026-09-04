@@ -101,12 +101,22 @@ export function technicienName(t: TechnicienOption): string {
 }
 
 export async function fetchTechniciens(): Promise<TechnicienOption[]> {
-  const { data, error } = await supabase
+  const { data: roles, error: rolesError } = await supabase
     .from("user_roles")
-    .select("user_id, profils_utilisateurs(id, nom, prenom)")
+    .select("user_id")
     .in("role", ["technicien", "prestataire"]);
-  if (error) throw error;
-  return (data ?? [])
-    .map((r) => r.profils_utilisateurs as unknown as TechnicienOption | null)
-    .filter((p): p is TechnicienOption => !!p);
+  if (rolesError) throw rolesError;
+
+  const ids = [...new Set((roles ?? []).map((r) => r.user_id))];
+  if (ids.length === 0) return [];
+
+  const { data: profils, error: profilsError } = await supabase
+    .from("profils_utilisateurs")
+    .select("id, nom, prenom")
+    .in("id", ids);
+  if (profilsError) throw profilsError;
+
+  return (profils ?? []).sort((a, b) =>
+    technicienName(a).localeCompare(technicienName(b)),
+  );
 }
