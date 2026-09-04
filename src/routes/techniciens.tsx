@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ComptesUtilisateurs } from "@/components/comptes-utilisateurs";
 import { useAuth } from "@/lib/auth-context";
 import { formatDuree } from "@/lib/interventions";
 import {
