@@ -106,7 +106,7 @@ function FicheDemandeSortie() {
     if (data) {
       setQuantites(
         Object.fromEntries(
-          data.demandes_sortie_lignes.map((l) => [
+          (data.demandes_sortie_lignes ?? []).map((l) => [
             l.id,
             String(l.quantite_sortie ?? l.quantite_demandee),
           ]),
@@ -193,7 +193,7 @@ function FicheDemandeSortie() {
     );
   }
 
-  const bon = data.bons_sortie[0];
+  const bon = data.bons_sortie?.[0];
   const peutValider = isResponsable && data.statut === "demande_creee";
   const peutTraiter = isGestionnaire && data.statut === "validee";
 
@@ -298,7 +298,7 @@ function FicheDemandeSortie() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.demandes_sortie_lignes.map((l) => (
+              {(data.demandes_sortie_lignes ?? []).map((l) => (
                 <TableRow key={l.id}>
                   <TableCell>
                     <div className="font-medium text-foreground">
