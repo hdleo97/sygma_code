@@ -41,7 +41,8 @@ export const Route = createFileRoute("/sorties/")({
 });
 
 function Carte({ d }: { d: DemandeSortieDetail }) {
-  const bon = d.bons_sortie[0];
+  const bon = d.bons_sortie?.[0];
+  const lignes = d.demandes_sortie_lignes ?? [];
   return (
     <Link
       to="/sorties/$id"
@@ -69,9 +70,9 @@ function Carte({ d }: { d: DemandeSortieDetail }) {
         </span>
       </div>
       <p className="mt-2 text-sm font-medium text-foreground">
-        {d.demandes_sortie_lignes.length} pièce
-        {d.demandes_sortie_lignes.length > 1 ? "s" : ""} —{" "}
-        {d.demandes_sortie_lignes
+        {lignes.length} pièce
+        {lignes.length > 1 ? "s" : ""} —{" "}
+        {lignes
           .map((l) => l.pieces?.code_article ?? "?")
           .join(", ")}
       </p>
