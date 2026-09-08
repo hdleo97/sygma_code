@@ -70,8 +70,8 @@ export const Route = createFileRoute("/")({
 });
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--destructive))",
+  "var(--primary)",
+  "var(--destructive)",
   "#64748b",
   "#0ea5e9",
   "#f59e0b",
@@ -97,20 +97,36 @@ function Kpi({
   hint?: string;
 }) {
   return (
-    <Card>
-      <CardContent className="flex items-start gap-3 p-4">
-        <div className="rounded-md bg-primary/10 p-2 text-primary">
-          <Icon className="h-5 w-5" />
+    <Card className="h-full">
+      <CardContent className="flex h-full flex-col gap-2 p-4">
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-primary/10 p-1.5 text-primary">
+            <Icon className="h-4 w-4" />
+          </span>
+          <p className="text-xs leading-tight text-muted-foreground">{label}</p>
         </div>
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="text-2xl font-semibold tracking-tight">{value}</p>
-          {hint ? (
-            <p className="text-xs text-muted-foreground">{hint}</p>
-          ) : null}
-        </div>
+        <p className="truncate text-2xl font-semibold tracking-tight">
+          {value}
+        </p>
+        {hint ? (
+          <p className="mt-auto text-xs leading-tight text-muted-foreground">
+            {hint}
+          </p>
+        ) : null}
       </CardContent>
     </Card>
+  );
+}
+
+function hasData(rows: { value: number }[] | undefined): boolean {
+  return !!rows && rows.some((r) => r.value > 0);
+}
+
+function EmptyChart() {
+  return (
+    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+      Aucune donnée sur la période sélectionnée.
+    </div>
   );
 }
 
@@ -130,6 +146,7 @@ function ChartCard({
     </Card>
   );
 }
+
 
 function Dashboard() {
   const {
