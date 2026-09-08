@@ -348,7 +348,7 @@ function Dashboard() {
         </Card>
       ) : kpis ? (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
             <Kpi
               icon={ClipboardList}
               label="Demandes d'intervention"
@@ -367,14 +367,18 @@ function Dashboard() {
               value={
                 kpis.mttrMinutes === null
                   ? "—"
-                  : `${Math.floor(kpis.mttrMinutes / 60)} h ${kpis.mttrMinutes % 60} min`
+                  : `${Math.floor(kpis.mttrMinutes / 60)} h ${String(kpis.mttrMinutes % 60).padStart(2, "0")}`
               }
               hint="durée moyenne de réparation"
             />
             <Kpi
               icon={Activity}
               label="MTBF"
-              value={kpis.mtbfHeures === null ? "—" : `${kpis.mtbfHeures} h`}
+              value={
+                kpis.mtbfHeures === null
+                  ? "—"
+                  : `${kpis.mtbfHeures.toLocaleString("fr-FR")} h`
+              }
               hint="temps moyen entre pannes"
             />
             <Kpi
@@ -393,121 +397,222 @@ function Dashboard() {
 
           <div className="grid gap-4 lg:grid-cols-2">
             <ChartCard title="Demandes d'intervention par statut">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={kpis.diParStatut}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="name" fontSize={11} interval={0} angle={-20} dy={8} height={50} />
-                  <YAxis allowDecimals={false} fontSize={11} />
-                  <Tooltip />
-                  <Bar dataKey="value" fill={COLORS[0]} radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              {hasData(kpis.diParStatut) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={kpis.diParStatut}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 16 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis
+                      dataKey="name"
+                      fontSize={10}
+                      interval={0}
+                      angle={-30}
+                      textAnchor="end"
+                      height={56}
+                    />
+                    <YAxis allowDecimals={false} fontSize={11} width={28} />
+                    <Tooltip />
+                    <Bar
+                      dataKey="value"
+                      fill={COLORS[0]}
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
             </ChartCard>
 
             <ChartCard title="Interventions par type">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={kpis.parNature}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={50}
-                    outerRadius={85}
-                    label
-                  >
-                    {kpis.parNature.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              {hasData(kpis.parNature) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={kpis.parNature}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={42}
+                      outerRadius={70}
+                      paddingAngle={2}
+                    >
+                      {kpis.parNature.map((_, i) => (
+                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Legend verticalAlign="bottom" height={24} />
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
             </ChartCard>
 
             <ChartCard title="Interventions par statut">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={kpis.parStatutIntervention}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={85}
-                    label
-                  >
-                    {kpis.parStatutIntervention.map((_, i) => (
-                      <Cell key={i} fill={COLORS[(i + 2) % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              {hasData(kpis.parStatutIntervention) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={kpis.parStatutIntervention.filter(
+                        (s) => s.value > 0,
+                      )}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={70}
+                      paddingAngle={2}
+                    >
+                      {kpis.parStatutIntervention
+                        .filter((s) => s.value > 0)
+                        .map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={COLORS[(i + 2) % COLORS.length]}
+                          />
+                        ))}
+                    </Pie>
+                    <Legend verticalAlign="bottom" height={24} />
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
             </ChartCard>
 
             <ChartCard title="Taux de réalisation du plan préventif">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  innerRadius="65%"
-                  outerRadius="100%"
-                  startAngle={210}
-                  endAngle={-30}
-                  data={[{ name: "Réalisé", value: kpis.tauxPreventif, fill: COLORS[0] }]}
-                >
-                  <RadialBar background dataKey="value" cornerRadius={8} />
-                  <Tooltip />
-                </RadialBarChart>
-              </ResponsiveContainer>
+              <div className="relative h-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    innerRadius="68%"
+                    outerRadius="98%"
+                    startAngle={210}
+                    endAngle={-30}
+                    barSize={18}
+                    data={[
+                      {
+                        name: "Réalisé",
+                        value: kpis.tauxPreventif,
+                        fill: COLORS[0],
+                      },
+                    ]}
+                  >
+                    <YAxis
+                      type="number"
+                      domain={[0, 100]}
+                      tick={false}
+                      axisLine={false}
+                      hide
+                    />
+                    <RadialBar background dataKey="value" cornerRadius={9} />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-semibold tracking-tight">
+                    {kpis.tauxPreventif} %
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {kpis.preventifRealisees}/{kpis.preventifTotal} réalisées
+                  </span>
+                </div>
+              </div>
             </ChartCard>
 
             <ChartCard title="Interventions par technicien">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={kpis.parTechnicien} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis type="number" allowDecimals={false} fontSize={11} />
-                  <YAxis type="category" dataKey="name" width={110} fontSize={11} />
-                  <Tooltip />
-                  <Bar dataKey="value" fill={COLORS[3]} radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              {hasData(kpis.parTechnicien) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={kpis.parTechnicien}
+                    layout="vertical"
+                    margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis type="number" allowDecimals={false} fontSize={11} />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={120}
+                      fontSize={11}
+                    />
+                    <Tooltip />
+                    <Bar
+                      dataKey="value"
+                      fill={COLORS[3]}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
             </ChartCard>
 
             <ChartCard title="Interventions par équipement">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={kpis.parEquipement} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis type="number" allowDecimals={false} fontSize={11} />
-                  <YAxis type="category" dataKey="name" width={140} fontSize={10} />
-                  <Tooltip />
-                  <Bar dataKey="value" fill={COLORS[5]} radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              {hasData(kpis.parEquipement) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={kpis.parEquipement}
+                    layout="vertical"
+                    margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis type="number" allowDecimals={false} fontSize={11} />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={150}
+                      fontSize={10}
+                    />
+                    <Tooltip />
+                    <Bar
+                      dataKey="value"
+                      fill={COLORS[5]}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
             </ChartCard>
 
             <ChartCard title="Évolution mensuelle des interventions">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={kpis.evolution}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="mois" fontSize={11} />
-                  <YAxis allowDecimals={false} fontSize={11} />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="curative"
-                    name="Curative"
-                    stroke={COLORS[1]}
-                    strokeWidth={2}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="preventive"
-                    name="Préventive"
-                    stroke={COLORS[0]}
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {kpis.evolution.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={kpis.evolution}
+                    margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis dataKey="mois" fontSize={11} />
+                    <YAxis allowDecimals={false} fontSize={11} width={28} />
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" height={24} />
+                    <Line
+                      type="monotone"
+                      dataKey="curative"
+                      name="Curative"
+                      stroke={COLORS[1]}
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="preventive"
+                      name="Préventive"
+                      stroke={COLORS[0]}
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart />
+              )}
+            </ChartCard>
+
             </ChartCard>
 
             <Card>
