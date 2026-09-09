@@ -613,7 +613,7 @@ function Dashboard() {
               )}
             </ChartCard>
 
-            </ChartCard>
+
 
             <Card>
               <CardHeader className="pb-2">
