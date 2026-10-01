@@ -1213,6 +1213,73 @@ export type Database = {
           },
         ]
       }
+      rapports_generes: {
+        Row: {
+          created_at: string
+          equipement_id: string | null
+          etablissement_id: string | null
+          fichier_path: string
+          filtres: Json
+          format: string
+          genere_par: string | null
+          id: string
+          periode_debut: string | null
+          periode_fin: string | null
+          titre: string
+          type: Database["public"]["Enums"]["rapport_type"]
+        }
+        Insert: {
+          created_at?: string
+          equipement_id?: string | null
+          etablissement_id?: string | null
+          fichier_path: string
+          filtres?: Json
+          format?: string
+          genere_par?: string | null
+          id?: string
+          periode_debut?: string | null
+          periode_fin?: string | null
+          titre: string
+          type: Database["public"]["Enums"]["rapport_type"]
+        }
+        Update: {
+          created_at?: string
+          equipement_id?: string | null
+          etablissement_id?: string | null
+          fichier_path?: string
+          filtres?: Json
+          format?: string
+          genere_par?: string | null
+          id?: string
+          periode_debut?: string | null
+          periode_fin?: string | null
+          titre?: string
+          type?: Database["public"]["Enums"]["rapport_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rapports_generes_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rapports_generes_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rapports_generes_genere_par_fkey"
+            columns: ["genere_par"]
+            isOneToOne: false
+            referencedRelation: "profils_utilisateurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_mouvements: {
         Row: {
           created_at: string
@@ -1616,6 +1683,11 @@ export type Database = {
       intervention_statut: "planifiee" | "en_cours" | "terminee" | "signee"
       periodicite_type: "temps" | "compteur"
       piece_etat: "neuf" | "fonctionnel" | "hors_service"
+      rapport_type:
+        | "intervention"
+        | "visite_quotidienne"
+        | "mensuel_preventif"
+        | "personnalise"
       stock_mouvement_origine: "commande_achat" | "cannibalisation" | "autre"
       stock_mouvement_type: "entree" | "sortie" | "ajustement"
     }
@@ -1783,6 +1855,12 @@ export const Constants = {
       intervention_statut: ["planifiee", "en_cours", "terminee", "signee"],
       periodicite_type: ["temps", "compteur"],
       piece_etat: ["neuf", "fonctionnel", "hors_service"],
+      rapport_type: [
+        "intervention",
+        "visite_quotidienne",
+        "mensuel_preventif",
+        "personnalise",
+      ],
       stock_mouvement_origine: ["commande_achat", "cannibalisation", "autre"],
       stock_mouvement_type: ["entree", "sortie", "ajustement"],
     },
