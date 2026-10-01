@@ -117,7 +117,7 @@ function EquipementsListe() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <ExportMenu disabled={rows.length === 0} onExport={(f) => exportRows(rows.map((e) => ({ Référence: e.reference, Désignation: e.designation, Catégorie: e.categorie ?? "", Zone: e.zone ?? "", Marque: e.marque ?? "", Modèle: e.modele ?? "", "N° série": e.numero_serie ?? "", "Mise en service": e.date_mise_en_service ?? "", Fournisseur: e.fournisseur ?? "", Statut: e.statut })), f, "Parc équipements")} />
+          <ExportMenu disabled={rows.length === 0} onExport={(f) => exportRows(rows.map((e) => ({ Référence: e.reference, Désignation: e.designation, Catégorie: e.categorie ?? "", Zone: e.zone ?? "", Marque: e.marque ?? "", Modèle: e.modele ?? "", "N° série": e.numero_serie ?? "", "Mise en service": e.date_mise_en_service ?? "", Fournisseur: e.fournisseur ?? "", Statut: statutLabel(e.statut) })), f, "Parc équipements")} />
           <Button asChild>
           <Link to="/equipements/nouveau">
             <Plus className="mr-2 h-4 w-4" />
