@@ -3,6 +3,9 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { Loader2, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { ExportMenu } from "@/components/export-menu";
+import { exportRows, fmtDate } from "@/lib/exports";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -138,12 +141,15 @@ function DemandesListe() {
             {rows.length} demande{rows.length > 1 ? "s" : ""}
           </p>
         </div>
-        <Button asChild>
+        <div className="flex flex-wrap gap-2">
+          <ExportMenu disabled={rows.length === 0} onExport={(f) => exportRows(rows.map((d) => ({ Date: fmtDate(d.created_at), Équipement: d.equipements ? `${d.equipements.reference} — ${d.equipements.designation}` : "", Description: d.description, Priorité: prioriteDiLabel(d.priorite), Statut: statutDiLabel(d.statut), Localisation: d.localisation ?? "", Demandeur: personName(d.demandeur), Technicien: personName(d.technicien) })), f, "Demandes d'intervention")} />
+          <Button asChild>
           <Link to="/demandes/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle demande
           </Link>
         </Button>
+        </div>
       </div>
 
       <Tabs value={vue} onValueChange={setVue} className="mb-4">
