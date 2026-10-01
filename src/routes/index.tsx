@@ -20,6 +20,7 @@ import {
   LineChart,
   Pie,
   PieChart,
+  PolarAngleAxis,
   RadialBar,
   RadialBarChart,
   ResponsiveContainer,
@@ -499,12 +500,11 @@ function Dashboard() {
                       },
                     ]}
                   >
-                    <YAxis
+                    <PolarAngleAxis
                       type="number"
                       domain={[0, 100]}
                       tick={false}
-                      axisLine={false}
-                      hide
+                      angleAxisId={0}
                     />
                     <RadialBar background dataKey="value" cornerRadius={9} />
                   </RadialBarChart>
