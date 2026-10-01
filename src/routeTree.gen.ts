@@ -9,63 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TechniciensRouteImport } from './routes/techniciens'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrestatairesRouteImport } from './routes/prestataires'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as EtablissementsRouteImport } from './routes/etablissements'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StocksIndexRouteImport } from './routes/stocks/index'
-import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
-import { Route as PreventifIndexRouteImport } from './routes/preventif/index'
-import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
-import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
-import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
-import { Route as CommandesIndexRouteImport } from './routes/commandes/index'
-import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
-import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
-import { Route as SortiesNouvelleRouteImport } from './routes/sorties/nouvelle'
-import { Route as SortiesIdRouteImport } from './routes/sorties/$id'
-import { Route as PreventifVisiteRouteImport } from './routes/preventif/visite'
-import { Route as PreventifNouveauRouteImport } from './routes/preventif/nouveau'
-import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
-import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
-import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
-import { Route as DemandesNouvelleRouteImport } from './routes/demandes/nouvelle'
-import { Route as DemandesIdRouteImport } from './routes/demandes/$id'
-import { Route as CommandesNouvelleRouteImport } from './routes/commandes/nouvelle'
-import { Route as CommandesIdRouteImport } from './routes/commandes/$id'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as EtablissementsRouteImport } from './routes/etablissements'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as PrestatairesRouteImport } from './routes/prestataires'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as TechniciensRouteImport } from './routes/techniciens'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as CommandesIndexRouteImport } from './routes/commandes/index'
+import { Route as CommandesIdRouteImport } from './routes/commandes/$id'
+import { Route as CommandesNouvelleRouteImport } from './routes/commandes/nouvelle'
+import { Route as DemandesIndexRouteImport } from './routes/demandes/index'
+import { Route as DemandesIdRouteImport } from './routes/demandes/$id'
+import { Route as DemandesNouvelleRouteImport } from './routes/demandes/nouvelle'
+import { Route as EquipementsIndexRouteImport } from './routes/equipements/index'
+import { Route as EquipementsNouveauRouteImport } from './routes/equipements/nouveau'
+import { Route as InterventionsIndexRouteImport } from './routes/interventions/index'
+import { Route as InterventionsIdRouteImport } from './routes/interventions/$id'
+import { Route as InterventionsNouvelleRouteImport } from './routes/interventions/nouvelle'
+import { Route as PreventifIndexRouteImport } from './routes/preventif/index'
+import { Route as PreventifNouveauRouteImport } from './routes/preventif/nouveau'
+import { Route as PreventifVisiteRouteImport } from './routes/preventif/visite'
+import { Route as SortiesIndexRouteImport } from './routes/sorties/index'
+import { Route as SortiesIdRouteImport } from './routes/sorties/$id'
+import { Route as SortiesNouvelleRouteImport } from './routes/sorties/nouvelle'
+import { Route as StocksIndexRouteImport } from './routes/stocks/index'
+import { Route as StocksAjustementRouteImport } from './routes/stocks/ajustement'
+import { Route as StocksEntreeRouteImport } from './routes/stocks/entree'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as EquipementsIdIndexRouteImport } from './routes/equipements/$id/index'
 import { Route as EquipementsIdModifierRouteImport } from './routes/equipements/$id/modifier'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
-const TechniciensRoute = TechniciensRouteImport.update({
-  id: '/techniciens',
-  path: '/techniciens',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrestatairesRoute = PrestatairesRouteImport.update({
-  id: '/prestataires',
-  path: '/prestataires',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EtablissementsRoute = EtablissementsRouteImport.update({
-  id: '/etablissements',
-  path: '/etablissements',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -73,104 +53,46 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const EtablissementsRoute = EtablissementsRouteImport.update({
+  id: '/etablissements',
+  path: '/etablissements',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StocksIndexRoute = StocksIndexRouteImport.update({
-  id: '/stocks/',
-  path: '/stocks/',
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SortiesIndexRoute = SortiesIndexRouteImport.update({
-  id: '/sorties/',
-  path: '/sorties/',
+const PrestatairesRoute = PrestatairesRouteImport.update({
+  id: '/prestataires',
+  path: '/prestataires',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PreventifIndexRoute = PreventifIndexRouteImport.update({
-  id: '/preventif/',
-  path: '/preventif/',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
-  id: '/interventions/',
-  path: '/interventions/',
+const TechniciensRoute = TechniciensRouteImport.update({
+  id: '/techniciens',
+  path: '/techniciens',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
-  id: '/equipements/',
-  path: '/equipements/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemandesIndexRoute = DemandesIndexRouteImport.update({
-  id: '/demandes/',
-  path: '/demandes/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CommandesIndexRoute = CommandesIndexRouteImport.update({
   id: '/commandes/',
   path: '/commandes/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StocksEntreeRoute = StocksEntreeRouteImport.update({
-  id: '/stocks/entree',
-  path: '/stocks/entree',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StocksAjustementRoute = StocksAjustementRouteImport.update({
-  id: '/stocks/ajustement',
-  path: '/stocks/ajustement',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SortiesNouvelleRoute = SortiesNouvelleRouteImport.update({
-  id: '/sorties/nouvelle',
-  path: '/sorties/nouvelle',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SortiesIdRoute = SortiesIdRouteImport.update({
-  id: '/sorties/$id',
-  path: '/sorties/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreventifVisiteRoute = PreventifVisiteRouteImport.update({
-  id: '/preventif/visite',
-  path: '/preventif/visite',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreventifNouveauRoute = PreventifNouveauRouteImport.update({
-  id: '/preventif/nouveau',
-  path: '/preventif/nouveau',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
-  id: '/interventions/nouvelle',
-  path: '/interventions/nouvelle',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InterventionsIdRoute = InterventionsIdRouteImport.update({
-  id: '/interventions/$id',
-  path: '/interventions/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EquipementsNouveauRoute = EquipementsNouveauRouteImport.update({
-  id: '/equipements/nouveau',
-  path: '/equipements/nouveau',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemandesNouvelleRoute = DemandesNouvelleRouteImport.update({
-  id: '/demandes/nouvelle',
-  path: '/demandes/nouvelle',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemandesIdRoute = DemandesIdRouteImport.update({
-  id: '/demandes/$id',
-  path: '/demandes/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CommandesNouvelleRoute = CommandesNouvelleRouteImport.update({
-  id: '/commandes/nouvelle',
-  path: '/commandes/nouvelle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommandesIdRoute = CommandesIdRouteImport.update({
@@ -178,16 +100,105 @@ const CommandesIdRoute = CommandesIdRouteImport.update({
   path: '/commandes/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
+const CommandesNouvelleRoute = CommandesNouvelleRouteImport.update({
+  id: '/commandes/nouvelle',
+  path: '/commandes/nouvelle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemandesIndexRoute = DemandesIndexRouteImport.update({
+  id: '/demandes/',
+  path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemandesIdRoute = DemandesIdRouteImport.update({
+  id: '/demandes/$id',
+  path: '/demandes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemandesNouvelleRoute = DemandesNouvelleRouteImport.update({
+  id: '/demandes/nouvelle',
+  path: '/demandes/nouvelle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipementsIndexRoute = EquipementsIndexRouteImport.update({
+  id: '/equipements/',
+  path: '/equipements/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipementsNouveauRoute = EquipementsNouveauRouteImport.update({
+  id: '/equipements/nouveau',
+  path: '/equipements/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsIndexRoute = InterventionsIndexRouteImport.update({
+  id: '/interventions/',
+  path: '/interventions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsIdRoute = InterventionsIdRouteImport.update({
+  id: '/interventions/$id',
+  path: '/interventions/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterventionsNouvelleRoute = InterventionsNouvelleRouteImport.update({
+  id: '/interventions/nouvelle',
+  path: '/interventions/nouvelle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifIndexRoute = PreventifIndexRouteImport.update({
+  id: '/preventif/',
+  path: '/preventif/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifNouveauRoute = PreventifNouveauRouteImport.update({
+  id: '/preventif/nouveau',
+  path: '/preventif/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreventifVisiteRoute = PreventifVisiteRouteImport.update({
+  id: '/preventif/visite',
+  path: '/preventif/visite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SortiesIndexRoute = SortiesIndexRouteImport.update({
+  id: '/sorties/',
+  path: '/sorties/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SortiesIdRoute = SortiesIdRouteImport.update({
+  id: '/sorties/$id',
+  path: '/sorties/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SortiesNouvelleRoute = SortiesNouvelleRouteImport.update({
+  id: '/sorties/nouvelle',
+  path: '/sorties/nouvelle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StocksIndexRoute = StocksIndexRouteImport.update({
+  id: '/stocks/',
+  path: '/stocks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StocksAjustementRoute = StocksAjustementRouteImport.update({
+  id: '/stocks/ajustement',
+  path: '/stocks/ajustement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StocksEntreeRoute = StocksEntreeRouteImport.update({
+  id: '/stocks/entree',
+  path: '/stocks/entree',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
 const EquipementsIdIndexRoute = EquipementsIdIndexRouteImport.update({
@@ -198,17 +209,6 @@ const EquipementsIdIndexRoute = EquipementsIdIndexRouteImport.update({
 const EquipementsIdModifierRoute = EquipementsIdModifierRouteImport.update({
   id: '/equipements/$id/modifier',
   path: '/equipements/$id/modifier',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -464,39 +464,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/techniciens': {
-      id: '/techniciens'
-      path: '/techniciens'
-      fullPath: '/techniciens'
-      preLoaderRoute: typeof TechniciensRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prestataires': {
-      id: '/prestataires'
-      path: '/prestataires'
-      fullPath: '/prestataires'
-      preLoaderRoute: typeof PrestatairesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etablissements': {
-      id: '/etablissements'
-      path: '/etablissements'
-      fullPath: '/etablissements'
-      preLoaderRoute: typeof EtablissementsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -506,151 +478,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/etablissements': {
+      id: '/etablissements'
+      path: '/etablissements'
+      fullPath: '/etablissements'
+      preLoaderRoute: typeof EtablissementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stocks/': {
-      id: '/stocks/'
-      path: '/stocks'
-      fullPath: '/stocks/'
-      preLoaderRoute: typeof StocksIndexRouteImport
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sorties/': {
-      id: '/sorties/'
-      path: '/sorties'
-      fullPath: '/sorties/'
-      preLoaderRoute: typeof SortiesIndexRouteImport
+    '/prestataires': {
+      id: '/prestataires'
+      path: '/prestataires'
+      fullPath: '/prestataires'
+      preLoaderRoute: typeof PrestatairesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/preventif/': {
-      id: '/preventif/'
-      path: '/preventif'
-      fullPath: '/preventif/'
-      preLoaderRoute: typeof PreventifIndexRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/interventions/': {
-      id: '/interventions/'
-      path: '/interventions'
-      fullPath: '/interventions/'
-      preLoaderRoute: typeof InterventionsIndexRouteImport
+    '/techniciens': {
+      id: '/techniciens'
+      path: '/techniciens'
+      fullPath: '/techniciens'
+      preLoaderRoute: typeof TechniciensRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/equipements/': {
-      id: '/equipements/'
-      path: '/equipements'
-      fullPath: '/equipements/'
-      preLoaderRoute: typeof EquipementsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demandes/': {
-      id: '/demandes/'
-      path: '/demandes'
-      fullPath: '/demandes/'
-      preLoaderRoute: typeof DemandesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/commandes/': {
-      id: '/commandes/'
-      path: '/commandes'
-      fullPath: '/commandes/'
-      preLoaderRoute: typeof CommandesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stocks/entree': {
-      id: '/stocks/entree'
-      path: '/stocks/entree'
-      fullPath: '/stocks/entree'
-      preLoaderRoute: typeof StocksEntreeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stocks/ajustement': {
-      id: '/stocks/ajustement'
-      path: '/stocks/ajustement'
-      fullPath: '/stocks/ajustement'
-      preLoaderRoute: typeof StocksAjustementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sorties/nouvelle': {
-      id: '/sorties/nouvelle'
-      path: '/sorties/nouvelle'
-      fullPath: '/sorties/nouvelle'
-      preLoaderRoute: typeof SortiesNouvelleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sorties/$id': {
-      id: '/sorties/$id'
-      path: '/sorties/$id'
-      fullPath: '/sorties/$id'
-      preLoaderRoute: typeof SortiesIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/preventif/visite': {
-      id: '/preventif/visite'
-      path: '/preventif/visite'
-      fullPath: '/preventif/visite'
-      preLoaderRoute: typeof PreventifVisiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/preventif/nouveau': {
-      id: '/preventif/nouveau'
-      path: '/preventif/nouveau'
-      fullPath: '/preventif/nouveau'
-      preLoaderRoute: typeof PreventifNouveauRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/interventions/nouvelle': {
-      id: '/interventions/nouvelle'
-      path: '/interventions/nouvelle'
-      fullPath: '/interventions/nouvelle'
-      preLoaderRoute: typeof InterventionsNouvelleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/interventions/$id': {
-      id: '/interventions/$id'
-      path: '/interventions/$id'
-      fullPath: '/interventions/$id'
-      preLoaderRoute: typeof InterventionsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/equipements/nouveau': {
-      id: '/equipements/nouveau'
-      path: '/equipements/nouveau'
-      fullPath: '/equipements/nouveau'
-      preLoaderRoute: typeof EquipementsNouveauRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demandes/nouvelle': {
-      id: '/demandes/nouvelle'
-      path: '/demandes/nouvelle'
-      fullPath: '/demandes/nouvelle'
-      preLoaderRoute: typeof DemandesNouvelleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demandes/$id': {
-      id: '/demandes/$id'
-      path: '/demandes/$id'
-      fullPath: '/demandes/$id'
-      preLoaderRoute: typeof DemandesIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/commandes/nouvelle': {
-      id: '/commandes/nouvelle'
-      path: '/commandes/nouvelle'
-      fullPath: '/commandes/nouvelle'
-      preLoaderRoute: typeof CommandesNouvelleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/commandes/$id': {
-      id: '/commandes/$id'
-      path: '/commandes/$id'
-      fullPath: '/commandes/$id'
-      preLoaderRoute: typeof CommandesIdRouteImport
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
@@ -660,11 +527,158 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/commandes/': {
+      id: '/commandes/'
+      path: '/commandes'
+      fullPath: '/commandes/'
+      preLoaderRoute: typeof CommandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commandes/$id': {
+      id: '/commandes/$id'
+      path: '/commandes/$id'
+      fullPath: '/commandes/$id'
+      preLoaderRoute: typeof CommandesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commandes/nouvelle': {
+      id: '/commandes/nouvelle'
+      path: '/commandes/nouvelle'
+      fullPath: '/commandes/nouvelle'
+      preLoaderRoute: typeof CommandesNouvelleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demandes/': {
+      id: '/demandes/'
+      path: '/demandes'
+      fullPath: '/demandes/'
+      preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demandes/$id': {
+      id: '/demandes/$id'
+      path: '/demandes/$id'
+      fullPath: '/demandes/$id'
+      preLoaderRoute: typeof DemandesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demandes/nouvelle': {
+      id: '/demandes/nouvelle'
+      path: '/demandes/nouvelle'
+      fullPath: '/demandes/nouvelle'
+      preLoaderRoute: typeof DemandesNouvelleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipements/': {
+      id: '/equipements/'
+      path: '/equipements'
+      fullPath: '/equipements/'
+      preLoaderRoute: typeof EquipementsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipements/nouveau': {
+      id: '/equipements/nouveau'
+      path: '/equipements/nouveau'
+      fullPath: '/equipements/nouveau'
+      preLoaderRoute: typeof EquipementsNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/': {
+      id: '/interventions/'
+      path: '/interventions'
+      fullPath: '/interventions/'
+      preLoaderRoute: typeof InterventionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/$id': {
+      id: '/interventions/$id'
+      path: '/interventions/$id'
+      fullPath: '/interventions/$id'
+      preLoaderRoute: typeof InterventionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interventions/nouvelle': {
+      id: '/interventions/nouvelle'
+      path: '/interventions/nouvelle'
+      fullPath: '/interventions/nouvelle'
+      preLoaderRoute: typeof InterventionsNouvelleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/': {
+      id: '/preventif/'
+      path: '/preventif'
+      fullPath: '/preventif/'
+      preLoaderRoute: typeof PreventifIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/nouveau': {
+      id: '/preventif/nouveau'
+      path: '/preventif/nouveau'
+      fullPath: '/preventif/nouveau'
+      preLoaderRoute: typeof PreventifNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preventif/visite': {
+      id: '/preventif/visite'
+      path: '/preventif/visite'
+      fullPath: '/preventif/visite'
+      preLoaderRoute: typeof PreventifVisiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sorties/': {
+      id: '/sorties/'
+      path: '/sorties'
+      fullPath: '/sorties/'
+      preLoaderRoute: typeof SortiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sorties/$id': {
+      id: '/sorties/$id'
+      path: '/sorties/$id'
+      fullPath: '/sorties/$id'
+      preLoaderRoute: typeof SortiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sorties/nouvelle': {
+      id: '/sorties/nouvelle'
+      path: '/sorties/nouvelle'
+      fullPath: '/sorties/nouvelle'
+      preLoaderRoute: typeof SortiesNouvelleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stocks/': {
+      id: '/stocks/'
+      path: '/stocks'
+      fullPath: '/stocks/'
+      preLoaderRoute: typeof StocksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stocks/ajustement': {
+      id: '/stocks/ajustement'
+      path: '/stocks/ajustement'
+      fullPath: '/stocks/ajustement'
+      preLoaderRoute: typeof StocksAjustementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stocks/entree': {
+      id: '/stocks/entree'
+      path: '/stocks/entree'
+      fullPath: '/stocks/entree'
+      preLoaderRoute: typeof StocksEntreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipements/$id/': {
@@ -679,20 +693,6 @@ declare module '@tanstack/react-router' {
       path: '/equipements/$id/modifier'
       fullPath: '/equipements/$id/modifier'
       preLoaderRoute: typeof EquipementsIdModifierRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
