@@ -3,6 +3,9 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { Loader2, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { ExportMenu } from "@/components/export-menu";
+import { exportRows, fmtDate } from "@/lib/exports";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -112,12 +115,15 @@ function ListeInterventions() {
             Planification, exécution et rapports d'intervention.
           </p>
         </div>
-        <Button asChild>
+        <div className="flex flex-wrap gap-2">
+          <ExportMenu disabled={rows.length === 0} onExport={(f) => exportRows(rows.map((r) => ({ Créée: fmtDate(r.created_at), Équipement: r.equipements ? `${r.equipements.reference} — ${r.equipements.designation}` : "", Description: r.description, Nature: natureInterventionLabel(r.nature), Statut: statutInterventionLabel(r.statut), Début: fmtDate(r.date_debut), Fin: fmtDate(r.date_fin), Durée: formatDuree(r.duree_minutes), Techniciens: r.intervention_techniciens.map((t) => [t.profils_utilisateurs?.prenom, t.profils_utilisateurs?.nom].filter(Boolean).join(" ")).join(", ") })), f, "Historique des interventions")} />
+          <Button asChild>
           <Link to="/interventions/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle intervention
           </Link>
         </Button>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
