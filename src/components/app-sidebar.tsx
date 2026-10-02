@@ -45,7 +45,8 @@ type ModuleItem = {
     | "/commandes"
     | "/techniciens"
     | "/prestataires"
-    | "/etablissements";
+    | "/etablissements"
+    | "/rapports";
 
   roles: AppRole[] | "all";
 };
@@ -170,6 +171,7 @@ const modules: ModuleItem[] = [
   },
   {
     title: "Rapports",
+    url: "/rapports",
     icon: FileBarChart,
     roles: [
       "super_admin",

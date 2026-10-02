@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EtablissementsRouteImport } from './routes/etablissements'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PrestatairesRouteImport } from './routes/prestataires'
+import { Route as RapportsRouteImport } from './routes/rapports'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TechniciensRouteImport } from './routes/techniciens'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -42,6 +43,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as EquipementsIdIndexRouteImport } from './routes/equipements/$id/index'
 import { Route as EquipementsIdModifierRouteImport } from './routes/equipements/$id/modifier'
+import { Route as ApiPublicCronRapportMensuelRouteImport } from './routes/api/public/cron/rapport-mensuel'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +68,11 @@ const McpRoute = McpRouteImport.update({
 const PrestatairesRoute = PrestatairesRouteImport.update({
   id: '/prestataires',
   path: '/prestataires',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RapportsRoute = RapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -211,6 +218,12 @@ const EquipementsIdModifierRoute = EquipementsIdModifierRouteImport.update({
   path: '/equipements/$id/modifier',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronRapportMensuelRoute =
+  ApiPublicCronRapportMensuelRouteImport.update({
+    id: '/api/public/cron/rapport-mensuel',
+    path: '/api/public/cron/rapport-mensuel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -218,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
+  '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -246,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
+  '/api/public/cron/rapport-mensuel': typeof ApiPublicCronRapportMensuelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -253,6 +268,7 @@ export interface FileRoutesByTo {
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
+  '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -281,6 +297,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id': typeof EquipementsIdIndexRoute
+  '/api/public/cron/rapport-mensuel': typeof ApiPublicCronRapportMensuelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -289,6 +306,7 @@ export interface FileRoutesById {
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
   '/prestataires': typeof PrestatairesRoute
+  '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/techniciens': typeof TechniciensRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -317,6 +335,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/equipements/$id/modifier': typeof EquipementsIdModifierRoute
   '/equipements/$id/': typeof EquipementsIdIndexRoute
+  '/api/public/cron/rapport-mensuel': typeof ApiPublicCronRapportMensuelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -326,6 +345,7 @@ export interface FileRouteTypes {
     | '/etablissements'
     | '/mcp'
     | '/prestataires'
+    | '/rapports'
     | '/reset-password'
     | '/techniciens'
     | '/.mcp/list-tools'
@@ -354,6 +374,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
     | '/equipements/$id/'
+    | '/api/public/cron/rapport-mensuel'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -361,6 +382,7 @@ export interface FileRouteTypes {
     | '/etablissements'
     | '/mcp'
     | '/prestataires'
+    | '/rapports'
     | '/reset-password'
     | '/techniciens'
     | '/.mcp/list-tools'
@@ -389,6 +411,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
     | '/equipements/$id'
+    | '/api/public/cron/rapport-mensuel'
   id:
     | '__root__'
     | '/'
@@ -396,6 +419,7 @@ export interface FileRouteTypes {
     | '/etablissements'
     | '/mcp'
     | '/prestataires'
+    | '/rapports'
     | '/reset-password'
     | '/techniciens'
     | '/.mcp/list-tools'
@@ -424,6 +448,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/equipements/$id/modifier'
     | '/equipements/$id/'
+    | '/api/public/cron/rapport-mensuel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -432,6 +457,7 @@ export interface RootRouteChildren {
   EtablissementsRoute: typeof EtablissementsRoute
   McpRoute: typeof McpRoute
   PrestatairesRoute: typeof PrestatairesRoute
+  RapportsRoute: typeof RapportsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TechniciensRoute: typeof TechniciensRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
@@ -460,6 +486,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   EquipementsIdModifierRoute: typeof EquipementsIdModifierRoute
   EquipementsIdIndexRoute: typeof EquipementsIdIndexRoute
+  ApiPublicCronRapportMensuelRoute: typeof ApiPublicCronRapportMensuelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -497,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/prestataires'
       fullPath: '/prestataires'
       preLoaderRoute: typeof PrestatairesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rapports': {
+      id: '/rapports'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof RapportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -695,6 +729,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipementsIdModifierRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/rapport-mensuel': {
+      id: '/api/public/cron/rapport-mensuel'
+      path: '/api/public/cron/rapport-mensuel'
+      fullPath: '/api/public/cron/rapport-mensuel'
+      preLoaderRoute: typeof ApiPublicCronRapportMensuelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -704,6 +745,7 @@ const rootRouteChildren: RootRouteChildren = {
   EtablissementsRoute: EtablissementsRoute,
   McpRoute: McpRoute,
   PrestatairesRoute: PrestatairesRoute,
+  RapportsRoute: RapportsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   TechniciensRoute: TechniciensRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
@@ -733,6 +775,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   EquipementsIdModifierRoute: EquipementsIdModifierRoute,
   EquipementsIdIndexRoute: EquipementsIdIndexRoute,
+  ApiPublicCronRapportMensuelRoute: ApiPublicCronRapportMensuelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
