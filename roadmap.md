@@ -10,3 +10,11 @@
 - [x] Affectation d'une intervention à un prestataire (création + fiche)
 - [x] Portail prestataire (interventions affectées uniquement, rapport identique)
 - [x] Liens sidebar : Techniciens, Prestataires, Établissements
+
+## Rapports & notifications
+- [x] Table rapports_generes + stockage
+- [x] Bibliothèque de rapports (/rapports)
+- [x] Rapport personnalisé PDF/Excel
+- [x] Rapport mensuel automatique des visites (1er du mois)
+- [x] Exports Excel/CSV/PDF : DI, équipements, interventions
+- [ ] Notifications e-mail — bloqué : domaine e-mail à configurer
