@@ -37,6 +37,43 @@ async function assertAdmin(supabase: {
     }),
   ]);
   if (!a.data && !b.data) throw new Error("Accès refusé");
+  return { isSuper: !!a.data };
+}
+
+type AdminClient = Awaited<
+  typeof import("@/integrations/supabase/client.server")
+>["supabaseAdmin"];
+
+async function assertTargetAllowed(
+  admin: AdminClient,
+  isSuper: boolean,
+  targetId: string,
+) {
+  if (isSuper) return;
+  const { data } = await admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", targetId)
+    .eq("role", "super_admin");
+  if (data && data.length > 0) {
+    throw new Error("Seul un super admin peut modifier ce compte");
+  }
+}
+
+async function audit(
+  admin: AdminClient,
+  userId: string,
+  action: string,
+  recordId: string,
+  details: Record<string, unknown> = {},
+) {
+  await admin.from("audit_logs" as never).insert({
+    user_id: userId,
+    action,
+    table_name: "comptes",
+    record_id: recordId,
+    details,
+  } as never);
 }
 
 export const listAppUsers = createServerFn({ method: "GET" })
@@ -103,7 +140,10 @@ export const createAppUser = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase as never, context.userId);
+    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
+    if (!isSuper && data.roles.includes("super_admin")) {
+      throw new Error("Seul un super admin peut attribuer ce rôle");
+    }
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
@@ -136,6 +176,11 @@ export const createAppUser = createServerFn({ method: "POST" })
         })),
       );
     }
+    await audit(supabaseAdmin, context.userId, "creation_compte", uid, {
+      email: data.email,
+      roles: data.roles,
+      etablissements: data.etablissements,
+    });
     return { id: uid };
   });
 
@@ -153,10 +198,14 @@ export const updateAppUserAccess = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase as never, context.userId);
+    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
+    if (!isSuper && data.roles.includes("super_admin")) {
+      throw new Error("Seul un super admin peut attribuer ce rôle");
+    }
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
+    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
 
     if (data.nom !== undefined || data.prenom !== undefined) {
       await supabaseAdmin
@@ -184,6 +233,10 @@ export const updateAppUserAccess = createServerFn({ method: "POST" })
         })),
       );
     }
+    await audit(supabaseAdmin, context.userId, "modification_droits", data.userId, {
+      roles: data.roles,
+      etablissements: data.etablissements,
+    });
     return { ok: true };
   });
 
@@ -193,18 +246,25 @@ export const setAppUserActive = createServerFn({ method: "POST" })
     z.object({ userId: z.string().uuid(), active: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase as never, context.userId);
+    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
     if (data.userId === context.userId) {
       throw new Error("Vous ne pouvez pas désactiver votre propre compte");
     }
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
+    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
     const { error } = await supabaseAdmin.auth.admin.updateUserById(
       data.userId,
       { ban_duration: data.active ? "none" : "876000h" },
     );
     if (error) throw new Error(error.message);
+    await audit(
+      supabaseAdmin,
+      context.userId,
+      data.active ? "reactivation_compte" : "desactivation_compte",
+      data.userId,
+    );
     return { ok: true };
   });
 
@@ -212,14 +272,38 @@ export const deleteAppUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ userId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase as never, context.userId);
+    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
     if (data.userId === context.userId) {
       throw new Error("Vous ne pouvez pas supprimer votre propre compte");
     }
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
+    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
+    await audit(supabaseAdmin, context.userId, "suppression_compte", data.userId);
+    return { ok: true };
+  });
+
+export const resetAppUserPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({ userId: z.string().uuid(), password: z.string().min(8) })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(
+      data.userId,
+      { password: data.password },
+    );
+    if (error) throw new Error(error.message);
+    await audit(supabaseAdmin, context.userId, "reinitialisation_mot_de_passe", data.userId);
     return { ok: true };
   });

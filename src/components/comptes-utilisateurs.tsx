@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { KeyRound, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,6 +19,7 @@ import {
   createAppUser,
   deleteAppUser,
   listAppUsers,
+  resetAppUserPassword,
   setAppUserActive,
   updateAppUserAccess,
   type AppUserRow,
@@ -41,6 +42,18 @@ export function ComptesUtilisateurs() {
   const list = useServerFn(listAppUsers);
   const [creating, setCreating] = useState(false);
   const [edited, setEdited] = useState<AppUserRow | null>(null);
+  const resetFn = useServerFn(resetAppUserPassword);
+  const reset = useMutation({
+    mutationFn: resetFn,
+    onSuccess: () => {
+      toast.success("Mot de passe réinitialisé");
+      invalidateLog();
+    },
+    onError: (e: unknown) =>
+      toast.error(e instanceof Error ? e.message : "Réinitialisation impossible"),
+  });
+  const invalidateLog = () =>
+    void queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["app-users"],
@@ -50,6 +63,7 @@ export function ComptesUtilisateurs() {
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ["app-users"] });
     void queryClient.invalidateQueries({ queryKey: ["technicien-profils"] });
+    void queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
   };
 
   const toggleActive = useMutation({
@@ -166,6 +180,25 @@ export function ComptesUtilisateurs() {
                       </Button>
                       <Button
                         size="sm"
+                        variant="outline"
+                        title="Réinitialiser le mot de passe"
+                        disabled={reset.isPending}
+                        onClick={() => {
+                          const pwd = window.prompt(
+                            "Nouveau mot de passe provisoire (8 caractères minimum) :",
+                          );
+                          if (!pwd) return;
+                          if (pwd.length < 8) {
+                            toast.error("8 caractères minimum");
+                            return;
+                          }
+                          reset.mutate({ data: { userId: u.id, password: pwd } });
+                        }}
+                      >
+                        <KeyRound className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
                         variant="destructive"
                         disabled={remove.isPending}
                         onClick={() => {
@@ -220,7 +253,10 @@ function RolesEtabsFields({
   etabs: string[];
   setEtabs: (e: string[]) => void;
 }) {
-  const { etablissements } = useAuth();
+  const { etablissements, hasRole } = useAuth();
+  const roleOptions = hasRole("super_admin")
+    ? ROLE_LABELS
+    : ROLE_LABELS.filter((r) => r.value !== "super_admin");
   const toggle = <T,>(arr: T[], v: T) =>
     arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
 
@@ -229,7 +265,7 @@ function RolesEtabsFields({
       <div className="space-y-2">
         <Label>Rôles</Label>
         <div className="grid gap-2 sm:grid-cols-2">
-          {ROLE_LABELS.map((r) => (
+          {roleOptions.map((r) => (
             <label key={r.value} className="flex items-center gap-2 text-sm">
               <Checkbox
                 checked={roles.includes(r.value)}
