@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json
+          id: string
+          record_id: string | null
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json
+          id?: string
+          record_id?: string | null
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          record_id?: string | null
+          table_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bons_sortie: {
         Row: {
           created_at: string
@@ -849,6 +879,36 @@ export type Database = {
           },
         ]
       }
+      libelles_statuts: {
+        Row: {
+          code: string
+          couleur: string
+          created_at: string
+          domaine: string
+          id: string
+          libelle: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          couleur?: string
+          created_at?: string
+          domaine: string
+          id?: string
+          libelle: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          couleur?: string
+          created_at?: string
+          domaine?: string
+          id?: string
+          libelle?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       magasins: {
         Row: {
           created_at: string
@@ -886,6 +946,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      parametres_notifications: {
+        Row: {
+          actif: boolean
+          contenu: string
+          destinataires: string
+          evenement: string
+          libelle: string
+          sujet: string
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          contenu?: string
+          destinataires?: string
+          evenement: string
+          libelle: string
+          sujet?: string
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          contenu?: string
+          destinataires?: string
+          evenement?: string
+          libelle?: string
+          sujet?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      parametres_organisation: {
+        Row: {
+          id: number
+          logo_path: string | null
+          nom_organisation: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          logo_path?: string | null
+          nom_organisation?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          logo_path?: string | null
+          nom_organisation?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       pieces: {
         Row: {
@@ -1279,6 +1390,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referentiels: {
+        Row: {
+          actif: boolean
+          created_at: string
+          id: string
+          libelle: string
+          ordre: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          created_at?: string
+          id?: string
+          libelle: string
+          ordre?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          created_at?: string
+          id?: string
+          libelle?: string
+          ordre?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       stock_mouvements: {
         Row: {
