@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useReferentiels } from "@/lib/parametrage";
 import {
   STATUTS,
   uploadPhoto,
@@ -59,6 +60,7 @@ function initialState(
 
 export function EquipementForm({ equipement }: { equipement?: Equipement }) {
   const { etablissements, currentEtablissementId } = useAuth();
+  const { data: refs } = useReferentiels();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
