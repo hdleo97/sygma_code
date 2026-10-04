@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useReferentiels } from "@/lib/parametrage";
 import {
   STATUTS,
   uploadPhoto,
@@ -59,6 +60,7 @@ function initialState(
 
 export function EquipementForm({ equipement }: { equipement?: Equipement }) {
   const { etablissements, currentEtablissementId } = useAuth();
+  const { data: refs } = useReferentiels();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -163,6 +165,7 @@ export function EquipementForm({ equipement }: { equipement?: Equipement }) {
             id="categorie"
             value={form.categorie}
             onChange={(e) => set("categorie", e.target.value)}
+            list="ref-categories"
             placeholder="Utilités"
           />
         </div>
@@ -190,7 +193,18 @@ export function EquipementForm({ equipement }: { equipement?: Equipement }) {
             id="zone"
             value={form.zone}
             onChange={(e) => set("zone", e.target.value)}
+            list="ref-zones"
           />
+          <datalist id="ref-zones">
+            {(refs ?? []).filter((r) => r.type === "zone" && r.actif).map((r) => (
+              <option key={r.id} value={r.libelle} />
+            ))}
+          </datalist>
+          <datalist id="ref-categories">
+            {(refs ?? []).filter((r) => r.type === "categorie_equipement" && r.actif).map((r) => (
+              <option key={r.id} value={r.libelle} />
+            ))}
+          </datalist>
         </div>
         <div className="space-y-2">
           <Label>Statut</Label>

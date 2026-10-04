@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EtablissementsRouteImport } from './routes/etablissements'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as ParametrageRouteImport } from './routes/parametrage'
 import { Route as PrestatairesRouteImport } from './routes/prestataires'
 import { Route as RapportsRouteImport } from './routes/rapports'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -63,6 +64,11 @@ const EtablissementsRoute = EtablissementsRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParametrageRoute = ParametrageRouteImport.update({
+  id: '/parametrage',
+  path: '/parametrage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrestatairesRoute = PrestatairesRouteImport.update({
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
+  '/parametrage': typeof ParametrageRoute
   '/prestataires': typeof PrestatairesRoute
   '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -267,6 +274,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
+  '/parametrage': typeof ParametrageRoute
   '/prestataires': typeof PrestatairesRoute
   '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/etablissements': typeof EtablissementsRoute
   '/mcp': typeof McpRoute
+  '/parametrage': typeof ParametrageRoute
   '/prestataires': typeof PrestatairesRoute
   '/rapports': typeof RapportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -344,6 +353,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/etablissements'
     | '/mcp'
+    | '/parametrage'
     | '/prestataires'
     | '/rapports'
     | '/reset-password'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/etablissements'
     | '/mcp'
+    | '/parametrage'
     | '/prestataires'
     | '/rapports'
     | '/reset-password'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/etablissements'
     | '/mcp'
+    | '/parametrage'
     | '/prestataires'
     | '/rapports'
     | '/reset-password'
@@ -456,6 +468,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   EtablissementsRoute: typeof EtablissementsRoute
   McpRoute: typeof McpRoute
+  ParametrageRoute: typeof ParametrageRoute
   PrestatairesRoute: typeof PrestatairesRoute
   RapportsRoute: typeof RapportsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -517,6 +530,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parametrage': {
+      id: '/parametrage'
+      path: '/parametrage'
+      fullPath: '/parametrage'
+      preLoaderRoute: typeof ParametrageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prestataires': {
@@ -744,6 +764,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   EtablissementsRoute: EtablissementsRoute,
   McpRoute: McpRoute,
+  ParametrageRoute: ParametrageRoute,
   PrestatairesRoute: PrestatairesRoute,
   RapportsRoute: RapportsRoute,
   ResetPasswordRoute: ResetPasswordRoute,

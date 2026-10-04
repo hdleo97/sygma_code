@@ -4,6 +4,7 @@ import autoTable from "jspdf-autotable";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDuree, natureInterventionLabel, statutInterventionLabel } from "@/lib/interventions";
 import { PHASES } from "@/lib/rapport-phases";
+import { fetchLogoDataUrl, fetchOrganisation } from "@/lib/parametrage";
 
 function fmt(value: string | null): string {
   if (!value) return "—";
@@ -74,6 +75,8 @@ export async function exporterRapportPdf(interventionId: string): Promise<void> 
   if (opsError) throw opsError;
   const ops = (opsData ?? []) as unknown as OpRow[];
 
+  const org = await fetchOrganisation();
+  const logo = await fetchLogoDataUrl(org.logo_path);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const marge = 40;
   const largeur = doc.internal.pageSize.getWidth();
@@ -84,10 +87,21 @@ export async function exporterRapportPdf(interventionId: string): Promise<void> 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
-  doc.text("SYGMA", marge, 30);
+  let xTitre = marge;
+  if (logo) {
+    try {
+      doc.setFillColor(255, 255, 255);
+      doc.rect(marge - 4, 8, 56, 48, "F");
+      doc.addImage(logo, marge, 12, 48, 40, undefined, "FAST");
+      xTitre = marge + 62;
+    } catch {
+      /* logo illisible : on l'ignore */
+    }
+  }
+  doc.text(org.nom_organisation, xTitre, 30);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Rapport d'intervention", marge, 46);
+  doc.text("Rapport d'intervention", xTitre, 46);
   doc.text(
     `Édité le ${new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}`,
     largeur - marge,

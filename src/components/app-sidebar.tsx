@@ -46,7 +46,8 @@ type ModuleItem = {
     | "/techniciens"
     | "/prestataires"
     | "/etablissements"
-    | "/rapports";
+    | "/rapports"
+    | "/parametrage";
 
   roles: AppRole[] | "all";
 };
@@ -179,7 +180,12 @@ const modules: ModuleItem[] = [
       "responsable_etablissement",
     ],
   },
-  { title: "Paramétrage", icon: Settings, roles: ["super_admin"] },
+  {
+    title: "Paramétrage",
+    url: "/parametrage",
+    icon: Settings,
+    roles: ["super_admin", "responsable_maintenance"],
+  },
 ];
 
 export function AppSidebar() {
