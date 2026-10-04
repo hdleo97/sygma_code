@@ -123,12 +123,12 @@ export function ParametrageChecklists() {
       <div className="grid gap-4 lg:grid-cols-2">
         {PHASES.map((p) => {
           const list = (ops ?? []).filter(
-            (o) => o.phase === p.numero && o.categorie_equipement === catValue,
+            (o) => o.phase === p.value && o.categorie_equipement === catValue,
           );
           return (
-            <div key={p.numero} className="rounded-lg border border-border bg-card p-4">
+            <div key={p.value} className="rounded-lg border border-border bg-card p-4">
               <h3 className="mb-3 font-semibold text-foreground">
-                {p.numero}. {p.titre}
+                {p.value}. {p.label}
               </h3>
               <ul className="mb-3 space-y-2">
                 {list.length === 0 && (
@@ -166,15 +166,15 @@ export function ParametrageChecklists() {
               </ul>
               <div className="flex gap-2">
                 <Input
-                  value={drafts[p.numero] ?? ""}
+                  value={drafts[p.value] ?? ""}
                   onChange={(e) =>
-                    setDrafts((d) => ({ ...d, [p.numero]: e.target.value }))
+                    setDrafts((d) => ({ ...d, [p.value]: e.target.value }))
                   }
                   placeholder="Nouvelle opération"
                 />
                 <Button
-                  disabled={!(drafts[p.numero] ?? "").trim() || add.isPending}
-                  onClick={() => add.mutate(p.numero)}
+                  disabled={!(drafts[p.value] ?? "").trim() || add.isPending}
+                  onClick={() => add.mutate(p.value)}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
