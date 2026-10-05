@@ -75,7 +75,7 @@ function useEquipements() {
 
 function RapportsPage() {
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="min-w-0 space-y-6 overflow-x-hidden p-4 md:p-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Rapports</h1>
         <p className="text-sm text-muted-foreground">
@@ -157,47 +157,63 @@ function Bibliotheque() {
     }
   };
 
+  const filtresActifs = !!q || type !== "all" || etab !== "all" || equip !== "all" || !!du || !!au;
+  const reset = () => {
+    setQ(""); setType("all"); setEtab("all"); setEquip("all"); setDu(""); setAu("");
+  };
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+    <Card className="min-w-0">
+      <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-base">{rows.length} rapport(s)</CardTitle>
-        <Button variant="outline" onClick={genererMensuel} disabled={busy}>
+        <Button variant="outline" onClick={genererMensuel} disabled={busy} className="w-full sm:w-auto">
           {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CalendarRange className="mr-2 h-4 w-4" />}
-          Générer le mensuel du mois dernier
+          <span className="truncate">Générer le mensuel du mois dernier</span>
         </Button>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="relative lg:col-span-2">
+      <CardContent className="min-w-0 space-y-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className="relative col-span-full min-w-0 xl:col-span-1">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input className="pl-8" placeholder="Rechercher…" value={q} onChange={(e) => setQ(e.target.value)} />
+            <Input className="w-full min-w-0 pl-8" placeholder="Rechercher…" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
           <Select value={type} onValueChange={setType}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full min-w-0 [&>span]:truncate"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous les types</SelectItem>
               {RAPPORT_TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={etab} onValueChange={setEtab}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full min-w-0 [&>span]:truncate"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous établissements</SelectItem>
               {etablissements.map((e) => <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={equip} onValueChange={setEquip}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full min-w-0 [&>span]:truncate"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous équipements</SelectItem>
               {(equipements ?? []).map((e) => <SelectItem key={e.id} value={e.id}>{e.reference} — {e.designation}</SelectItem>)}
             </SelectContent>
           </Select>
-          <div className="flex gap-1">
-            <Input type="date" value={du} onChange={(e) => setDu(e.target.value)} aria-label="Du" />
-            <Input type="date" value={au} onChange={(e) => setAu(e.target.value)} aria-label="Au" />
+          <div className="grid min-w-0 grid-cols-1 gap-2 min-[400px]:grid-cols-2 sm:col-span-2 lg:col-span-1 xl:col-span-2">
+            <label className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="shrink-0">Du</span>
+              <Input type="date" className="w-full min-w-0" value={du} onChange={(e) => setDu(e.target.value)} aria-label="Du" />
+            </label>
+            <label className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="shrink-0">Au</span>
+              <Input type="date" className="w-full min-w-0" value={au} onChange={(e) => setAu(e.target.value)} aria-label="Au" />
+            </label>
           </div>
         </div>
+        {filtresActifs ? (
+          <div className="flex justify-end">
+            <Button variant="ghost" size="sm" onClick={reset}>Réinitialiser les filtres</Button>
+          </div>
+        ) : null}
 
         {isLoading ? (
           <Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" />
@@ -206,13 +222,13 @@ function Bibliotheque() {
         ) : (
           <div className="divide-y divide-border rounded-md border border-border">
             {rows.map((r) => (
-              <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 text-sm">
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 truncate font-medium">
+              <div key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2 text-sm">
+                <div className="min-w-0">
+                  <p className="flex min-w-0 items-center gap-2 font-medium">
                     <FileText className="h-4 w-4 shrink-0 text-primary" />
                     <span className="truncate">{r.titre}</span>
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="break-words text-xs text-muted-foreground">
                     {rapportTypeLabel(r.type)} · {r.format.toUpperCase()} · {fmtDate(r.created_at)}
                     {r.etablissements ? ` · ${r.etablissements.nom}` : ""}
                     {r.equipements ? ` · ${r.equipements.reference}` : ""}
@@ -222,8 +238,8 @@ function Bibliotheque() {
                       : "Automatique"}
                   </p>
                 </div>
-                <Button size="sm" variant="outline" onClick={() => ouvrir(r.fichier_path)}>
-                  <Download className="mr-1 h-4 w-4" /> Télécharger
+                <Button size="sm" variant="outline" onClick={() => ouvrir(r.fichier_path)} aria-label="Télécharger">
+                  <Download className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Télécharger</span>
                 </Button>
               </div>
             ))}
