@@ -1004,6 +1004,7 @@ export type Database = {
           code_article: string
           created_at: string
           designation: string
+          etablissement_id: string
           fournisseur: string | null
           id: string
           prix_unitaire: number | null
@@ -1015,6 +1016,7 @@ export type Database = {
           code_article: string
           created_at?: string
           designation: string
+          etablissement_id: string
           fournisseur?: string | null
           id?: string
           prix_unitaire?: number | null
@@ -1026,13 +1028,22 @@ export type Database = {
           code_article?: string
           created_at?: string
           designation?: string
+          etablissement_id?: string
           fournisseur?: string | null
           id?: string
           prix_unitaire?: number | null
           unite?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pieces_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plan_echeances: {
         Row: {
@@ -1175,7 +1186,7 @@ export type Database = {
           contrat_notes: string | null
           contrat_reference: string | null
           created_at: string
-          etablissement_id: string | null
+          etablissement_id: string
           id: string
           raison_sociale: string
           specialite: string | null
@@ -1193,7 +1204,7 @@ export type Database = {
           contrat_notes?: string | null
           contrat_reference?: string | null
           created_at?: string
-          etablissement_id?: string | null
+          etablissement_id: string
           id?: string
           raison_sociale: string
           specialite?: string | null
@@ -1211,7 +1222,7 @@ export type Database = {
           contrat_notes?: string | null
           contrat_reference?: string | null
           created_at?: string
-          etablissement_id?: string | null
+          etablissement_id?: string
           id?: string
           raison_sociale?: string
           specialite?: string | null
@@ -1554,6 +1565,38 @@ export type Database = {
         }
         Relationships: []
       }
+      utilisateur_etablissement_roles: {
+        Row: {
+          created_at: string
+          etablissement_id: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          etablissement_id: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          etablissement_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utilisateur_etablissement_roles_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       utilisateur_etablissements: {
         Row: {
           created_at: string
@@ -1766,12 +1809,24 @@ export type Database = {
         Returns: boolean
       }
       generer_interventions_preventives: { Args: never; Returns: number }
+      has_any_role_in: {
+        Args: {
+          _etab: string
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_global_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      has_role_in_etablissement: {
+        Args: { _etab: string; _role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
       intervention_etab: { Args: { _intervention_id: string }; Returns: string }
@@ -1784,6 +1839,11 @@ export type Database = {
         Args: { _commande_id: string; _lignes: Json; _magasin_id: string }
         Returns: undefined
       }
+      shares_etablissement: {
+        Args: { _a: string; _b: string }
+        Returns: boolean
+      }
+      user_etablissements: { Args: never; Returns: string[] }
       user_in_etablissement: {
         Args: { _etab: string; _user_id: string }
         Returns: boolean
