@@ -1,0 +1,3 @@
+REVOKE EXECUTE ON FUNCTION public.user_etablissements(), public.has_any_role_in(uuid,uuid,public.app_role[]), public.has_role_in_etablissement(uuid,public.app_role), public.shares_etablissement(uuid,uuid), public.etab_attach_creator(), public.check_affectation_meme_site() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.etab_attach_creator(), public.check_affectation_meme_site() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.user_etablissements(), public.has_any_role_in(uuid,uuid,public.app_role[]), public.has_role_in_etablissement(uuid,public.app_role), public.shares_etablissement(uuid,uuid) TO authenticated;
