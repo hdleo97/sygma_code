@@ -18,3 +18,8 @@
 - [x] Rapport mensuel automatique des visites (1er du mois)
 - [x] Exports Excel/CSV/PDF : DI, équipements, interventions
 - [ ] Notifications e-mail — bloqué : domaine e-mail à configurer
+
+## Cloisonnement des établissements
+- [x] Étape 1 : règles d'accès base de données par site, rôles par site, Site B de test
+- [ ] Étape 2 : interface (sélecteur branché partout, vidage du cache, écran rôles par site, listes déroulantes filtrées)
+- [ ] Étape 3 : fichiers par site, exports, transferts inter-sites, audit étendu, tests complets connectés
