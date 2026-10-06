@@ -9,7 +9,7 @@ export async function fetchPrestataires(
 ): Promise<Prestataire[]> {
   let q = supabase.from("prestataires").select("*").order("raison_sociale");
   if (etablissementId) {
-    q = q.or(`etablissement_id.eq.${etablissementId},etablissement_id.is.null`);
+    q = q.eq("etablissement_id", etablissementId);
   }
   const { data, error } = await q;
   if (error) throw error;
@@ -17,7 +17,7 @@ export async function fetchPrestataires(
 }
 
 export async function upsertPrestataire(
-  input: PrestataireInput & { id?: string },
+  input: Partial<PrestataireInput> & { id?: string },
 ): Promise<Prestataire> {
   const { data, error } = input.id
     ? await supabase
@@ -26,7 +26,7 @@ export async function upsertPrestataire(
         .eq("id", input.id)
         .select("*")
         .single()
-    : await supabase.from("prestataires").insert(input).select("*").single();
+    : await supabase.from("prestataires").insert(input as PrestataireInput).select("*").single();
   if (error) throw error;
   return data;
 }

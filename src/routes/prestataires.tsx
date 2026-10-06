@@ -99,7 +99,7 @@ function PrestatairesPage() {
         contrat_debut: f.contrat_debut || null,
         contrat_fin: f.contrat_fin || null,
         contrat_notes: f.contrat_notes || null,
-        etablissement_id: f.id ? undefined : currentEtablissementId,
+        ...(f.id ? {} : { etablissement_id: currentEtablissementId as string }),
       }),
     onSuccess: () => {
       toast.success("Prestataire enregistré");
