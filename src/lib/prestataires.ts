@@ -9,7 +9,7 @@ export async function fetchPrestataires(
 ): Promise<Prestataire[]> {
   let q = supabase.from("prestataires").select("*").order("raison_sociale");
   if (etablissementId) {
-    q = q.or(`etablissement_id.eq.${etablissementId},etablissement_id.is.null`);
+    q = q.eq("etablissement_id", etablissementId);
   }
   const { data, error } = await q;
   if (error) throw error;

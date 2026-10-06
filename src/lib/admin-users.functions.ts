@@ -44,6 +44,43 @@ type AdminClient = Awaited<
   typeof import("@/integrations/supabase/client.server")
 >["supabaseAdmin"];
 
+/** L'appelant ne peut rattacher qu'aux établissements auxquels il est lui-même rattaché. */
+async function assertEtabsAllowed(
+  supabase: {
+    from: (t: "utilisateur_etablissements") => {
+      select: (c: string) => {
+        eq: (k: string, v: string) => PromiseLike<{ data: { etablissement_id: string }[] | null }>;
+      };
+    };
+  },
+  userId: string,
+  etabs: string[],
+) {
+  if (!etabs.length) return;
+  const { data } = await supabase
+    .from("utilisateur_etablissements")
+    .select("etablissement_id")
+    .eq("user_id", userId);
+  const mine = new Set((data ?? []).map((r) => r.etablissement_id));
+  if (etabs.some((e) => !mine.has(e))) {
+    throw new Error("Vous ne pouvez rattacher qu'à vos propres établissements");
+  }
+}
+
+async function insertSiteRoles(
+  admin: AdminClient,
+  userId: string,
+  roles: string[],
+  etabs: string[],
+) {
+  const rows = etabs.flatMap((etablissement_id) =>
+    roles.map((role) => ({ user_id: userId, etablissement_id, role })),
+  );
+  if (rows.length) {
+    await admin.from("utilisateur_etablissement_roles" as never).insert(rows as never);
+  }
+}
+
 async function assertTargetAllowed(
   admin: AdminClient,
   isSuper: boolean,
@@ -144,6 +181,7 @@ export const createAppUser = createServerFn({ method: "POST" })
     if (!isSuper && data.roles.includes("super_admin")) {
       throw new Error("Seul un super admin peut attribuer ce rôle");
     }
+    await assertEtabsAllowed(context.supabase as never, context.userId, data.etablissements);
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
@@ -175,6 +213,7 @@ export const createAppUser = createServerFn({ method: "POST" })
           etablissement_id,
         })),
       );
+      await insertSiteRoles(supabaseAdmin, uid, data.roles, data.etablissements);
     }
     await audit(supabaseAdmin, context.userId, "creation_compte", uid, {
       email: data.email,
@@ -221,10 +260,15 @@ export const updateAppUserAccess = createServerFn({ method: "POST" })
         .insert(data.roles.map((role) => ({ user_id: data.userId, role })));
     }
 
+    await assertEtabsAllowed(context.supabase as never, context.userId, data.etablissements);
     await supabaseAdmin
       .from("utilisateur_etablissements")
       .delete()
       .eq("user_id", data.userId);
+    await supabaseAdmin
+      .from("utilisateur_etablissement_roles" as never)
+      .delete()
+      .eq("user_id" as never, data.userId as never);
     if (data.etablissements.length) {
       await supabaseAdmin.from("utilisateur_etablissements").insert(
         data.etablissements.map((etablissement_id) => ({
@@ -232,6 +276,7 @@ export const updateAppUserAccess = createServerFn({ method: "POST" })
           etablissement_id,
         })),
       );
+      await insertSiteRoles(supabaseAdmin, data.userId, data.roles, data.etablissements);
     }
     await audit(supabaseAdmin, context.userId, "modification_droits", data.userId, {
       roles: data.roles,
