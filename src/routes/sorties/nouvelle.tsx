@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
@@ -63,6 +64,7 @@ function NouvelleDemandeSortie() {
       const { data, error } = await supabase
         .from("interventions")
         .select("id, description, equipement_id, etablissement_id, statut")
+        .eq("etablissement_id", currentSiteId())
         .neq("statut", "signee")
         .order("created_at", { ascending: false })
         .limit(100);

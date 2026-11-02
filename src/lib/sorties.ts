@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -110,6 +111,7 @@ export async function fetchDemandesSortie(): Promise<DemandeSortieDetail[]> {
   const { data, error } = await supabase
     .from("demandes_sortie_pieces")
     .select(SELECT_DEMANDE)
+    .eq("etablissement_id", currentSiteId())
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as unknown as DemandeSortieDetail[];
@@ -121,6 +123,7 @@ export async function fetchDemandeSortie(
   const { data, error } = await supabase
     .from("demandes_sortie_pieces")
     .select(SELECT_DEMANDE)
+    .eq("etablissement_id", currentSiteId())
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;

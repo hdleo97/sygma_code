@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -39,7 +40,7 @@ export async function fetchMagasins(): Promise<Magasin[]> {
   const { data, error } = await supabase
     .from("magasins")
     .select("*")
-    .order("nom");
+    .eq("etablissement_id", currentSiteId()).order("nom");
   if (error) throw error;
   return data ?? [];
 }
@@ -48,7 +49,7 @@ export async function fetchPieces(): Promise<Piece[]> {
   const { data, error } = await supabase
     .from("pieces")
     .select("*")
-    .order("code_article");
+    .eq("etablissement_id", currentSiteId()).order("code_article");
   if (error) throw error;
   return data ?? [];
 }
@@ -60,9 +61,11 @@ export type StockLigne = {
 };
 
 export async function fetchStockActuel(): Promise<StockLigne[]> {
+  const magasins = await fetchMagasins();
+  if (!magasins.length) return [];
   const { data, error } = await supabase
     .from("v_stock_actuel")
-    .select("piece_id, magasin_id, quantite");
+    .select("piece_id, magasin_id, quantite").in("magasin_id", magasins.map(m => m.id));
   if (error) throw error;
   return (data ?? []).map((r) => ({
     piece_id: r.piece_id as string,
@@ -72,7 +75,9 @@ export async function fetchStockActuel(): Promise<StockLigne[]> {
 }
 
 export async function fetchSeuils(): Promise<StockSeuil[]> {
-  const { data, error } = await supabase.from("stock_seuils").select("*");
+  const magasins = await fetchMagasins();
+  if (!magasins.length) return [];
+  const { data, error } = await supabase.from("stock_seuils").select("*").in("magasin_id", magasins.map(m => m.id));
   if (error) throw error;
   return data ?? [];
 }
