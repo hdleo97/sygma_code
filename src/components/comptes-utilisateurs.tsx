@@ -24,6 +24,7 @@ import {
   updateAppUserAccess,
   type AppUserRow,
 } from "@/lib/admin-users.functions";
+import type { SiteAssignment } from "@/lib/site-access";
 import { useAuth, type AppRole } from "@/lib/auth-context";
 
 const ROLE_LABELS: { value: AppRole; label: string }[] = [
@@ -125,12 +126,12 @@ export function ComptesUtilisateurs() {
                       {u.roles.length === 0 ? (
                         <span className="text-muted-foreground">—</span>
                       ) : (
-                        u.roles.map((r) => (
+                        u.affectations.map((a) => (
                           <span
-                            key={r}
+                            key={`${a.etablissement_id}:${a.role}`}
                             className="rounded-full border border-border bg-muted px-2 py-0.5 text-xs"
                           >
-                            {ROLE_LABELS.find((x) => x.value === r)?.label ?? r}
+                            {etablissements.find(e => e.id === a.etablissement_id)?.nom} : {ROLE_LABELS.find(x => x.value === a.role)?.label ?? a.role}
                           </span>
                         ))
                       )}
@@ -242,56 +243,23 @@ export function ComptesUtilisateurs() {
   );
 }
 
-function RolesEtabsFields({
-  roles,
-  setRoles,
-  etabs,
-  setEtabs,
-}: {
-  roles: AppRole[];
-  setRoles: (r: AppRole[]) => void;
-  etabs: string[];
-  setEtabs: (e: string[]) => void;
+function RolesEtabsFields({ assignments, setAssignments }: {
+  assignments: SiteAssignment[]; setAssignments: (rows: SiteAssignment[]) => void;
 }) {
-  const { etablissements, hasRole } = useAuth();
-  const roleOptions = hasRole("super_admin")
-    ? ROLE_LABELS
-    : ROLE_LABELS.filter((r) => r.value !== "super_admin");
-  const toggle = <T,>(arr: T[], v: T) =>
-    arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
-
-  return (
-    <>
-      <div className="space-y-2">
-        <Label>Rôles</Label>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {roleOptions.map((r) => (
-            <label key={r.value} className="flex items-center gap-2 text-sm">
-              <Checkbox
-                checked={roles.includes(r.value)}
-                onCheckedChange={() => setRoles(toggle(roles, r.value))}
-              />
-              {r.label}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label>Établissements rattachés</Label>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {etablissements.map((e) => (
-            <label key={e.id} className="flex items-center gap-2 text-sm">
-              <Checkbox
-                checked={etabs.includes(e.id)}
-                onCheckedChange={() => setEtabs(toggle(etabs, e.id))}
-              />
-              {e.nom}
-            </label>
-          ))}
-        </div>
-      </div>
-    </>
-  );
+  const { etablissements } = useAuth();
+  return <div className="space-y-4">
+    {etablissements.map(site => <fieldset key={site.id} className="space-y-2 border-t border-border pt-3">
+      <legend className="text-sm font-semibold">{site.nom}</legend>
+      <div className="grid gap-2 sm:grid-cols-2">{ROLE_LABELS.map(role => {
+        const checked = assignments.some(a => a.etablissement_id === site.id && a.role === role.value);
+        return <label key={role.value} className="flex items-center gap-2 text-sm">
+          <Checkbox checked={checked} onCheckedChange={() => setAssignments(checked
+            ? assignments.filter(a => !(a.etablissement_id === site.id && a.role === role.value))
+            : [...assignments, { etablissement_id: site.id, role: role.value }])} />{role.label}
+        </label>;
+      })}</div>
+    </fieldset>)}
+  </div>;
 }
 
 function CreateDialog({
@@ -307,14 +275,15 @@ function CreateDialog({
   const [password, setPassword] = useState("");
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
-  const [roles, setRoles] = useState<AppRole[]>(["technicien"]);
-  const [etabs, setEtabs] = useState<string[]>([]);
+  const [assignments, setAssignments] = useState<SiteAssignment[]>([]);
+  const roles = [...new Set(assignments.map(a => a.role))] as AppRole[];
+  const etabs = [...new Set(assignments.map(a => a.etablissement_id))];
   const create = useServerFn(createAppUser);
 
   const save = useMutation({
     mutationFn: () =>
       create({
-        data: { email, password, nom, prenom, roles, etablissements: etabs },
+        data: { email, password, nom, prenom, roles, etablissements: etabs, affectations: assignments },
       }),
     onSuccess: () => {
       toast.success("Compte créé");
@@ -322,8 +291,7 @@ function CreateDialog({
       setPassword("");
       setNom("");
       setPrenom("");
-      setRoles(["technicien"]);
-      setEtabs([]);
+      setAssignments([]);
       onSaved();
     },
     onError: (e: unknown) =>
@@ -368,16 +336,15 @@ function CreateDialog({
             <Label htmlFor="password">Mot de passe provisoire</Label>
             <Input
               id="password"
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="8 caractères minimum"
             />
           </div>
           <RolesEtabsFields
-            roles={roles}
-            setRoles={setRoles}
-            etabs={etabs}
-            setEtabs={setEtabs}
+            assignments={assignments}
+            setAssignments={setAssignments}
           />
         </div>
         <DialogFooter>
@@ -416,29 +383,32 @@ function EditDialog({
   const [initialised, setInitialised] = useState<string | null>(null);
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [etabs, setEtabs] = useState<string[]>([]);
+  const [assignments, setAssignments] = useState<SiteAssignment[]>([]);
+  const roles = [...new Set(assignments.map(a => a.role))] as AppRole[];
+  const etabs = [...new Set(assignments.map(a => a.etablissement_id))];
   const update = useServerFn(updateAppUserAccess);
 
   if (user && initialised !== user.id) {
     setInitialised(user.id);
     setNom(user.nom ?? "");
     setPrenom(user.prenom ?? "");
-    setRoles(user.roles as AppRole[]);
-    setEtabs(user.etablissements);
+    setAssignments(user.affectations);
   }
 
   const save = useMutation({
-    mutationFn: () =>
-      update({
+    mutationFn: () => {
+      if (!user) throw new Error("Compte manquant");
+      return update({
         data: {
-          userId: user!.id,
+          userId: user.id,
           nom,
           prenom,
           roles,
           etablissements: etabs,
+          affectations: assignments,
         },
-      }),
+      });
+    },
     onSuccess: () => {
       toast.success("Accès mis à jour");
       onSaved();
@@ -473,17 +443,15 @@ function EditDialog({
             </div>
           </div>
           <RolesEtabsFields
-            roles={roles}
-            setRoles={setRoles}
-            etabs={etabs}
-            setEtabs={setEtabs}
+            assignments={assignments}
+            setAssignments={setAssignments}
           />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Annuler
           </Button>
-          <Button disabled={save.isPending} onClick={() => save.mutate()}>
+          <Button disabled={save.isPending || !assignments.length} onClick={() => save.mutate()}>
             {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Enregistrer
           </Button>

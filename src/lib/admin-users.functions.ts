@@ -1,354 +1,111 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertSiteAssignments, assertWholeAccountScope, type SiteAssignment } from "@/lib/site-access";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 export type AppUserRow = {
-  id: string;
-  email: string | null;
-  nom: string | null;
-  prenom: string | null;
-  roles: string[];
-  etablissements: string[];
-  actif: boolean;
+  id: string; email: string | null; nom: string | null; prenom: string | null;
+  roles: string[]; etablissements: string[]; affectations: SiteAssignment[]; actif: boolean;
 };
+const ROLES = ["super_admin", "responsable_maintenance", "technicien", "demandeur", "gestionnaire_stock", "prestataire", "responsable_etablissement"] as const;
+const assignmentSchema = z.array(z.object({ etablissement_id: z.string().uuid(), role: z.enum(ROLES) })).min(1);
 
-const ROLES = [
-  "super_admin",
-  "responsable_maintenance",
-  "technicien",
-  "demandeur",
-  "gestionnaire_stock",
-  "prestataire",
-  "responsable_etablissement",
-] as const;
-
-async function assertAdmin(supabase: {
-  rpc: (
-    fn: "has_role",
-    args: { _user_id: string; _role: (typeof ROLES)[number] },
-  ) => PromiseLike<{ data: boolean | null }>;
-}, userId: string) {
-  const [a, b] = await Promise.all([
-    supabase.rpc("has_role", { _user_id: userId, _role: "super_admin" }),
-    supabase.rpc("has_role", {
-      _user_id: userId,
-      _role: "responsable_maintenance",
-    }),
-  ]);
-  if (!a.data && !b.data) throw new Error("Accès refusé");
-  return { isSuper: !!a.data };
-}
-
-type AdminClient = Awaited<
-  typeof import("@/integrations/supabase/client.server")
->["supabaseAdmin"];
-
-/** L'appelant ne peut rattacher qu'aux établissements auxquels il est lui-même rattaché. */
-async function assertEtabsAllowed(
-  supabase: {
-    from: (t: "utilisateur_etablissements") => {
-      select: (c: string) => {
-        eq: (k: string, v: string) => PromiseLike<{ data: { etablissement_id: string }[] | null }>;
-      };
-    };
-  },
-  userId: string,
-  etabs: string[],
-) {
-  if (!etabs.length) return;
-  const { data } = await supabase
-    .from("utilisateur_etablissements")
-    .select("etablissement_id")
-    .eq("user_id", userId);
-  const mine = new Set((data ?? []).map((r) => r.etablissement_id));
-  if (etabs.some((e) => !mine.has(e))) {
-    throw new Error("Vous ne pouvez rattacher qu'à vos propres établissements");
+async function managementScope(client: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await client.from("utilisateur_etablissement_roles").select("etablissement_id, role").eq("user_id", userId);
+  if (error) throw error;
+  const scope = new Map<string, boolean>();
+  for (const row of data ?? []) {
+    if (row.role === "super_admin" || row.role === "responsable_maintenance") {
+      scope.set(row.etablissement_id, scope.get(row.etablissement_id) === true || row.role === "super_admin");
+    }
   }
+  if (!scope.size) throw new Error("Accès refusé");
+  return scope;
 }
-
-async function insertSiteRoles(
-  admin: AdminClient,
-  userId: string,
-  roles: string[],
-  etabs: string[],
-) {
-  const rows = etabs.flatMap((etablissement_id) =>
-    roles.map((role) => ({ user_id: userId, etablissement_id, role })),
-  );
-  if (rows.length) {
-    await admin.from("utilisateur_etablissement_roles" as never).insert(rows as never);
+async function targetScope(client: SupabaseClient<Database>, userId: string, scope: Map<string, boolean>, whole = false) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: links, error } = await supabaseAdmin.from("utilisateur_etablissements").select("etablissement_id").eq("user_id", userId);
+  if (error) throw error;
+  const sites = (links ?? []).map(r => r.etablissement_id);
+  if (!sites.some(id => scope.has(id))) throw new Error("Compte inaccessible");
+  if (whole) assertWholeAccountScope(sites, scope);
+  const { data: roles } = await client.from("utilisateur_etablissement_roles").select("etablissement_id, role").eq("user_id", userId);
+  if ((roles ?? []).some(r => scope.has(r.etablissement_id) && r.role === "super_admin" && !scope.get(r.etablissement_id))) {
+    throw new Error("Seul un super admin de cet établissement peut modifier ce compte");
   }
+  return supabaseAdmin;
 }
-
-async function assertTargetAllowed(
-  admin: AdminClient,
-  isSuper: boolean,
-  targetId: string,
-) {
-  if (isSuper) return;
-  const { data } = await admin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", targetId)
-    .eq("role", "super_admin");
-  if (data && data.length > 0) {
-    throw new Error("Seul un super admin peut modifier ce compte");
-  }
-}
-
-async function audit(
-  admin: AdminClient,
-  userId: string,
-  action: string,
-  recordId: string,
-  details: Record<string, unknown> = {},
-) {
-  await admin.from("audit_logs" as never).insert({
-    user_id: userId,
-    action,
-    table_name: "comptes",
-    record_id: recordId,
-    details,
-  } as never);
-}
-
-export const listAppUsers = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<AppUserRow[]> => {
-    await assertAdmin(context.supabase as never, context.userId);
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-
-    const [{ data: profils }, { data: roles }, { data: liens }, authRes] =
-      await Promise.all([
-        supabaseAdmin.from("profils_utilisateurs").select("id, nom, prenom"),
-        supabaseAdmin.from("user_roles").select("user_id, role"),
-        supabaseAdmin
-          .from("utilisateur_etablissements")
-          .select("user_id, etablissement_id"),
-        supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
-      ]);
-
-    const authUsers = new Map(
-      (authRes.data?.users ?? []).map((u) => [
-        u.id,
-        {
-          email: u.email ?? null,
-          actif: !(u as { banned_until?: string | null }).banned_until,
-        },
-      ]),
-    );
-
-    return (profils ?? [])
-      .map((p) => ({
-        id: p.id,
-        email: authUsers.get(p.id)?.email ?? null,
-        actif: authUsers.get(p.id)?.actif ?? true,
-        nom: p.nom,
-        prenom: p.prenom,
-        roles: (roles ?? [])
-          .filter((r) => r.user_id === p.id)
-          .map((r) => r.role as string),
-        etablissements: (liens ?? [])
-          .filter((l) => l.user_id === p.id)
-          .map((l) => l.etablissement_id),
-      }))
-      .sort((a, b) =>
-        `${a.prenom ?? ""} ${a.nom ?? ""}`.localeCompare(
-          `${b.prenom ?? ""} ${b.nom ?? ""}`,
-        ),
-      );
-  });
-
-export const createAppUser = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z
-      .object({
-        email: z.string().email(),
-        password: z.string().min(8),
-        nom: z.string().min(1),
-        prenom: z.string().min(1),
-        roles: z.array(z.enum(ROLES)).min(1),
-        etablissements: z.array(z.string().uuid()).default([]),
-      })
-      .parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
-    if (!isSuper && data.roles.includes("super_admin")) {
-      throw new Error("Seul un super admin peut attribuer ce rôle");
-    }
-    await assertEtabsAllowed(context.supabase as never, context.userId, data.etablissements);
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-
-    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { nom: data.nom, prenom: data.prenom },
-    });
-    if (error || !created.user) {
-      throw new Error(error?.message ?? "Création du compte impossible");
-    }
-    const uid = created.user.id;
-
-    await supabaseAdmin
-      .from("profils_utilisateurs")
-      .upsert({ id: uid, nom: data.nom, prenom: data.prenom });
-
-    if (data.roles.length) {
-      await supabaseAdmin
-        .from("user_roles")
-        .insert(data.roles.map((role) => ({ user_id: uid, role })));
-    }
-    if (data.etablissements.length) {
-      await supabaseAdmin.from("utilisateur_etablissements").insert(
-        data.etablissements.map((etablissement_id) => ({
-          user_id: uid,
-          etablissement_id,
-        })),
-      );
-      await insertSiteRoles(supabaseAdmin, uid, data.roles, data.etablissements);
-    }
-    await audit(supabaseAdmin, context.userId, "creation_compte", uid, {
-      email: data.email,
-      roles: data.roles,
-      etablissements: data.etablissements,
-    });
-    return { id: uid };
-  });
-
-export const updateAppUserAccess = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z
-      .object({
-        userId: z.string().uuid(),
-        nom: z.string().nullable().optional(),
-        prenom: z.string().nullable().optional(),
-        roles: z.array(z.enum(ROLES)),
-        etablissements: z.array(z.string().uuid()),
-      })
-      .parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
-    if (!isSuper && data.roles.includes("super_admin")) {
-      throw new Error("Seul un super admin peut attribuer ce rôle");
-    }
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
-
-    if (data.nom !== undefined || data.prenom !== undefined) {
-      await supabaseAdmin
-        .from("profils_utilisateurs")
-        .update({ nom: data.nom ?? null, prenom: data.prenom ?? null })
-        .eq("id", data.userId);
-    }
-
-    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
-    if (data.roles.length) {
-      await supabaseAdmin
-        .from("user_roles")
-        .insert(data.roles.map((role) => ({ user_id: data.userId, role })));
-    }
-
-    await assertEtabsAllowed(context.supabase as never, context.userId, data.etablissements);
-    await supabaseAdmin
-      .from("utilisateur_etablissements")
-      .delete()
-      .eq("user_id", data.userId);
-    await supabaseAdmin
-      .from("utilisateur_etablissement_roles" as never)
-      .delete()
-      .eq("user_id" as never, data.userId as never);
-    if (data.etablissements.length) {
-      await supabaseAdmin.from("utilisateur_etablissements").insert(
-        data.etablissements.map((etablissement_id) => ({
-          user_id: data.userId,
-          etablissement_id,
-        })),
-      );
-      await insertSiteRoles(supabaseAdmin, data.userId, data.roles, data.etablissements);
-    }
-    await audit(supabaseAdmin, context.userId, "modification_droits", data.userId, {
-      roles: data.roles,
-      etablissements: data.etablissements,
-    });
-    return { ok: true };
-  });
-
-export const setAppUserActive = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z.object({ userId: z.string().uuid(), active: z.boolean() }).parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
-    if (data.userId === context.userId) {
-      throw new Error("Vous ne pouvez pas désactiver votre propre compte");
-    }
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(
-      data.userId,
-      { ban_duration: data.active ? "none" : "876000h" },
-    );
-    if (error) throw new Error(error.message);
-    await audit(
-      supabaseAdmin,
-      context.userId,
-      data.active ? "reactivation_compte" : "desactivation_compte",
-      data.userId,
-    );
-    return { ok: true };
-  });
-
-export const deleteAppUser = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ userId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
-    if (data.userId === context.userId) {
-      throw new Error("Vous ne pouvez pas supprimer votre propre compte");
-    }
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
-    if (error) throw new Error(error.message);
-    await audit(supabaseAdmin, context.userId, "suppression_compte", data.userId);
-    return { ok: true };
-  });
-
-export const resetAppUserPassword = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z
-      .object({ userId: z.string().uuid(), password: z.string().min(8) })
-      .parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { isSuper } = await assertAdmin(context.supabase as never, context.userId);
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
-    await assertTargetAllowed(supabaseAdmin, isSuper, data.userId);
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(
-      data.userId,
-      { password: data.password },
-    );
-    if (error) throw new Error(error.message);
-    await audit(supabaseAdmin, context.userId, "reinitialisation_mot_de_passe", data.userId);
-    return { ok: true };
-  });
+export const listAppUsers = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }): Promise<AppUserRow[]> => {
+  const scope = await managementScope(context.supabase, context.userId);
+  const { data: assignments, error } = await context.supabase.from("utilisateur_etablissement_roles").select("user_id, etablissement_id, role").in("etablissement_id", [...scope.keys()]);
+  if (error) throw error;
+  const ids = [...new Set((assignments ?? []).map(r => r.user_id))];
+  if (!ids.length) return [];
+  const { data: profiles, error: profileError } = await context.supabase.from("profils_utilisateurs").select("id, nom, prenom").in("id", ids);
+  if (profileError) throw profileError;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return Promise.all((profiles ?? []).map(async p => {
+    const { data, error: authError } = await supabaseAdmin.auth.admin.getUserById(p.id);
+    if (authError) throw authError;
+    const rows = (assignments ?? []).filter(r => r.user_id === p.id).map(({ etablissement_id, role }) => ({ etablissement_id, role }));
+    const banned = (data.user as { banned_until?: string } | null)?.banned_until;
+    return { ...p, email: data.user?.email ?? null, actif: !banned || new Date(banned).getTime() <= Date.now(),
+      affectations: rows, roles: [...new Set(rows.map(r => r.role))], etablissements: [...new Set(rows.map(r => r.etablissement_id))] };
+  }));
+});
+export const createAppUser = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({
+  email: z.string().email(), password: z.string().min(8), nom: z.string().min(1), prenom: z.string().min(1),
+  roles: z.array(z.enum(ROLES)), etablissements: z.array(z.string().uuid()), affectations: assignmentSchema,
+}).parse(input)).handler(async ({ data, context }) => {
+  const scope = await managementScope(context.supabase, context.userId);
+  assertSiteAssignments(data.affectations, scope);
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: created, error } = await supabaseAdmin.auth.admin.createUser({ email: data.email, password: data.password, email_confirm: true, user_metadata: { nom: data.nom, prenom: data.prenom } });
+  if (error || !created.user) throw new Error(error?.message ?? "Création impossible");
+  const id = created.user.id;
+  try {
+    const { error: profileError } = await supabaseAdmin.from("profils_utilisateurs").upsert({ id, nom: data.nom, prenom: data.prenom });
+    if (profileError) throw profileError;
+    const { error: accessError } = await context.supabase.rpc("set_user_site_access", { _target: id, _assignments: data.affectations });
+    if (accessError) throw accessError;
+  } catch (e) { await supabaseAdmin.auth.admin.deleteUser(id); throw e; }
+  return { id };
+});
+export const updateAppUserAccess = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({
+  userId: z.string().uuid(), nom: z.string().nullable(), prenom: z.string().nullable(),
+  roles: z.array(z.enum(ROLES)), etablissements: z.array(z.string().uuid()), affectations: assignmentSchema,
+}).parse(input)).handler(async ({ data, context }) => {
+  const scope = await managementScope(context.supabase, context.userId);
+  assertSiteAssignments(data.affectations, scope);
+  const admin = await targetScope(context.supabase, data.userId, scope);
+  const { error } = await context.supabase.rpc("set_user_site_access", { _target: data.userId, _assignments: data.affectations });
+  if (error) throw error;
+  const { error: profileError } = await admin.from("profils_utilisateurs").update({ nom: data.nom, prenom: data.prenom }).eq("id", data.userId);
+  if (profileError) throw profileError;
+  return { ok: true };
+});
+export const setAppUserActive = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({ userId: z.string().uuid(), active: z.boolean() }).parse(input)).handler(async ({ data, context }) => {
+  const scope = await managementScope(context.supabase, context.userId);
+  if (data.userId === context.userId) throw new Error("Vous ne pouvez pas désactiver votre propre compte");
+  const admin = await targetScope(context.supabase, data.userId, scope, true);
+  const { error } = await admin.auth.admin.updateUserById(data.userId, { ban_duration: data.active ? "none" : "876000h" });
+  if (error) throw error;
+  return { ok: true };
+});
+export const deleteAppUser = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({ userId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
+  const scope = await managementScope(context.supabase, context.userId);
+  if (data.userId === context.userId) throw new Error("Vous ne pouvez pas supprimer votre propre compte");
+  const admin = await targetScope(context.supabase, data.userId, scope, true);
+  const { error } = await admin.auth.admin.deleteUser(data.userId);
+  if (error) throw error;
+  return { ok: true };
+});
+export const resetAppUserPassword = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({ userId: z.string().uuid(), password: z.string().min(8) }).parse(input)).handler(async ({ data, context }) => {
+  const scope = await managementScope(context.supabase, context.userId);
+  const admin = await targetScope(context.supabase, data.userId, scope, true);
+  const { error } = await admin.auth.admin.updateUserById(data.userId, { password: data.password });
+  if (error) throw error;
+  return { ok: true };
+});
