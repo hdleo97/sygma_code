@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Loader2, Plus, Search } from "lucide-react";
@@ -67,7 +68,7 @@ function EquipementsListe() {
       const { data, error } = await supabase
         .from("equipements")
         .select("*")
-        .order("reference");
+        .eq("etablissement_id", currentSiteId()).order("reference");
       if (error) throw error;
       return data as Equipement[];
     },

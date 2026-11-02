@@ -10,6 +10,7 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
+import { rolesForSite, type SiteAssignment } from "@/lib/site-access";
 
 export type AppRole =
   | "super_admin"
@@ -49,19 +50,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profil, setProfil] = useState<AuthContextValue["profil"]>(null);
-  const [roles, setRoles] = useState<AppRole[]>([]);
+  const [siteRoles, setSiteRoles] = useState<SiteAssignment[]>([]);
   const [etablissements, setEtablissements] = useState<Etablissement[]>([]);
   const [currentEtablissementId, setCurrentEtablissementIdState] = useState<
     string | null
   >(null);
 
   const setCurrentEtablissementId = useCallback((id: string | null) => {
+    if (!id || !etablissements.some((e) => e.id === id)) return;
     setCurrentEtablissementIdState(id);
     if (typeof window !== "undefined") {
       if (id) window.localStorage.setItem(STORAGE_KEY, id);
       else window.localStorage.removeItem(STORAGE_KEY);
     }
-  }, []);
+  }, [etablissements]);
 
   const loadUserData = useCallback(async (userId: string) => {
     const [profilRes, rolesRes, etabsRes] = await Promise.all([
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select("nom, prenom")
         .eq("id", userId)
         .maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", userId),
+      supabase.from("utilisateur_etablissement_roles").select("etablissement_id, role").eq("user_id", userId),
       supabase
         .from("utilisateur_etablissements")
         .select("etablissement_id, etablissements(id, nom)")
@@ -78,26 +80,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ]);
 
     setProfil(profilRes.data ?? { nom: null, prenom: null });
-    const nextRoles = (rolesRes.data ?? []).map((r) => r.role as AppRole);
-    setRoles(nextRoles);
-
-    const isGlobal = nextRoles.some(
-      (r) => r === "super_admin" || r === "responsable_maintenance",
-    );
-
-    let etabs: Etablissement[] = [];
-    if (isGlobal) {
-      const { data } = await supabase
-        .from("etablissements")
-        .select("id, nom")
-        .order("nom");
-      etabs = data ?? [];
-    } else {
-      etabs = (etabsRes.data ?? [])
+    setSiteRoles(rolesRes.data ?? []);
+    const etabs = (etabsRes.data ?? [])
         .map((r) => r.etablissements as unknown as Etablissement | null)
         .filter((x): x is Etablissement => !!x)
         .sort((a, b) => a.nom.localeCompare(b.nom));
-    }
     setEtablissements(etabs);
 
     const stored =
@@ -107,6 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const nextCurrent =
       etabs.find((e) => e.id === stored)?.id ?? etabs[0]?.id ?? null;
     setCurrentEtablissementIdState(nextCurrent);
+    if (nextCurrent) window.localStorage.setItem(STORAGE_KEY, nextCurrent);
+    else window.localStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const refresh = useCallback(async () => {
@@ -116,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await loadUserData(data.session.user.id);
     } else {
       setProfil(null);
-      setRoles([]);
+      setSiteRoles([]);
       setEtablissements([]);
       setCurrentEtablissementIdState(null);
     }
@@ -129,13 +118,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await refresh();
       if (!mounted) return;
     })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      if (!["SIGNED_IN", "SIGNED_OUT", "USER_UPDATED"].includes(event)) return;
       setSession(s);
       if (s?.user) {
-        void loadUserData(s.user.id);
+        setTimeout(() => void loadUserData(s.user.id), 0);
       } else {
         setProfil(null);
-        setRoles([]);
+        setSiteRoles([]);
         setEtablissements([]);
         setCurrentEtablissementIdState(null);
       }
@@ -147,6 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh, loadUserData]);
 
   const value = useMemo<AuthContextValue>(() => {
+    const roles = rolesForSite(siteRoles, currentEtablissementId) as AppRole[];
     const isGlobal = roles.some(
       (r) => r === "super_admin" || r === "responsable_maintenance",
     );
@@ -171,7 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     session,
     profil,
-    roles,
+    siteRoles,
     etablissements,
     currentEtablissementId,
     setCurrentEtablissementId,

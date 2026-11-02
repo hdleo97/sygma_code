@@ -23,3 +23,8 @@
 - [x] Étape 1 : règles d'accès base de données par site, rôles par site, Site B de test
 - [ ] Étape 2 : interface (sélecteur branché partout, vidage du cache, écran rôles par site, listes déroulantes filtrées)
 - [ ] Étape 3 : fichiers par site, exports, transferts inter-sites, audit étendu, tests complets connectés
+
+### Suite demandée
+- [ ] Rôles actifs du site sélectionné, cache isolé et formulaires réinitialisés au changement de site
+- [ ] Gestion des rôles par établissement avec contrôles serveur et conservation des droits des autres sites
+- [ ] Vérifications connectées et tests de non-contournement des droits

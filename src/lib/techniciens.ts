@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -39,8 +40,9 @@ export function profilName(p: {
 /** Techniciens internes (rôles technicien / prestataire) avec leur profil complet. */
 export async function fetchTechnicienProfils(): Promise<Profil[]> {
   const { data: roles, error: rolesError } = await supabase
-    .from("user_roles")
+    .from("utilisateur_etablissement_roles")
     .select("user_id")
+    .eq("etablissement_id", currentSiteId())
     .in("role", ["technicien", "prestataire"]);
   if (rolesError) throw rolesError;
 

@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 
 import appCss from "../styles.css?url";
@@ -147,7 +147,9 @@ function RootComponent() {
 
 function AppShell() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const { loading, session } = useAuth();
+  const { loading, session, currentEtablissementId } = useAuth();
+  const siteQueryClient = useMemo(() => new QueryClient(), [session?.user.id, currentEtablissementId]);
+  useEffect(() => () => siteQueryClient.clear(), [siteQueryClient]);
   const navigate = useNavigate();
   const isPublic = isPublicUiRoute(pathname);
 
@@ -174,13 +176,14 @@ function AppShell() {
   }
 
   return (
+    <QueryClientProvider key={`${session.user.id}:${currentEtablissementId}`} client={siteQueryClient}>
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
             <SidebarTrigger />
-            <div className="flex flex-col leading-tight">
+            <div className="hidden flex-col leading-tight sm:flex">
               <span className="text-sm font-semibold text-foreground">SYGMA</span>
               <span className="text-xs text-muted-foreground">
                 Système de Gestion de Maintenance Assistée
@@ -196,5 +199,6 @@ function AppShell() {
         </div>
       </div>
     </SidebarProvider>
+    </QueryClientProvider>
   );
 }

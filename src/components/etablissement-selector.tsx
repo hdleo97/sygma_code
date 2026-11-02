@@ -24,13 +24,12 @@ export function EtablissementSelector() {
     etablissements,
     currentEtablissementId,
     setCurrentEtablissementId,
-    isGlobal,
   } = useAuth();
 
   if (etablissements.length === 0) return null;
 
   // Single-establishment users: show as a static badge.
-  if (!isGlobal && etablissements.length === 1) {
+  if (etablissements.length === 1) {
     return (
       <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
         <Building2 className="h-3.5 w-3.5" />
@@ -51,7 +50,7 @@ export function EtablissementSelector() {
           role="combobox"
           size="sm"
           aria-expanded={open}
-          className="w-[16rem] justify-between"
+          className="w-[12rem] max-w-full justify-between sm:w-[16rem]"
         >
           <span className="flex items-center gap-2 truncate">
             <Building2 className="h-4 w-4 text-muted-foreground" />

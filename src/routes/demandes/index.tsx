@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Loader2, Plus, Search } from "lucide-react";
@@ -88,7 +89,7 @@ function DemandesListe() {
         .select(
           "*, equipements(reference, designation), demandeur:profils_utilisateurs!demandes_intervention_demandeur_id_fkey(nom, prenom), technicien:profils_utilisateurs!demandes_intervention_technicien_id_fkey(nom, prenom)",
         )
-        .order("created_at", { ascending: false });
+        .eq("etablissement_id", currentSiteId()).order("created_at", { ascending: false });
       if (error) throw error;
       return data as unknown as Row[];
     },

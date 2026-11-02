@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -102,8 +103,9 @@ export function technicienName(t: TechnicienOption): string {
 
 export async function fetchTechniciens(): Promise<TechnicienOption[]> {
   const { data: roles, error: rolesError } = await supabase
-    .from("user_roles")
+    .from("utilisateur_etablissement_roles")
     .select("user_id")
+    .eq("etablissement_id", currentSiteId())
     .in("role", ["technicien", "prestataire"]);
   if (rolesError) throw rolesError;
 

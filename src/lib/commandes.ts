@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -91,6 +92,7 @@ export async function fetchCommandes(): Promise<CommandeDetail[]> {
   const { data, error } = await supabase
     .from("commandes_achat")
     .select(SELECT_COMMANDE)
+    .eq("etablissement_id", currentSiteId())
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as unknown as CommandeDetail[];
@@ -100,6 +102,7 @@ export async function fetchCommande(id: string): Promise<CommandeDetail | null> 
   const { data, error } = await supabase
     .from("commandes_achat")
     .select(SELECT_COMMANDE)
+    .eq("etablissement_id", currentSiteId())
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;

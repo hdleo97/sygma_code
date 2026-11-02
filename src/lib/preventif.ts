@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -31,6 +32,7 @@ export async function fetchPlans(): Promise<PlanDetail[]> {
   const { data, error } = await supabase
     .from("plans_preventifs")
     .select(SELECT_PLAN)
+    .eq("etablissement_id", currentSiteId())
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as unknown as PlanDetail[];
@@ -105,6 +107,7 @@ export async function fetchPreventifsPlanifies(): Promise<PreventifPlanifie[]> {
     .select(
       "id, description, statut, date_planifiee, duree_estimee_minutes, equipements(reference, designation)",
     )
+    .eq("etablissement_id", currentSiteId())
     .eq("nature", "preventive")
     .in("statut", ["planifiee", "en_cours"])
     .order("date_planifiee", { ascending: true });
@@ -229,6 +232,7 @@ export async function fetchVisites(): Promise<
   const { data, error } = await supabase
     .from("visites_quotidiennes")
     .select("*, equipements(reference, designation)")
+    .eq("etablissement_id", currentSiteId())
     .order("date_visite", { ascending: false })
     .limit(50);
   if (error) throw error;

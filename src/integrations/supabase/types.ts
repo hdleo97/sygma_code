@@ -1839,6 +1839,10 @@ export type Database = {
         Args: { _commande_id: string; _lignes: Json; _magasin_id: string }
         Returns: undefined
       }
+      set_user_site_access: {
+        Args: { _assignments: Json; _target: string }
+        Returns: undefined
+      }
       shares_etablissement: {
         Args: { _a: string; _b: string }
         Returns: boolean

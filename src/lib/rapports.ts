@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import { prioriteDiLabel, statutDiLabel } from "@/lib/demandes";
 import { fmtDate, type ExportFormat, type ExportRow } from "@/lib/exports";
@@ -43,7 +44,7 @@ export async function fetchRapports(): Promise<RapportGenere[]> {
     .select(
       "*, etablissements(nom), equipements(reference, designation), profils_utilisateurs(nom, prenom)",
     )
-    .order("created_at", { ascending: false })
+    .eq("etablissement_id" as never, currentSiteId() as never).order("created_at", { ascending: false })
     .limit(500);
   if (error) throw error;
   return (data ?? []) as unknown as RapportGenere[];
@@ -61,7 +62,8 @@ export async function saveRapport(params: {
   periode_fin?: string | null;
   userId: string;
 }): Promise<void> {
-  const path = `${params.userId}/${crypto.randomUUID()}.${params.format}`;
+  const site = params.etablissement_id || currentSiteId();
+  const path = `${site}/${params.userId}/${crypto.randomUUID()}.${params.format}`;
   const { error: upErr } = await supabase.storage
     .from(RAPPORTS_BUCKET)
     .upload(path, params.blob, { contentType: params.blob.type });
@@ -72,16 +74,18 @@ export async function saveRapport(params: {
     filtres: params.filtres,
     format: params.format,
     fichier_path: path,
-    etablissement_id: params.etablissement_id || null,
+    etablissement_id: site,
     equipement_id: params.equipement_id || null,
     periode_debut: params.periode_debut || null,
     periode_fin: params.periode_fin || null,
     genere_par: params.userId,
   } as never);
-  if (error) throw error;
+  if (error) { await supabase.storage.from(RAPPORTS_BUCKET).remove([path]); throw error; }
 }
 
 export async function rapportUrl(path: string): Promise<string | null> {
+  const { data: report, error } = await supabase.from("rapports_generes").select("id").eq("fichier_path", path).eq("etablissement_id", currentSiteId()).maybeSingle();
+  if (error || !report) return null;
   const { data } = await supabase.storage.from(RAPPORTS_BUCKET).createSignedUrl(path, 600);
   return data?.signedUrl ?? null;
 }
@@ -109,6 +113,7 @@ const nomP = (p: { nom: string | null; prenom: string | null } | null | undefine
   [p?.prenom, p?.nom].filter(Boolean).join(" ");
 
 export async function fetchSourceRows(f: FiltresRapport): Promise<ExportRow[]> {
+  f = { ...f, etablissement: f.etablissement === "all" ? currentSiteId() : f.etablissement };
   const all = (v: string) => !v || v === "all";
   const du = f.du ? `${f.du}T00:00:00` : null;
   const au = f.au ? `${f.au}T23:59:59` : null;
@@ -119,7 +124,7 @@ export async function fetchSourceRows(f: FiltresRapport): Promise<ExportRow[]> {
       .select(
         "*, equipements(reference, designation), etablissements(nom), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
       )
-      .order("created_at", { ascending: false });
+      .eq("etablissement_id" as never, currentSiteId() as never).order("created_at", { ascending: false });
     if (du) q = q.gte("created_at", du);
     if (au) q = q.lte("created_at", au);
     if (!all(f.etablissement)) q = q.eq("etablissement_id", f.etablissement);
@@ -158,7 +163,7 @@ export async function fetchSourceRows(f: FiltresRapport): Promise<ExportRow[]> {
       .select(
         "*, equipements(reference, designation), etablissements(nom), demandeur:profils_utilisateurs!demandes_intervention_demandeur_id_fkey(nom, prenom), technicien:profils_utilisateurs!demandes_intervention_technicien_id_fkey(nom, prenom)",
       )
-      .order("created_at", { ascending: false });
+      .eq("etablissement_id" as never, currentSiteId() as never).order("created_at", { ascending: false });
     if (du) q = q.gte("created_at", du);
     if (au) q = q.lte("created_at", au);
     if (!all(f.etablissement)) q = q.eq("etablissement_id", f.etablissement);
