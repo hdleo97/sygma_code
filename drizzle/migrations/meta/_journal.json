@@ -15,6 +15,13 @@
       "when": 1793703647646,
       "tag": "0001_tenant_file_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793705573206,
+      "tag": "0002_fix_demande_creation_and_history",
+      "breakpoints": true
     }
   ]
 }
