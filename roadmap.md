@@ -1,5 +1,10 @@
 # Roadmap SYGMA
 
+## Correction de création des demandes
+- [ ] Auditer les règles de création, de lecture et de pièces jointes
+- [ ] Corriger le blocage sans affaiblir le cloisonnement par établissement
+- [ ] Tester la création connectée, la relecture et le refus inter-sites
+
 ## En cours — Techniciens / Prestataires / Établissements
 - [x] Schéma BDD : compétences, disponibilité, supérieur hiérarchique, table `prestataires`, `prestataire_id` sur DI et interventions
 - [x] Lib `src/lib/prestataires.ts` et `src/lib/techniciens.ts`
