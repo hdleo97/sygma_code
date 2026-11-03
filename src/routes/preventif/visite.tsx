@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
@@ -79,7 +80,7 @@ function VisiteQuotidiennePage() {
         .select(
           "id, reference, designation, categorie, etablissement_id, zone, marque, modele, numero_serie",
         )
-        .order("reference");
+        .eq("etablissement_id", currentSiteId()).order("reference");
       if (error) throw error;
       return data ?? [];
     },

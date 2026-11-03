@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Pencil } from "lucide-react";
@@ -60,6 +61,7 @@ function FicheEquipement() {
         .from("equipements")
         .select("*")
         .eq("id", id)
+        .eq("etablissement_id", currentSiteId())
         .maybeSingle();
       if (error) throw error;
       return data as Equipement | null;

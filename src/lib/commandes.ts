@@ -188,9 +188,9 @@ export async function enregistrerReception(
   if (error) throw error;
 }
 
-export async function uploadPieceJointeCommande(file: File): Promise<string> {
+export async function uploadPieceJointeCommande(file: File, siteId = currentSiteId()): Promise<string> {
   const ext = file.name.split(".").pop() ?? "bin";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `${siteId}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage
     .from(COMMANDE_BUCKET)
     .upload(path, file, { upsert: false, contentType: file.type });

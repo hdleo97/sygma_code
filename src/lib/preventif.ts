@@ -253,7 +253,9 @@ export async function uploadDocumentEquipement(
   file: File,
 ): Promise<string> {
   const ext = file.name.split(".").pop() ?? "pdf";
-  const path = `docs/${equipementId}/${kind}-${crypto.randomUUID()}.${ext}`;
+  const { data: equipment, error: lookupError } = await supabase.from("equipements").select("etablissement_id").eq("id", equipementId).eq("etablissement_id", currentSiteId()).single();
+  if (lookupError || !equipment) throw new Error("Équipement inaccessible");
+  const path = `${equipment.etablissement_id}/docs/${equipementId}/${kind}-${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage
     .from(DOC_BUCKET)
     .upload(path, file, { upsert: false, contentType: file.type });
@@ -265,7 +267,7 @@ export async function uploadDocumentEquipement(
       kind === "manuel_path" ? { manuel_path: path } : { gamme_path: path },
     )
     .eq("id", equipementId);
-  if (updErr) throw updErr;
+  if (updErr) { await supabase.storage.from(DOC_BUCKET).remove([path]); throw updErr; }
   return path;
 }
 

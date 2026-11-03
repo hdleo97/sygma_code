@@ -76,7 +76,7 @@ export function EquipementForm({ equipement }: { equipement?: Equipement }) {
   const mutation = useMutation({
     mutationFn: async () => {
       let photo_path = equipement?.photo_path ?? null;
-      if (file) photo_path = await uploadPhoto(file);
+      if (file) photo_path = await uploadPhoto(file, form.etablissement_id);
 
       const payload = {
         reference: form.reference.trim(),

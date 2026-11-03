@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -75,7 +76,7 @@ function NouveauPlan() {
       const { data, error } = await supabase
         .from("equipements")
         .select("id, reference, designation, categorie, etablissement_id")
-        .order("reference");
+        .eq("etablissement_id", currentSiteId()).order("reference");
       if (error) throw error;
       return data ?? [];
     },
