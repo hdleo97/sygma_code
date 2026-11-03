@@ -8,6 +8,13 @@
       "when": 1793615325168,
       "tag": "0000_site_scoped_account_access",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793703647646,
+      "tag": "0001_tenant_file_permissions",
+      "breakpoints": true
     }
   ]
 }
