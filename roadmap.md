@@ -15,16 +15,17 @@
 - [x] Table rapports_generes + stockage
 - [x] Bibliothèque de rapports (/rapports)
 - [x] Rapport personnalisé PDF/Excel
-- [x] Rapport mensuel automatique des visites (1er du mois)
+- [ ] Rapport mensuel automatique sécurisé — bloqué : secret de tâche planifiée à configurer ; relance manuelle disponible
 - [x] Exports Excel/CSV/PDF : DI, équipements, interventions
 - [ ] Notifications e-mail — bloqué : domaine e-mail à configurer
 
 ## Cloisonnement des établissements
 - [x] Étape 1 : règles d'accès base de données par site, rôles par site, Site B de test
-- [ ] Étape 2 : interface (sélecteur branché partout, vidage du cache, écran rôles par site, listes déroulantes filtrées)
-- [ ] Étape 3 : fichiers par site, exports, transferts inter-sites, audit étendu, tests complets connectés
+- [x] Étape 2 : rôles actifs par site, nouveau cache et formulaires au changement, écran rôles par établissement, listes principales filtrées
+- [x] Étape 3 : fichiers liés au site et à leur dossier parent, exports filtrés, changements d'établissement interdits, audit des comptes
+- [ ] Validation complète connectée — bloqué : session transmise non valide et aucun compte correspondant à l’adresse du demandeur pour créer une session
 
 ### Suite demandée
-- [ ] Rôles actifs du site sélectionné, cache isolé et formulaires réinitialisés au changement de site
-- [ ] Gestion des rôles par établissement avec contrôles serveur et conservation des droits des autres sites
-- [ ] Vérifications connectées et tests de non-contournement des droits
+- [x] Rôles actifs du site sélectionné, cache isolé et formulaires réinitialisés au changement de site
+- [x] Gestion des rôles par établissement avec contrôles serveur et conservation des droits des autres sites
+- [x] Cinq tests de non-contournement des droits ; compilation validée

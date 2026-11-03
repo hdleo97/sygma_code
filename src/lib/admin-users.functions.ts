@@ -109,6 +109,7 @@ export const deleteAppUser = createServerFn({ method: "POST" }).middleware([requ
   const admin = await targetScope(context.supabase, data.userId, scope, true);
   const { error } = await admin.auth.admin.deleteUser(data.userId);
   if (error) throw error;
+  await auditAction(context.userId, data.userId, "suppression_compte", scope);
   return { ok: true };
 });
 export const resetAppUserPassword = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({ userId: z.string().uuid(), password: z.string().min(8) }).parse(input)).handler(async ({ data, context }) => {
@@ -116,5 +117,6 @@ export const resetAppUserPassword = createServerFn({ method: "POST" }).middlewar
   const admin = await targetScope(context.supabase, data.userId, scope, true);
   const { error } = await admin.auth.admin.updateUserById(data.userId, { password: data.password });
   if (error) throw error;
+  await auditAction(context.userId, data.userId, "reinitialisation_mot_de_passe", scope);
   return { ok: true };
 });
