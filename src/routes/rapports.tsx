@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarRange, Download, FileText, Loader2, Search } from "lucide-react";
@@ -66,7 +67,7 @@ function useEquipements() {
       const { data, error } = await supabase
         .from("equipements")
         .select("id, reference, designation, etablissement_id")
-        .order("reference");
+        .eq("etablissement_id", currentSiteId()).order("reference");
       if (error) throw error;
       return data ?? [];
     },
@@ -135,7 +136,7 @@ function Bibliotheque() {
     try {
       const m = moisPrecedent();
       const filtres: FiltresRapport = {
-        source: "visites", du: m.debut, au: m.fin, etablissement: "all",
+        source: "visites", du: m.debut, au: m.fin, etablissement: currentSiteId(),
         equipement: "all", technicien: "all", statut: "all", nature: "all",
       };
       const lignes = await fetchSourceRows(filtres);
@@ -145,7 +146,7 @@ function Bibliotheque() {
       });
       await saveRapport({
         blob, format: "pdf", type: "mensuel_preventif", titre, filtres,
-        periode_debut: m.debut, periode_fin: m.fin, userId: user.id,
+        etablissement_id: currentSiteId(), periode_debut: m.debut, periode_fin: m.fin, userId: user.id,
       });
       downloadBlob(blob, `${slug(titre)}.pdf`);
       qc.invalidateQueries({ queryKey: ["rapports"] });
@@ -257,7 +258,7 @@ function Generateur() {
   const { data: techniciens } = useQuery({ queryKey: ["techniciens-options"], queryFn: fetchTechniciens });
   const [f, setF] = useState<FiltresRapport>({
     source: "interventions", du: moisPrecedent().debut, au: new Date().toISOString().slice(0, 10),
-    etablissement: "all", equipement: "all", technicien: "all", statut: "all", nature: "all",
+    etablissement: currentSiteId(), equipement: "all", technicien: "all", statut: "all", nature: "all",
   });
   const [busy, setBusy] = useState<ExportFormat | null>(null);
   const set = (k: keyof FiltresRapport) => (v: string) =>
@@ -279,7 +280,8 @@ function Generateur() {
     setBusy(format);
     try {
       const lignes = await fetchSourceRows(f);
-      const src = SOURCES.find((s) => s.value === f.source)!;
+      const src = SOURCES.find((s) => s.value === f.source);
+      if (!src) throw new Error("Type de rapport inconnu");
       const titre = `${src.label} — du ${f.du || "début"} au ${f.au || "aujourd'hui"}`;
       const blob = buildExport(lignes, format, titre, { sousTitre: `${lignes.length} ligne(s)` });
       downloadBlob(blob, `${slug(titre)}.${format}`);

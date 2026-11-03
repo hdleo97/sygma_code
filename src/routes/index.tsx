@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -200,7 +201,7 @@ function Dashboard() {
       const { data, error } = await supabase
         .from("equipements")
         .select("categorie")
-        .not("categorie", "is", null);
+        .eq("etablissement_id", currentSiteId()).not("categorie", "is", null);
       if (error) throw error;
       return [
         ...new Set((data ?? []).map((r) => r.categorie as string)),

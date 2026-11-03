@@ -55,7 +55,7 @@ export function DemandeForm() {
     mutationFn: async () => {
       if (!user) throw new Error("Session expirée");
       const pieces: string[] = [];
-      for (const f of files) pieces.push(await uploadPieceJointe(f));
+      for (const f of files) pieces.push(await uploadPieceJointe(f, etablissementId));
 
       const { data, error } = await supabase
         .from("demandes_intervention")

@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -75,9 +76,9 @@ export function prioriteDiClasses(p: DemandePriorite): string {
 
 export const DI_BUCKET = "demandes";
 
-export async function uploadPieceJointe(file: File): Promise<string> {
+export async function uploadPieceJointe(file: File, siteId = currentSiteId()): Promise<string> {
   const ext = file.name.split(".").pop() ?? "bin";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `${siteId}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage
     .from(DI_BUCKET)
     .upload(path, file, { upsert: false, contentType: file.type });

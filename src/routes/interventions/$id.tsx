@@ -1,3 +1,4 @@
+import { currentSiteId } from "@/lib/current-site";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, FileDown, Loader2, Lock } from "lucide-react";
@@ -108,6 +109,7 @@ function FicheIntervention() {
           "*, equipements(reference, designation, marque, modele, numero_serie, zone, categorie), prestataires(raison_sociale, specialite), intervention_techniciens(technicien_id, profils_utilisateurs:profils_utilisateurs!intervention_techniciens_technicien_id_fkey(nom, prenom))",
         )
         .eq("id", id)
+        .eq("etablissement_id", currentSiteId())
         .maybeSingle();
       if (error) throw error;
       return data as unknown as Row | null;
