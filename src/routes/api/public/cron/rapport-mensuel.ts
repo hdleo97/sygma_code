@@ -12,8 +12,14 @@ export const Route = createFileRoute("/api/public/cron/rapport-mensuel")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"];
-        if (!key || request.headers.get("apikey") !== key) {
+        const key = process.env["CRON_SECRET"];
+        if (!key) return new Response("Scheduled reports are not configured", { status: 503 });
+        const supplied = request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
+        const digest = async (value: string) => new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
+        const [expected, actual] = await Promise.all([digest(key), digest(supplied)]);
+        let difference = 0;
+        for (let i = 0; i < expected.length; i++) difference |= expected[i] ^ actual[i];
+        if (difference !== 0) {
           return new Response("Unauthorized", { status: 401 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -55,7 +61,7 @@ export const Route = createFileRoute("/api/public/cron/rapport-mensuel")({
           });
           if (up.error) return new Response(up.error.message, { status: 500 });
 
-          await db.from("rapports_generes").insert({
+          const saved = await db.from("rapports_generes").insert({
             type: "mensuel_preventif",
             titre: `Rapport mensuel des visites quotidiennes — ${m.label} — ${etab.nom}`,
             filtres: { source: "visites", du: m.debut, au: m.fin, etablissement: etab.id },
@@ -66,6 +72,10 @@ export const Route = createFileRoute("/api/public/cron/rapport-mensuel")({
             periode_fin: m.fin,
             genere_par: null,
           });
+          if (saved.error) {
+            await supabaseAdmin.storage.from("rapports").remove([path]);
+            return new Response("Report could not be saved", { status: 500 });
+          }
           crees++;
         }
         return Response.json({ ok: true, mois: m.label, rapports: crees });

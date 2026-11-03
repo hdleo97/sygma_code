@@ -12,6 +12,13 @@ export type AppUserRow = {
 const ROLES = ["super_admin", "responsable_maintenance", "technicien", "demandeur", "gestionnaire_stock", "prestataire", "responsable_etablissement"] as const;
 const assignmentSchema = z.array(z.object({ etablissement_id: z.string().uuid(), role: z.enum(ROLES) })).min(1);
 
+async function auditAction(userId: string, targetId: string, action: string, scope: Map<string, boolean>) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin.from("audit_logs").insert({ user_id: userId, record_id: targetId, action,
+    table_name: "comptes", details: { etablissements: [...scope.keys()] } });
+  if (error) throw error;
+}
+
 async function managementScope(client: SupabaseClient<Database>, userId: string) {
   const { data, error } = await client.from("utilisateur_etablissement_roles").select("etablissement_id, role").eq("user_id", userId);
   if (error) throw error;
@@ -71,6 +78,7 @@ export const createAppUser = createServerFn({ method: "POST" }).middleware([requ
     const { error: accessError } = await context.supabase.rpc("set_user_site_access", { _target: id, _assignments: data.affectations });
     if (accessError) throw accessError;
   } catch (e) { await supabaseAdmin.auth.admin.deleteUser(id); throw e; }
+  await auditAction(context.userId, id, "creation_compte", scope);
   return { id };
 });
 export const updateAppUserAccess = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({
@@ -92,6 +100,7 @@ export const setAppUserActive = createServerFn({ method: "POST" }).middleware([r
   const admin = await targetScope(context.supabase, data.userId, scope, true);
   const { error } = await admin.auth.admin.updateUserById(data.userId, { ban_duration: data.active ? "none" : "876000h" });
   if (error) throw error;
+  await auditAction(context.userId, data.userId, data.active ? "reactivation_compte" : "desactivation_compte", scope);
   return { ok: true };
 });
 export const deleteAppUser = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(input => z.object({ userId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
