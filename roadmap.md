@@ -1,9 +1,9 @@
 # Roadmap SYGMA
 
 ## Correction de création des demandes
-- [ ] Auditer les règles de création, de lecture et de pièces jointes
-- [ ] Corriger le blocage sans affaiblir le cloisonnement par établissement
-- [ ] Tester la création connectée, la relecture et le refus inter-sites
+- [x] Auditer les règles de création, de lecture et de pièces jointes
+- [x] Corriger la lecture immédiate à la création et les écritures d'historique, sans élargir les droits de création
+- [x] Dix tests réussis ; création connectée avec pièce jointe, relecture et téléchargement vérifiés ; données de test supprimées
 
 ## En cours — Techniciens / Prestataires / Établissements
 - [x] Schéma BDD : compétences, disponibilité, supérieur hiérarchique, table `prestataires`, `prestataire_id` sur DI et interventions
