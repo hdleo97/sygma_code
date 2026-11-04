@@ -1,5 +1,13 @@
 # Roadmap SYGMA
 
+## Durcissement avant production
+- [ ] Auditer et corriger les policies, fonctions et accès aux fichiers par rôle et établissement
+- [ ] Vérifier et corriger les écrans principaux sur mobile et tablette
+- [ ] Uniformiser les erreurs des formulaires et actions asynchrones
+- [ ] Ajouter une déconnexion après inactivité configurable
+- [ ] Contrôler les secrets et données sensibles dans le code et les logs
+- [ ] Exécuter les tests de sécurité et les parcours connectés
+
 ## Correction de création des demandes
 - [x] Auditer les règles de création, de lecture et de pièces jointes
 - [x] Corriger la lecture immédiate à la création et les écritures d'historique, sans élargir les droits de création
