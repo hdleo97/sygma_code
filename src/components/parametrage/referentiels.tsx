@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { currentSiteId } from "@/lib/current-site";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +34,7 @@ function ListeReferentiel({
     mutationFn: async () => {
       const { error } = await db
         .from("referentiels")
-        .insert({ type, libelle: nouveau.trim() });
+        .insert({ type, libelle: nouveau.trim(), etablissement_id: currentSiteId() });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -153,7 +154,7 @@ function LibellesStatuts() {
                     }}
                   />
                   <span
-                    className="whitespace-nowrap rounded-full px-2 py-0.5 text-xs text-primary-foreground"
+                    className="max-w-24 shrink-0 truncate rounded-full px-2 py-0.5 text-xs text-primary-foreground"
                     style={{ backgroundColor: l.couleur }}
                   >
                     {l.libelle}

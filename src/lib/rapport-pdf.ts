@@ -16,6 +16,7 @@ function fmt(value: string | null): string {
 
 type RapportRow = {
   id: string;
+  etablissement_id: string;
   description: string;
   nature: "curative" | "preventive";
   statut: "planifiee" | "en_cours" | "terminee" | "signee";
@@ -75,7 +76,7 @@ export async function exporterRapportPdf(interventionId: string): Promise<void> 
   if (opsError) throw opsError;
   const ops = (opsData ?? []) as unknown as OpRow[];
 
-  const org = await fetchOrganisation();
+  const org = await fetchOrganisation(row.etablissement_id);
   const logo = await fetchLogoDataUrl(org.logo_path);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const marge = 40;

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { currentSiteId } from "@/lib/current-site";
 
 // Les nouvelles tables ne sont pas encore dans les types générés : accès souple.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,12 +30,13 @@ export const DOMAINES_STATUTS: { value: string; label: string }[] = [
   { value: "equipement_statut", label: "Statuts des équipements" },
 ];
 
-export async function fetchOrganisation(): Promise<Organisation> {
-  const { data } = await db
-    .from("parametres_organisation")
+export async function fetchOrganisation(siteId = currentSiteId()): Promise<Organisation> {
+  const { data, error } = await db
+    .from("parametres_site")
     .select("nom_organisation, logo_path")
-    .eq("id", 1)
+    .eq("etablissement_id", siteId)
     .maybeSingle();
+  if (error) throw error;
   return data ?? { nom_organisation: "SYGMA", logo_path: null };
 }
 
@@ -55,6 +57,7 @@ export async function fetchReferentiels(): Promise<Referentiel[]> {
   const { data, error } = await db
     .from("referentiels")
     .select("*")
+    .eq("etablissement_id", currentSiteId())
     .order("ordre")
     .order("libelle");
   if (error) throw error;
@@ -69,6 +72,7 @@ export async function fetchLibellesStatuts(): Promise<LibelleStatut[]> {
   const { data, error } = await db
     .from("libelles_statuts")
     .select("*")
+    .eq("etablissement_id", currentSiteId())
     .order("domaine")
     .order("created_at");
   if (error) throw error;

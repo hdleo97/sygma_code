@@ -143,4 +143,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  input, textarea, select { min-width: 0; max-width: 100%; }
+  main { overflow-wrap: anywhere; }
 }

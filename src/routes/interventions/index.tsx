@@ -64,7 +64,7 @@ function ListeInterventions() {
   const [nature, setNature] = useState("all");
   const [onlyMine, setOnlyMine] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["interventions", currentEtablissementId],
     queryFn: async () => {
       let query = supabase
@@ -175,6 +175,8 @@ function ListeInterventions() {
           <div className="flex items-center justify-center gap-2 p-10 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" /> Chargement…
           </div>
+        ) : isError ? (
+          <div role="alert" className="space-y-3 p-6 text-sm text-destructive"><p>Impossible de charger les interventions.</p><Button variant="outline" onClick={() => void refetch()}>Réessayer</Button></div>
         ) : rows.length === 0 ? (
           <p className="p-10 text-center text-sm text-muted-foreground">
             Aucune intervention.

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { db, useReferentiels } from "@/lib/parametrage";
 import { PHASES } from "@/lib/rapport-phases";
+import { currentSiteId } from "@/lib/current-site";
 
 type Op = {
   id: string;
@@ -37,6 +38,7 @@ export function ParametrageChecklists() {
       const { data, error } = await db
         .from("checklist_operations")
         .select("id, phase, categorie_equipement, libelle, ordre, actif")
+        .eq("etablissement_id", currentSiteId())
         .order("phase")
         .order("ordre");
       if (error) throw error;
@@ -68,6 +70,7 @@ export function ParametrageChecklists() {
           .map((o) => o.ordre),
       );
       const { error } = await db.from("checklist_operations").insert({
+        etablissement_id: currentSiteId(),
         phase,
         categorie_equipement: catValue,
         libelle,
@@ -107,7 +110,7 @@ export function ParametrageChecklists() {
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm text-muted-foreground">Catégorie d'équipement :</span>
         <Select value={cat} onValueChange={setCat}>
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-full min-w-0 sm:w-64">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

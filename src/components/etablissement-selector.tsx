@@ -31,9 +31,9 @@ export function EtablissementSelector() {
   // Single-establishment users: show as a static badge.
   if (etablissements.length === 1) {
     return (
-      <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
-        <Building2 className="h-3.5 w-3.5" />
-        <span className="max-w-[16rem] truncate">
+      <div className="flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
+        <Building2 className="h-3.5 w-3.5 shrink-0" />
+        <span className="min-w-0 max-w-[16rem] truncate">
           {etablissements[0].nom}
         </span>
       </div>
@@ -61,7 +61,7 @@ export function EtablissementSelector() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[20rem] p-0" align="start">
+      <PopoverContent className="w-[20rem] max-w-[calc(100vw-2rem)] p-0" align="end">
         <Command>
           <CommandInput placeholder="Rechercher un établissement…" />
           <CommandList>

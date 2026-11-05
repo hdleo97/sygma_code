@@ -8,6 +8,7 @@ import { ParametrageNotifications } from "@/components/parametrage/notifications
 import { ParametrageReferentiels } from "@/components/parametrage/referentiels";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth-context";
+import { ParametrageSecurite } from "@/components/parametrage/securite";
 
 export const Route = createFileRoute("/parametrage")({
   head: () => ({
@@ -49,6 +50,7 @@ function ParametragePage() {
           {isSuper && <TabsTrigger value="notifications">Notifications</TabsTrigger>}
           {isSuper && <TabsTrigger value="identite">Identité visuelle</TabsTrigger>}
           {isSuper && <TabsTrigger value="audit">Journal d'audit</TabsTrigger>}
+          {isSuper && <TabsTrigger value="securite">Sécurité</TabsTrigger>}
         </TabsList>
         <TabsContent value="utilisateurs" className="mt-4"><ComptesUtilisateurs /></TabsContent>
         <TabsContent value="checklists" className="mt-4"><ParametrageChecklists /></TabsContent>
@@ -56,6 +58,7 @@ function ParametragePage() {
         {isSuper && <TabsContent value="notifications" className="mt-4"><ParametrageNotifications /></TabsContent>}
         {isSuper && <TabsContent value="identite" className="mt-4"><ParametrageIdentite /></TabsContent>}
         {isSuper && <TabsContent value="audit" className="mt-4"><JournalAudit /></TabsContent>}
+        {isSuper && <TabsContent value="securite" className="mt-4"><ParametrageSecurite /></TabsContent>}
       </Tabs>
     </div>
   );

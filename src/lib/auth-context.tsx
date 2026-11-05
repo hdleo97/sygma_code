@@ -11,6 +11,9 @@ import type { Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import { rolesForSite, type SiteAssignment } from "@/lib/site-access";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { errorMessage } from "@/lib/app-errors";
 
 export type AppRole =
   | "super_admin"
@@ -47,6 +50,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = "sygma.current_etablissement";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profil, setProfil] = useState<AuthContextValue["profil"]>(null);
@@ -79,6 +83,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", userId),
     ]);
 
+    const error = profilRes.error ?? rolesRes.error ?? etabsRes.error;
+    if (error) {
+      setProfil(null); setSiteRoles([]); setEtablissements([]); setCurrentEtablissementIdState(null);
+      toast.error(errorMessage(error));
+      return;
+    }
     setProfil(profilRes.data ?? { nom: null, prenom: null });
     setSiteRoles(rolesRes.data ?? []);
     const etabs = (etabsRes.data ?? [])
@@ -97,6 +107,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (nextCurrent) window.localStorage.setItem(STORAGE_KEY, nextCurrent);
     else window.localStorage.removeItem(STORAGE_KEY);
   }, []);
+
+  const signOut = useCallback(async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    if (error) {
+      // Local cleanup must not depend on a successful network revocation.
+      await supabase.auth.signOut({ scope: "local" });
+    }
+    setSession(null); setProfil(null); setSiteRoles([]); setEtablissements([]); setCurrentEtablissementIdState(null);
+    window.localStorage.removeItem(STORAGE_KEY);
+  }, [queryClient]);
 
   const refresh = useCallback(async () => {
     const { data } = await supabase.auth.getSession();
@@ -153,9 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasRole: (r) => roles.includes(r),
       hasAnyRole: (rs) => rs.some((r) => roles.includes(r)),
       isGlobal,
-      signOut: async () => {
-        await supabase.auth.signOut();
-      },
+      signOut,
       refresh,
     };
   }, [
@@ -167,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     currentEtablissementId,
     setCurrentEtablissementId,
     refresh,
+    signOut,
   ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

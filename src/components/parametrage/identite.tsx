@@ -8,10 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { db, fetchLogoDataUrl, fetchOrganisation } from "@/lib/parametrage";
+import { currentSiteId } from "@/lib/current-site";
 
 export function ParametrageIdentite() {
   const qc = useQueryClient();
-  const { data: org } = useQuery({ queryKey: ["organisation"], queryFn: fetchOrganisation });
+  const { data: org } = useQuery({ queryKey: ["organisation"], queryFn: () => fetchOrganisation() });
   const { data: logo } = useQuery({
     queryKey: ["organisation-logo", org?.logo_path],
     queryFn: () => fetchLogoDataUrl(org?.logo_path ?? null),
@@ -27,15 +28,15 @@ export function ParametrageIdentite() {
     mutationFn: async () => {
       let logo_path = org?.logo_path ?? null;
       if (file) {
+        if (file.size > 2 * 1024 * 1024 || !["image/png", "image/jpeg"].includes(file.type)) throw new Error("Vous devez choisir une image PNG ou JPG de 2 Mo maximum.");
         const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
-        logo_path = `logo-${Date.now()}.${ext}`;
-        const { error } = await supabase.storage.from("branding").upload(logo_path, file, { upsert: true });
+        logo_path = `${currentSiteId()}/logo-${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("branding").upload(logo_path, file);
         if (error) throw error;
       }
       const { error } = await db
-        .from("parametres_organisation")
-        .update({ nom_organisation: nom.trim() || "SYGMA", logo_path })
-        .eq("id", 1);
+        .from("parametres_site")
+        .upsert({ etablissement_id: currentSiteId(), nom_organisation: nom.trim() || "SYGMA", logo_path });
       if (error) throw error;
     },
     onSuccess: () => {

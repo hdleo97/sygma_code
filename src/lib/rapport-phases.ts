@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { currentSiteId } from "@/lib/current-site";
 
 export type ChecklistOperation = Tables<"checklist_operations">;
 export type OperationRealisee = Tables<"rapport_operations_realisees">;
@@ -25,6 +26,7 @@ export async function fetchChecklist(
   let query = supabase
     .from("checklist_operations")
     .select("*")
+    .eq("etablissement_id", currentSiteId())
     .eq("actif", true)
     .order("phase")
     .order("ordre");

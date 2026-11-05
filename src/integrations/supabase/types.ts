@@ -19,6 +19,7 @@ export type Database = {
           action: string
           created_at: string
           details: Json
+          etablissement_id: string | null
           id: string
           record_id: string | null
           table_name: string
@@ -28,6 +29,7 @@ export type Database = {
           action: string
           created_at?: string
           details?: Json
+          etablissement_id?: string | null
           id?: string
           record_id?: string | null
           table_name: string
@@ -37,12 +39,21 @@ export type Database = {
           action?: string
           created_at?: string
           details?: Json
+          etablissement_id?: string | null
           id?: string
           record_id?: string | null
           table_name?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bons_sortie: {
         Row: {
@@ -124,6 +135,7 @@ export type Database = {
           actif: boolean
           categorie_equipement: string | null
           created_at: string
+          etablissement_id: string | null
           id: string
           libelle: string
           ordre: number
@@ -134,6 +146,7 @@ export type Database = {
           actif?: boolean
           categorie_equipement?: string | null
           created_at?: string
+          etablissement_id?: string | null
           id?: string
           libelle: string
           ordre?: number
@@ -144,13 +157,22 @@ export type Database = {
           actif?: boolean
           categorie_equipement?: string | null
           created_at?: string
+          etablissement_id?: string | null
           id?: string
           libelle?: string
           ordre?: number
           phase?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "checklist_operations_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       commandes_achat: {
         Row: {
@@ -885,6 +907,7 @@ export type Database = {
           couleur: string
           created_at: string
           domaine: string
+          etablissement_id: string | null
           id: string
           libelle: string
           updated_at: string
@@ -894,6 +917,7 @@ export type Database = {
           couleur?: string
           created_at?: string
           domaine: string
+          etablissement_id?: string | null
           id?: string
           libelle: string
           updated_at?: string
@@ -903,11 +927,20 @@ export type Database = {
           couleur?: string
           created_at?: string
           domaine?: string
+          etablissement_id?: string | null
           id?: string
           libelle?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "libelles_statuts_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       magasins: {
         Row: {
@@ -940,6 +973,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "magasins_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications_site: {
+        Row: {
+          actif: boolean
+          contenu: string
+          destinataires: string
+          etablissement_id: string
+          evenement: string
+          libelle: string
+          sujet: string
+        }
+        Insert: {
+          actif?: boolean
+          contenu?: string
+          destinataires?: string
+          etablissement_id: string
+          evenement: string
+          libelle: string
+          sujet?: string
+        }
+        Update: {
+          actif?: boolean
+          contenu?: string
+          destinataires?: string
+          etablissement_id?: string
+          evenement?: string
+          libelle?: string
+          sujet?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_site_etablissement_id_fkey"
             columns: ["etablissement_id"]
             isOneToOne: false
             referencedRelation: "etablissements"
@@ -997,6 +1068,38 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      parametres_site: {
+        Row: {
+          etablissement_id: string
+          inactivite_minutes: number
+          logo_path: string | null
+          nom_organisation: string
+          updated_at: string
+        }
+        Insert: {
+          etablissement_id: string
+          inactivite_minutes?: number
+          logo_path?: string | null
+          nom_organisation?: string
+          updated_at?: string
+        }
+        Update: {
+          etablissement_id?: string
+          inactivite_minutes?: number
+          logo_path?: string | null
+          nom_organisation?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parametres_site_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: true
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pieces: {
         Row: {
@@ -1406,6 +1509,7 @@ export type Database = {
         Row: {
           actif: boolean
           created_at: string
+          etablissement_id: string | null
           id: string
           libelle: string
           ordre: number
@@ -1415,6 +1519,7 @@ export type Database = {
         Insert: {
           actif?: boolean
           created_at?: string
+          etablissement_id?: string | null
           id?: string
           libelle: string
           ordre?: number
@@ -1424,13 +1529,22 @@ export type Database = {
         Update: {
           actif?: boolean
           created_at?: string
+          etablissement_id?: string | null
           id?: string
           libelle?: string
           ordre?: number
           type?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "referentiels_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stock_mouvements: {
         Row: {

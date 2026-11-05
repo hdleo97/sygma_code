@@ -110,7 +110,7 @@ function CommandesListe() {
         const seuil = Number(s.seuil_alerte);
         return { s, piece, magasin, quantite, seuil };
       })
-      .filter((r) => r.piece && r.magasin && r.quantite < r.seuil);
+      .filter((r): r is typeof r & { piece: NonNullable<typeof r.piece>; magasin: NonNullable<typeof r.magasin> } => Boolean(r.piece && r.magasin && r.quantite < r.seuil));
   }, [piecesQ.data, magasinsQ.data, stockQ.data, seuilsQ.data]);
 
   const toggle = (id: string) =>
@@ -119,7 +119,7 @@ function CommandesListe() {
     );
 
   const creerDepuisSelection = () => {
-    const magasinId = sousSeuil.find((r) => selection.includes(r.piece!.id))
+    const magasinId = sousSeuil.find((r) => selection.includes(r.piece.id))
       ?.magasin?.id;
     void navigate({
       to: "/commandes/nouvelle",
@@ -138,7 +138,7 @@ function CommandesListe() {
             Réapprovisionnement des pièces : commandes, réceptions et exports.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             onClick={() => exporterCommandesExcel(commandes)}
@@ -199,6 +199,8 @@ function CommandesListe() {
             <div className="flex items-center gap-2 p-6 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" /> Chargement…
             </div>
+          ) : commandesQ.isError ? (
+            <div role="alert" className="space-y-2 text-sm text-destructive"><p>Impossible de charger les commandes.</p><Button variant="outline" onClick={() => void commandesQ.refetch()}>Réessayer</Button></div>
           ) : commandes.length === 0 ? (
             <p className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
               Aucune commande pour le moment.
@@ -263,7 +265,9 @@ function CommandesListe() {
             </Button>
           </div>
 
-          {sousSeuil.length === 0 ? (
+          {[piecesQ, magasinsQ, stockQ, seuilsQ].some(q => q.isError) ? (
+            <p role="alert" className="text-sm text-destructive">Impossible de charger les alertes de stock. Réessayez en actualisant la page.</p>
+          ) : sousSeuil.length === 0 ? (
             <p className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
               Aucune pièce sous le seuil d'alerte.
             </p>
@@ -286,27 +290,27 @@ function CommandesListe() {
                     <TableRow key={r.s.id}>
                       <TableCell>
                         <Checkbox
-                          checked={selection.includes(r.piece!.id)}
-                          onCheckedChange={() => toggle(r.piece!.id)}
-                          aria-label={`Sélectionner ${r.piece!.code_article}`}
+                          checked={selection.includes(r.piece.id)}
+                          onCheckedChange={() => toggle(r.piece.id)}
+                          aria-label={`Sélectionner ${r.piece.code_article}`}
                         />
                       </TableCell>
                       <TableCell className="font-medium">
-                        {r.piece!.code_article}
+                        {r.piece.code_article}
                       </TableCell>
-                      <TableCell>{r.piece!.designation}</TableCell>
-                      <TableCell>{r.magasin!.nom}</TableCell>
+                      <TableCell>{r.piece.designation}</TableCell>
+                      <TableCell>{r.magasin.nom}</TableCell>
                       <TableCell>
                         <span className="inline-flex items-center gap-1 text-destructive">
                           <AlertTriangle className="h-3.5 w-3.5" />
-                          {formatQuantite(r.quantite, r.piece!.unite)}
+                          {formatQuantite(r.quantite, r.piece.unite)}
                         </span>
                       </TableCell>
                       <TableCell>
-                        {formatQuantite(r.seuil, r.piece!.unite)}
+                        {formatQuantite(r.seuil, r.piece.unite)}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {r.piece!.fournisseur ?? "—"}
+                        {r.piece.fournisseur ?? "—"}
                       </TableCell>
                     </TableRow>
                   ))}

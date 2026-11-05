@@ -12,3 +12,6 @@
 - Derive UI permissions from the selected site's role assignments; scope browser queries with `currentSiteId` and remount the query cache and forms per user/site. Why: menus, options and cached rows must not carry over between sites.
 - Account role changes use the atomic `set_user_site_access` RPC; preserve assignments outside the caller's management scope and authorize account-wide actions across every target site. Why: administrators must not erase or alter another site's rights.
 - Demand SELECT policies evaluate ownership and site access directly on the row; immutable history is written only by hardened definer triggers. Why: INSERT RETURNING must see the new row while history remains protected from direct client writes.
+- Site-owned configuration uses parametres_site, notifications_site and site-scoped checklist/reference rows; legacy rows remain read-only for historical reports. Why: administrators must not alter another site's configuration.
+- Use the shared query-client, safe-feedback and payload-free error summaries for asynchronous errors. Why: provider messages and business data must not leak through UI or telemetry.
+- Session inactivity is managed once per authenticated shell with user-scoped cross-tab timestamps and site settings; cancel and clear queries before sign-out. Why: expired sessions must not restore cached private data.

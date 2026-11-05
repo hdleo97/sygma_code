@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/parametrage";
+import { currentSiteId } from "@/lib/current-site";
 
 type Notif = {
   evenement: string;
@@ -22,7 +23,7 @@ export function ParametrageNotifications() {
   const { data } = useQuery({
     queryKey: ["param-notifs"],
     queryFn: async (): Promise<Notif[]> => {
-      const { data, error } = await db.from("parametres_notifications").select("*").order("libelle");
+      const { data, error } = await db.from("notifications_site").select("*").eq("etablissement_id", currentSiteId()).order("libelle");
       if (error) throw error;
       return data ?? [];
     },
@@ -30,9 +31,9 @@ export function ParametrageNotifications() {
   const save = useMutation({
     mutationFn: async (n: Notif) => {
       const { error } = await db
-        .from("parametres_notifications")
+        .from("notifications_site")
         .update({ actif: n.actif, destinataires: n.destinataires, sujet: n.sujet, contenu: n.contenu })
-        .eq("evenement", n.evenement);
+        .eq("evenement", n.evenement).eq("etablissement_id", currentSiteId());
       if (error) throw error;
     },
     onSuccess: () => {

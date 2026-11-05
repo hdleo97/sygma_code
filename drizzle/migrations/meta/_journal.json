@@ -22,6 +22,13 @@
       "when": 1793705573206,
       "tag": "0002_fix_demande_creation_and_history",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793867244530,
+      "tag": "0003_production_site_hardening",
+      "breakpoints": true
     }
   ]
 }

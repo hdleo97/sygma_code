@@ -205,7 +205,7 @@ function NouvelleCommande() {
           </div>
 
           {lignes.map((l, i) => (
-            <div key={i} className="grid gap-2 sm:grid-cols-[1fr_140px_140px_auto]">
+            <div key={i} className="grid min-w-0 gap-2 lg:grid-cols-[minmax(0,1fr)_100px_100px_auto]">
               <Select
                 value={l.piece_id}
                 onValueChange={(v) =>

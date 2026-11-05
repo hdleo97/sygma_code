@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/parametrage";
+import { currentSiteId } from "@/lib/current-site";
 
 type Log = {
   id: string;
@@ -25,7 +26,7 @@ export function JournalAudit() {
   const { data: logs, isLoading } = useQuery({
     queryKey: ["audit-logs", du, au],
     queryFn: async (): Promise<Log[]> => {
-      let q = db.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(500);
+      let q = db.from("audit_logs").select("*").or(`etablissement_id.eq.${currentSiteId()},etablissement_id.is.null`).order("created_at", { ascending: false }).limit(500);
       if (du) q = q.gte("created_at", du);
       if (au) q = q.lte("created_at", `${au}T23:59:59`);
       const { data, error } = await q;
@@ -59,9 +60,9 @@ export function JournalAudit() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Input type="date" value={du} onChange={(e) => setDu(e.target.value)} className="w-40" />
-        <Input type="date" value={au} onChange={(e) => setAu(e.target.value)} className="w-40" />
+      <div className="grid min-w-0 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <Input aria-label="Du" type="date" value={du} onChange={(e) => setDu(e.target.value)} className="w-full min-w-0" />
+        <Input aria-label="Au" type="date" value={au} onChange={(e) => setAu(e.target.value)} className="w-full min-w-0" />
         <select
           value={table}
           onChange={(e) => setTable(e.target.value)}
@@ -72,7 +73,7 @@ export function JournalAudit() {
             <option key={t} value={t}>{t}</option>
           ))}
         </select>
-        <Input placeholder="Rechercher…" value={qtext} onChange={(e) => setQtext(e.target.value)} className="w-56" />
+        <Input placeholder="Rechercher…" value={qtext} onChange={(e) => setQtext(e.target.value)} className="w-full min-w-0" />
       </div>
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-sm">
