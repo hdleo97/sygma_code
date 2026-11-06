@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertSiteAssignments, assertWholeAccountScope, type SiteAssignment } from "@/lib/site-access";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { errorMessage } from "@/lib/app-errors";
 
 export type AppUserRow = {
   id: string; email: string | null; nom: string | null; prenom: string | null;
@@ -70,7 +71,7 @@ export const createAppUser = createServerFn({ method: "POST" }).middleware([requ
   assertSiteAssignments(data.affectations, scope);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: created, error } = await supabaseAdmin.auth.admin.createUser({ email: data.email, password: data.password, email_confirm: true, user_metadata: { nom: data.nom, prenom: data.prenom } });
-  if (error || !created.user) throw new Error(error?.message ?? "Création impossible");
+  if (error || !created.user) throw new Error(errorMessage(error));
   const id = created.user.id;
   try {
     const { error: profileError } = await supabaseAdmin.from("profils_utilisateurs").upsert({ id, nom: data.nom, prenom: data.prenom });
@@ -87,7 +88,7 @@ export const updateAppUserAccess = createServerFn({ method: "POST" }).middleware
 }).parse(input)).handler(async ({ data, context }) => {
   const scope = await managementScope(context.supabase, context.userId);
   assertSiteAssignments(data.affectations, scope);
-  const admin = await targetScope(context.supabase, data.userId, scope);
+  const admin = await targetScope(context.supabase, data.userId, scope, true);
   const { error } = await context.supabase.rpc("set_user_site_access", { _target: data.userId, _assignments: data.affectations });
   if (error) throw error;
   const { error: profileError } = await admin.from("profils_utilisateurs").update({ nom: data.nom, prenom: data.prenom }).eq("id", data.userId);

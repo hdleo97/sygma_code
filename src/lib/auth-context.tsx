@@ -109,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    const activityKey = session?.user.id ? `sygma.activity.${session.user.id}` : null;
     await queryClient.cancelQueries();
     queryClient.clear();
     const { error } = await supabase.auth.signOut({ scope: "local" });
@@ -118,7 +119,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setSession(null); setProfil(null); setSiteRoles([]); setEtablissements([]); setCurrentEtablissementIdState(null);
     window.localStorage.removeItem(STORAGE_KEY);
-  }, [queryClient]);
+    if (activityKey) window.localStorage.removeItem(activityKey);
+  }, [queryClient, session?.user.id]);
 
   const refresh = useCallback(async () => {
     const { data } = await supabase.auth.getSession();

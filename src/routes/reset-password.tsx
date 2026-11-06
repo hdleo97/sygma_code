@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { errorMessage } from "@/lib/app-errors";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
@@ -14,6 +15,10 @@ export const Route = createFileRoute("/reset-password")({
         name: "description",
         content: "Définir un nouveau mot de passe pour votre compte SYGMA.",
       },
+      { property: "og:title", content: "Réinitialisation du mot de passe — SYGMA" },
+      { property: "og:description", content: "Définissez un nouveau mot de passe pour votre espace SYGMA." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -50,11 +55,15 @@ function ResetPasswordPage() {
       return setError("Les mots de passe ne correspondent pas.");
     }
     setBusy(true);
+    try {
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
-    if (error) return setError(error.message);
+    if (error) return setError(errorMessage(error));
+    setPassword(""); setConfirm("");
     setDone(true);
     setTimeout(() => navigate({ to: "/" }), 1200);
+    } catch (error) { setError(errorMessage(error)); }
+    finally { setBusy(false); }
   }
 
   return (

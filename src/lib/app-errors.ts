@@ -2,6 +2,16 @@
 export function errorMessage(error: unknown): string {
   const item = error && typeof error === "object" ? error as { code?: string; message?: string; status?: number } : {};
   const message = item.message ?? "";
+  if ([
+    "Vous n’avez pas les droits nécessaires dans cet établissement.",
+    "Cet élément existe déjà. Vérifiez la référence ou le code saisi.",
+    "Un élément lié est absent ou encore utilisé. Actualisez la page.",
+    "Vérifiez les champs obligatoires et les valeurs saisies.",
+    "Votre session a expiré. Reconnectez-vous pour continuer.",
+    "Connexion interrompue. Vérifiez votre connexion puis réessayez.",
+    "Adresse e-mail ou mot de passe incorrect.",
+    "Trop de tentatives. Patientez avant de réessayer.",
+  ].includes(message)) return message;
   if (item.code === "42501" || /row.level security|permission denied|forbidden/i.test(message))
     return "Vous n’avez pas les droits nécessaires dans cet établissement.";
   if (item.code === "23505") return "Cet élément existe déjà. Vérifiez la référence ou le code saisi.";

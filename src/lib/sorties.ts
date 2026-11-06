@@ -208,54 +208,11 @@ export async function effectuerSortie(input: {
   user_id: string;
   quantites: { ligne_id: string; quantite: number }[];
 }): Promise<void> {
-  const { demande, magasin_id, user_id } = input;
-  const map = new Map(input.quantites.map((q) => [q.ligne_id, q.quantite]));
-
-  const mouvements = demande.demandes_sortie_lignes
-    .map((l) => ({
-      piece_id: l.piece_id,
-      magasin_id,
-      type: "sortie" as const,
-      quantite: map.get(l.id) ?? Number(l.quantite_demandee),
-      origine: "autre" as const,
-      etat_piece: "neuf" as const,
-      user_id,
-      reference: `Demande ${demande.id.slice(0, 8)}`,
-      justification: demande.justification,
-    }))
-    .filter((m) => m.quantite > 0);
-
-  if (mouvements.length === 0) {
-    throw new Error("Aucune quantité à sortir");
-  }
-
-  const { error: errMvt } = await supabase
-    .from("stock_mouvements")
-    .insert(mouvements);
-  if (errMvt) throw errMvt;
-
-  for (const l of demande.demandes_sortie_lignes) {
-    const q = map.get(l.id) ?? Number(l.quantite_demandee);
-    const { error } = await supabase
-      .from("demandes_sortie_lignes")
-      .update({ quantite_sortie: q })
-      .eq("id", l.id);
-    if (error) throw error;
-  }
-
-  const { error: errBon } = await supabase.from("bons_sortie").insert({
-    demande_id: demande.id,
-    magasin_id,
-    etablissement_id: demande.etablissement_id,
-    intervention_id: demande.intervention_id,
-    cree_par: user_id,
+  const { error } = await supabase.rpc("traiter_sortie", {
+    _demande_id: input.demande.id,
+    _magasin_id: input.magasin_id,
+    _quantites: input.quantites,
   });
-  if (errBon) throw errBon;
-
-  const { error } = await supabase
-    .from("demandes_sortie_pieces")
-    .update({ statut: "traitee" })
-    .eq("id", demande.id);
   if (error) throw error;
 }
 

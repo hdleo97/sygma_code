@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { errorMessage } from "@/lib/app-errors";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -14,6 +15,10 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "SYGMA — Connexion" },
       { name: "description", content: "Connexion à l'application SYGMA." },
+      { property: "og:title", content: "Connexion — SYGMA" },
+      { property: "og:description", content: "Connexion sécurisée à votre espace de maintenance SYGMA." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -46,10 +51,12 @@ function AuthPage() {
     setError(null);
     setInfo(null);
 
+    try {
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
-      if (error) return setError(error.message);
+      if (error) return setError(errorMessage(error));
+      setPassword("");
       navigate({ to: target });
       return;
     }
@@ -59,10 +66,12 @@ function AuthPage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     setBusy(false);
-    if (error) return setError(error.message);
+    if (error) return setError(errorMessage(error));
     setInfo(
       "Si un compte est associé à cet e-mail, un lien de réinitialisation vient d'être envoyé.",
     );
+    } catch (error) { setError(errorMessage(error)); }
+    finally { setBusy(false); }
   }
 
   return (

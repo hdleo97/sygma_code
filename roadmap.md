@@ -1,12 +1,13 @@
 # Roadmap SYGMA
 
 ## Durcissement avant production
-- [ ] Auditer et corriger les policies, fonctions et accès aux fichiers par rôle et établissement
-- [ ] Vérifier et corriger les écrans principaux sur mobile et tablette
-- [ ] Uniformiser les erreurs des formulaires et actions asynchrones
-- [ ] Ajouter une déconnexion après inactivité configurable
-- [ ] Contrôler les secrets et données sensibles dans le code et les logs
-- [ ] Exécuter les tests de sécurité et les parcours connectés
+- [x] Audit RLS : paramètres/checklists/référentiels par site, profils et rôles protégés, fichiers cloisonnés, contrôles de liens intra-site ; sorties atomiques et transitions par rôle
+- [x] Première vérification connectée de 22 écrans à 375/768/1130 px ; débordement commande sur tablette corrigé, en-tête et paramètres adaptés ; connexion recontrôlée à 375/768/1280 px
+- [x] Messages d’erreur assainis, erreurs de chargement visibles, connexion/réinitialisation/consentement récupérables
+- [x] Déconnexion configurable par site dans Paramétrage > Sécurité, avertissement et synchronisation entre onglets
+- [x] Aucun secret littéral trouvé dans le frontend ; logs applicatifs et télémétrie sans messages/charges bruts ; audit conserve les noms des champs plutôt que leur contenu
+- [ ] Validation finale connectée des écrans modifiés et expiration réelle — bloquée : session désormais déconnectée et aucun compte correspondant à l’adresse du demandeur ; reconnexion dans l’aperçu requise
+- [x] Dix tests unitaires réussis ; tests d’intégration ajoutés, ignorés faute de session ; connexion et reprise après erreur réseau vérifiées
 
 ## Correction de création des demandes
 - [x] Auditer les règles de création, de lecture et de pièces jointes

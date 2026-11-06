@@ -83,7 +83,6 @@ function FicheDemandeSortie() {
   ]);
   const isGestionnaire = hasAnyRole([
     "super_admin",
-    "responsable_maintenance",
     "gestionnaire_stock",
   ]);
 

@@ -29,6 +29,20 @@
       "when": 1793867244530,
       "tag": "0003_production_site_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793963688042,
+      "tag": "0004_enforce_sortie_roles_and_transitions",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793963745171,
+      "tag": "0005_atomic_stock_processing",
+      "breakpoints": true
     }
   ]
 }

@@ -1961,6 +1961,10 @@ export type Database = {
         Args: { _a: string; _b: string }
         Returns: boolean
       }
+      traiter_sortie: {
+        Args: { _demande_id: string; _magasin_id: string; _quantites: Json }
+        Returns: undefined
+      }
       user_etablissements: { Args: never; Returns: string[] }
       user_in_etablissement: {
         Args: { _etab: string; _user_id: string }
