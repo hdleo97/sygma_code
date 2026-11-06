@@ -43,6 +43,13 @@
       "when": 1793963745171,
       "tag": "0005_atomic_stock_processing",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793980458383,
+      "tag": "0006_close_selected_legacy_access_rules",
+      "breakpoints": true
     }
   ]
 }
